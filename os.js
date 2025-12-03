@@ -228,17 +228,78 @@ function printTerm(text) {
 /* --- FILE SYSTEM --- */
 // MISSION REGISTRY
 const MISSIONS = {
-    "alpha": { id: "alpha", ip: "192.168.0.99", domain: "secure.alpha", score: 0, reward: "payload.txt", theme: "blue", title: "SECURE SERVER (ALPHA)" },
-    "gamma": { id: "gamma", ip: "192.168.0.55", domain: "gamma.net", score: 10, reward: "gamma_intel.txt", theme: "purple", title: "GAMMA NETWORKS" },
-    "delta": { id: "delta", ip: "192.168.0.101", domain: "delta.sys", score: 20, reward: "delta_plans.pdf", theme: "yellow", title: "DELTA SYSTEMS" },
-    "epsilon": { id: "epsilon", ip: "192.168.0.44", domain: "epsilon.io", score: 30, reward: "epsilon_key.key", theme: "orange", title: "EPSILON IO" },
-    "zeta": { id: "zeta", ip: "192.168.0.77", domain: "zeta.org", score: 40, reward: "zeta_coords.csv", theme: "cyan", title: "ZETA ORG" },
-    "omega": { id: "omega", ip: "192.168.0.200", domain: "target.corp", score: 50, reward: "encrypted_payload.dat", theme: "red", title: "SECURE SERVER (OMEGA)" },
-    "eta": { id: "eta", ip: "192.168.0.88", domain: "eta.edu", score: 60, reward: "eta_virus.exe", theme: "pink", title: "ETA RESEARCH" },
-    "theta": { id: "theta", ip: "192.168.0.33", domain: "theta.gov", score: 70, reward: "theta_logs.log", theme: "brown", title: "THETA GOV" },
-    "iota": { id: "iota", ip: "192.168.0.11", domain: "iota.mil", score: 80, reward: "iota_blueprint.cad", theme: "gray", title: "IOTA MILITARY" },
-    "kappa": { id: "kappa", ip: "192.168.0.66", domain: "kappa.xyz", score: 90, reward: "kappa_source.js", theme: "white", title: "KAPPA LABS" }
+    "alpha": { id: "alpha", ip: "192.168.0.99", domain: "secure.alpha", score: 0, reward: "payload.txt", theme: "blue", title: "SECURE SERVER (ALPHA)", type: "standard" },
+    "gamma": { id: "gamma", ip: "192.168.0.55", domain: "gamma.net", score: 10, reward: "gamma_intel.txt", theme: "purple", title: "GAMMA NETWORKS", type: "standard" },
+    "delta": { id: "delta", ip: "192.168.0.101", domain: "delta.sys", score: 20, reward: "delta_plans.pdf", theme: "yellow", title: "DELTA SYSTEMS", type: "standard" },
+    "epsilon": { id: "epsilon", ip: "192.168.0.44", domain: "epsilon.io", score: 30, reward: "epsilon_key.key", theme: "orange", title: "EPSILON IO", type: "standard" },
+    "zeta": { id: "zeta", ip: "192.168.0.77", domain: "zeta.org", score: 40, reward: "zeta_coords.csv", theme: "cyan", title: "ZETA ORG", type: "standard" },
+    "omega": { id: "omega", ip: "192.168.0.200", domain: "target.corp", score: 50, reward: "encrypted_payload.dat", theme: "red", title: "SECURE SERVER (OMEGA)", type: "standard" },
+    "eta": { id: "eta", ip: "192.168.0.88", domain: "eta.edu", score: 60, reward: "eta_virus.exe", theme: "pink", title: "ETA RESEARCH", type: "standard" },
+    "theta": { id: "theta", ip: "192.168.0.33", domain: "theta.gov", score: 70, reward: "theta_logs.log", theme: "brown", title: "THETA GOV", type: "standard" },
+    "iota": { id: "iota", ip: "192.168.0.11", domain: "iota.mil", score: 80, reward: "iota_blueprint.cad", theme: "gray", title: "IOTA MILITARY", type: "standard" },
+    "kappa": { id: "kappa", ip: "192.168.0.66", domain: "kappa.xyz", score: 90, reward: "kappa_source.js", theme: "white", title: "KAPPA LABS", type: "standard" },
+    "deep_web": { id: "deep_web", ip: "10.0.0.66", domain: "portal.dark.net", score: 0, reward: "PROJECT_GENESIS.zip", theme: "red", title: "OPERATION DEEP WEB", type: "timed", duration: 300 }
 };
+
+// PROCEDURAL MISSION GENERATOR
+const MissionGenerator = {
+    adjectives: ['Silent', 'Dark', 'Crimson', 'Neon', 'Cyber', 'Rogue', 'Phantom', 'Steel', 'Iron', 'Glass', 'Void', 'Solar', 'Lunar', 'Nether', 'Hyper'],
+    nouns: ['Storm', 'Viper', 'Echo', 'Protocol', 'Citadel', 'Fortress', 'Shadow', 'Dragon', 'Wolf', 'Hawk', 'Core', 'Nexus', 'Gate', 'Grid', 'Pulse'],
+    domains: ['.com', '.net', '.org', '.io', '.biz', '.gov', '.mil', '.edu', '.corp', '.xyz'],
+
+    init: function () {
+        console.log("Generating 100 missions...");
+        for (let i = 0; i < 100; i++) {
+            this.generateOne(i);
+        }
+    },
+
+    generateOne: function (index) {
+        const adj = this.adjectives[Math.floor(Math.random() * this.adjectives.length)];
+        const noun = this.nouns[Math.floor(Math.random() * this.nouns.length)];
+        const id = `op_${index + 1}`;
+        const title = `OPERATION ${adj.toUpperCase()} ${noun.toUpperCase()}`;
+
+        // Unique IP
+        let ip;
+        do {
+            ip = `192.168.${Math.floor(Math.random() * 240) + 10}.${Math.floor(Math.random() * 250)}`;
+        } while (Object.values(MISSIONS).some(m => m.ip === ip));
+
+        // Unique Domain
+        const domain = `${adj.toLowerCase()}${noun.toLowerCase()}${Math.floor(Math.random() * 999)}${this.domains[Math.floor(Math.random() * this.domains.length)]}`;
+
+        // Type: 80% Standard, 20% Timed
+        const isTimed = Math.random() > 0.8;
+
+        if (isTimed) {
+            MISSIONS[id] = {
+                id: id,
+                ip: ip,
+                domain: domain,
+                title: title,
+                type: 'timed',
+                duration: Math.floor(Math.random() * 480) + 120, // 2-10 mins
+                reward: `loot_${id}.zip`,
+                theme: 'red'
+            };
+        } else {
+            MISSIONS[id] = {
+                id: id,
+                ip: ip,
+                domain: domain,
+                title: title,
+                type: 'standard',
+                score: Math.floor(Math.random() * 90) + 5,
+                reward: `data_${id}.txt`,
+                theme: 'green'
+            };
+        }
+    }
+};
+
+// Initialize Generator
+setTimeout(() => MissionGenerator.init(), 100);
 
 // ADVANCED MISSION ENGINE
 const MissionEngine = {
@@ -261,6 +322,12 @@ const MissionEngine = {
         if (opId === 'deep_web') {
             this.timer = 300; // 5 minutes
             this.objective = "Scan network for entry point.";
+        } else {
+            const mission = MISSIONS[opId];
+            if (mission && mission.type === 'timed') {
+                this.timer = mission.duration || 300;
+                this.objective = `Scan network to locate ${mission.domain}`;
+            }
         }
 
         this.interval = setInterval(() => this.tick(), 1000);
@@ -546,24 +613,75 @@ function handleCmd(cmd) {
         }
     }
     else if (c === 'start_op') {
-        if (arg === 'deep_web') {
-            printTerm(MissionEngine.start('deep_web'));
+        const opId = arg;
+        if (MISSIONS[opId]) {
+            const m = MISSIONS[opId];
+            if (m.type === 'timed') {
+                printTerm(MissionEngine.start(opId));
+            } else {
+                printTerm(`Operation ${m.title} is a Standard Biometric Mission.`);
+                printTerm(`Use 'connect ${m.ip}' or 'connect ${m.domain}' to begin.`);
+            }
         } else {
             printTerm("Usage: start_op <operation_id>");
-            printTerm("Available Operations: deep_web");
+            printTerm("Example: start_op deep_web");
         }
+    }
+    else if (c === 'contracts') {
+        const page = parseInt(arg) || 1;
+        const pageSize = 10;
+        const allMissions = Object.values(MISSIONS);
+        const totalPages = Math.ceil(allMissions.length / pageSize);
+
+        if (page < 1 || page > totalPages) {
+            printTerm(`Page ${page} does not exist. Total pages: ${totalPages}`);
+            return;
+        }
+
+        printTerm(`--- AVAILABLE CONTRACTS (Page ${page}/${totalPages}) ---`);
+        printTerm("ID           | TITLE                          | TARGET          | TYPE");
+        printTerm("-".repeat(70));
+
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        const slice = allMissions.slice(start, end);
+
+        slice.forEach(m => {
+            const id = m.id.padEnd(12);
+            const title = m.title.replace('OPERATION ', '').padEnd(30);
+            const target = m.ip.padEnd(15);
+            const type = (m.type === 'timed' ? 'TIMED OP' : 'BIOMETRIC').padEnd(10);
+            printTerm(`${id} | ${title} | ${target} | ${type}`);
+        });
+
+        printTerm("-".repeat(70));
+        printTerm(`Type 'contracts ${page + 1}' for next page.`);
     }
     else if (c === 'scan_network') {
         printTerm("Scanning local subnet...");
         setTimeout(() => {
             printTerm("Found: 192.168.0.1 (Gateway)");
             printTerm("Found: 192.168.0.105 (Self)");
+
+            // Check for Deep Web
             if (MissionEngine.active && MissionEngine.currentOp === 'deep_web' && MissionEngine.stage === 1) {
                 printTerm("Found: 10.0.0.66 (HIDDEN) - PORT 80 OPEN");
                 printTerm("Resolving hostname... portal.dark.net");
                 MissionEngine.stage = 2;
                 MissionEngine.objective = "Hack Employee Portal (portal.dark.net)";
                 MissionEngine.renderHUD();
+            }
+
+            // Check for Generated Timed Missions
+            if (MissionEngine.active && MISSIONS[MissionEngine.currentOp]) {
+                const m = MISSIONS[MissionEngine.currentOp];
+                if (m.type === 'timed' && MissionEngine.stage === 1) {
+                    printTerm(`Found: ${m.ip} (TARGET) - PORT 80 OPEN`);
+                    printTerm(`Resolving hostname... ${m.domain}`);
+                    MissionEngine.stage = 2;
+                    MissionEngine.objective = `Infiltrate ${m.domain}`;
+                    MissionEngine.renderHUD();
+                }
             }
         }, 2000);
     }
@@ -957,12 +1075,16 @@ function browserGo() {
     setTimeout(() => {
         frame.style.opacity = '1';
 
-        // DEEP WEB PORTAL (Advanced Op)
-        if (url.includes('portal.dark.net')) {
+        // MISSION LOGIC: Dynamic Registry Lookup
+        const mission = Object.values(MISSIONS).find(m => url.includes(m.domain) || url.includes(m.ip));
+
+        // DEEP WEB PORTAL (Advanced Op) OR Generated Timed Mission
+        if (url.includes('portal.dark.net') || (mission && mission.type === 'timed')) {
+            const title = mission ? mission.title : "DarkCorp Employee Portal";
             const html = `
                 <body style="background:#1a1a1a; color:#ccc; font-family:sans-serif; padding:20px;">
                     <div style="background:#333; padding:10px; border-bottom:2px solid #555;">
-                        <h2 style="margin:0; color:#fff;">DarkCorp Employee Portal</h2>
+                        <h2 style="margin:0; color:#fff;">${title} - Login</h2>
                     </div>
                     <div style="margin-top:20px;">
                         <div style="background:#222; padding:10px; margin-bottom:10px;">
@@ -985,22 +1107,29 @@ function browserGo() {
                             const p = document.getElementById('p').value;
                             const msg = document.getElementById('msg');
                             
-                            // SQL Injection Check
-                            if (u.includes("' OR '1'='1") || p.includes("' OR '1'='1")) {
-                                document.body.innerHTML = \`
-                                    <body style="background:black; color:#00FF41; font-family:monospace; padding:20px;">
-                                        <h1>SQL INJECTION SUCCESSFUL</h1>
-                                        <p>Dumping User Database...</p>
-                                        <pre>
+                                // SQL Injection Check
+                                if (u.includes("' OR '1'='1") || p.includes("' OR '1'='1")) {
+                                    const rewardName = '${mission ? mission.reward : "PROJECT_GENESIS.zip"}';
+                                    const uploadCmd = '${mission && mission.id !== "deep_web" ? "LOOT" : "GENESIS"}';
+                                    
+                                    document.body.innerHTML = \`
+                                        <body style="background:black; color:#00FF41; font-family:monospace; padding:20px;">
+                                            <h1>SQL INJECTION SUCCESSFUL</h1>
+                                            <p>Dumping User Database...</p>
+                                            <pre>
 ID | USER | ROLE
 1  | admin| SYSADMIN
 2  | jdoe | USER
 3  | root | SUPERUSER
-                                        </pre>
-                                        <p><strong>VAULT IP FOUND: 10.0.0.99</strong></p>
-                                        <p>Project Genesis is stored in the Vault.</p>
-                                    </body>
-                                \`;
+                                            </pre>
+                                            <p><strong>VAULT IP FOUND: 10.0.0.99</strong></p>
+                                            <p>Target File: <strong>\${rewardName}</strong></p>
+                                            <p>To Exfiltrate: Run <strong>upload \${uploadCmd}</strong> in Terminal.</p>
+                                        </body>
+                                    \`;
+                                    window.parent.postMessage('deep_web_sqli', '*');
+                                    return;
+                                }
                                 window.parent.postMessage('deep_web_sqli', '*');
                                 return;
                             }
@@ -1022,9 +1151,6 @@ ID | USER | ROLE
             frame.srcdoc = html;
             return;
         }
-
-        // MISSION LOGIC: Dynamic Registry Lookup
-        const mission = Object.values(MISSIONS).find(m => url.includes(m.domain) || url.includes(m.ip));
 
         if (mission) {
             const highScore = localStorage.getItem('snakeHighScore') || 0;
@@ -1174,10 +1300,11 @@ window.addEventListener('message', (e) => {
             }
 
             // Visual Feedback (Always Run)
-            // Fallback to blue/red or just flash green
+            // Dynamic Theme Application
             let themeClass = 'theme-green';
-            if (mission.theme === 'red') themeClass = 'theme-red';
-            if (mission.theme === 'blue') themeClass = 'theme-blue';
+            if (mission.theme) {
+                themeClass = `theme-${mission.theme}`;
+            }
 
             document.body.className = themeClass;
             setTimeout(() => document.body.className = 'theme-green', 3000);
