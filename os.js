@@ -245,10 +245,12 @@ const FileSystem = {
                     type: "dir",
                     children: {
                         "config.sys": { type: "file", content: "THEME=GREEN\nAUDIO=ON" },
-                        "kernel.log": { type: "file", content: "System booted successfully.\nAll modules loaded." }
+                        "kernel.log": { type: "file", content: "System booted successfully.\nAll modules loaded." },
+                        "network.log": { type: "file", content: "DHCP: 192.168.0.105\nGATEWAY: 192.168.0.1\nTARGET_DETECTED: 192.168.0.99 [SECURE_SERVER]" }
                     }
                 },
-                "secret.txt": { type: "file", content: "The cake is a lie." }
+                "secret.txt": { type: "file", content: "The cake is a lie." },
+                "mission_brief.txt": { type: "file", content: "AGENT: 007\nMISSION: RETRIEVE PAYLOAD\n\nWe have located a secure server at 192.168.0.99.\nIt is protected by a biometric score lock.\n\nOBJECTIVES:\n1. Locate the IP address (check system logs).\n2. Connect via Terminal.\n3. Bypass the login screen using your reflex score (Snake High Score).\n4. Download the payload." }
             }
         }
     },
@@ -347,6 +349,18 @@ function handleCmd(cmd) {
     else if (c === 'touch') printTerm(FileSystem.touch(arg));
     else if (c === 'rm') printTerm(FileSystem.rm(arg));
     else if (c === 'delete' && args[1] === 'system32' || c === 'del' && args[1] === 'system32') triggerBSOD();
+    else if (c === 'connect') {
+        if (arg === '192.168.0.99') {
+            printTerm("Initiating secure connection...");
+            setTimeout(() => {
+                document.getElementById('browser-url').value = 'secure.corp';
+                openWindow('win-browser');
+                browserGo();
+            }, 1000);
+        } else {
+            printTerm(`Connection to ${arg} timed out.`);
+        }
+    }
     else printTerm(`Unknown command: ${c}`);
 }
 
@@ -736,7 +750,43 @@ function browserGo() {
 
     setTimeout(() => {
         frame.style.opacity = '1';
+
+        // MISSION LOGIC: Secure Server
+        if (url.includes('secure.corp') || url.includes('192.168.0.99')) {
+            const highScore = localStorage.getItem('snakeHighScore') || 0;
+            const html = `
+                <body style="background:black; color:#00FF41; font-family:monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;">
+                    <h1 style="border-bottom: 2px solid #00FF41; padding-bottom: 10px;">SECURE SERVER LOGIN</h1>
+                    <p>BIOMETRIC VERIFICATION REQUIRED</p>
+                    <p>Please enter your reflex synchronization score:</p>
+                    <input type="number" id="pass" style="background:black; border:1px solid #00FF41; color:#00FF41; padding:5px; outline:none;">
+                    <button onclick="check()" style="background:#00FF41; color:black; border:none; padding:5px 10px; margin-top:10px; cursor:pointer; font-weight:bold;">AUTHENTICATE</button>
+                    <p id="msg" style="margin-top:20px;"></p>
+                    <script>
+                        function check() {
+                            const val = document.getElementById('pass').value;
+                            const required = ${highScore};
+                            const msg = document.getElementById('msg');
+                            if (val == required && required > 0) {
+                                msg.style.color = '#00FF41';
+                                msg.innerText = "ACCESS GRANTED. DOWNLOADING PAYLOAD...";
+                                setTimeout(() => {
+                                    window.parent.postMessage('mission_success', '*');
+                                }, 1500);
+                            } else {
+                                msg.style.color = 'red';
+                                msg.innerText = "ACCESS DENIED. INVALID SCORE OR SCORE TOO LOW.";
+                            }
+                        }
+                    </script>
+                </body>
+            `;
+            frame.srcdoc = html;
+            return;
+        }
+
         try {
+            frame.removeAttribute('srcdoc'); // Clear srcdoc if navigating away
             frame.src = url;
         } catch (e) {
             console.error("Load error:", e);
@@ -744,6 +794,38 @@ function browserGo() {
         }
     }, 500);
 }
+
+// Listen for mission success message from iframe
+window.addEventListener('message', (e) => {
+    if (e.data === 'mission_success') {
+        // Unlock payload
+        const dir = FileSystem.structure.root.children;
+        if (!dir['payload.txt']) {
+            dir['payload.txt'] = {
+                type: "file",
+                content: "CONGRATULATIONS!\n\nYou have successfully hacked the mainframe.\n\nREWARD CODE: PK_MASTER_HACKER_2025\n\nKeep exploring."
+            };
+            refreshExplorer();
+
+            // Notification
+            const term = document.getElementById('term-output');
+            if (term) {
+                term.innerHTML += '<div>> [SYSTEM] PAYLOAD DOWNLOADED TO ROOT DIRECTORY.</div>';
+                term.scrollTop = term.scrollHeight;
+            }
+
+            // Visual Flair
+            document.body.className = 'theme-red'; // Alert mode
+            setTimeout(() => document.body.className = 'theme-green', 3000); // Reset
+
+            // Open the file
+            setTimeout(() => {
+                openWindow('win-explorer');
+                openFile('payload.txt');
+            }, 1000);
+        }
+    }
+});
 
 function browserBack() {
     try { document.getElementById('browser-frame').contentWindow.history.back(); } catch (e) { }
