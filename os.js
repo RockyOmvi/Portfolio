@@ -246,11 +246,11 @@ const FileSystem = {
                     children: {
                         "config.sys": { type: "file", content: "THEME=GREEN\nAUDIO=ON" },
                         "kernel.log": { type: "file", content: "System booted successfully.\nAll modules loaded." },
-                        "network.log": { type: "file", content: "DHCP: 192.168.0.105\nGATEWAY: 192.168.0.1\nTARGET_DETECTED: 192.168.0.99 [SECURE_SERVER]" }
+                        "network.log": { type: "file", content: "DHCP: 192.168.0.105\nGATEWAY: 192.168.0.1\nTARGET_DETECTED: 192.168.0.99 [LEGACY_SERVER]\nPROXY_DETECTED: target.corp [IP MASKED]" }
                     }
                 },
                 "secret.txt": { type: "file", content: "The cake is a lie." },
-                "mission_brief.txt": { type: "file", content: "AGENT: 007\nMISSION: RETRIEVE PAYLOAD\n\nWe have located a secure server at 192.168.0.99.\nIt is protected by a biometric score lock.\n\nOBJECTIVES:\n1. Locate the IP address (check system logs).\n2. Connect via Terminal.\n3. Bypass the login screen using your reflex score (Snake High Score).\n4. Download the payload." }
+                "mission_brief.txt": { type: "file", content: "AVAILABLE CONTRACTS:\n\n--- CONTRACT ALPHA (LEGACY) ---\nTARGET: 192.168.0.99\nOBJECTIVE: Retrieve payload.txt\nSECURITY: Basic Biometric (Score > 0)\n\n--- CONTRACT OMEGA (NEW) ---\nTARGET: target.corp\nOBJECTIVE: Exfiltrate Project OMEGA-9\nINTEL:\n1. Ping target.corp to find IP.\n2. Connect and bypass Advanced Biometric (Score > 50).\n3. Decrypt payload (Hint: Identity).\n4. Upload OMEGA-9." }
             }
         }
     },
@@ -349,16 +349,84 @@ function handleCmd(cmd) {
     else if (c === 'touch') printTerm(FileSystem.touch(arg));
     else if (c === 'rm') printTerm(FileSystem.rm(arg));
     else if (c === 'delete' && args[1] === 'system32' || c === 'del' && args[1] === 'system32') triggerBSOD();
+    else if (c === 'rm') printTerm(FileSystem.rm(arg));
+    else if (c === 'delete' && args[1] === 'system32' || c === 'del' && args[1] === 'system32') triggerBSOD();
+    else if (c === 'ping') {
+        if (arg === 'target.corp') {
+            printTerm("Pinging target.corp [192.168.0.200] with 32 bytes of data:");
+            setTimeout(() => printTerm("Reply from 192.168.0.200: bytes=32 time=12ms TTL=54"), 500);
+            setTimeout(() => printTerm("Reply from 192.168.0.200: bytes=32 time=15ms TTL=54"), 1000);
+            setTimeout(() => printTerm("Reply from 192.168.0.200: bytes=32 time=11ms TTL=54"), 1500);
+        } else {
+            printTerm(`Ping request could not find host ${arg}. Please check the name and try again.`);
+        }
+    }
     else if (c === 'connect') {
         if (arg === '192.168.0.99') {
-            printTerm("Initiating secure connection...");
+            printTerm("Initiating secure connection (Legacy)...");
+            setTimeout(() => {
+                document.getElementById('browser-url').value = 'secure.alpha';
+                openWindow('win-browser');
+                browserGo();
+            }, 1000);
+        }
+        else if (arg === '192.168.0.200') {
+            printTerm("Initiating secure connection (Omega)...");
             setTimeout(() => {
                 document.getElementById('browser-url').value = 'secure.corp';
                 openWindow('win-browser');
                 browserGo();
             }, 1000);
         } else {
-            printTerm(`Connection to ${arg} timed out.`);
+            printTerm(`Connection to ${arg} failed. Target unreachable.`);
+        }
+    }
+    else if (c === 'decrypt') {
+        if (!arg) {
+            printTerm("Usage: decrypt <file> <password>");
+            return;
+        }
+        const file = arg;
+        const pass = args[2];
+
+        const dir = FileSystem.getDir();
+        if (dir.children[file]) {
+            if (file === 'encrypted_payload.dat') {
+                if (pass && pass.toLowerCase() === 'india') {
+                    printTerm("Decryption Successful.");
+                    printTerm("Extracting data...");
+                    FileSystem.structure.root.children['payload_decrypted.txt'] = {
+                        type: "file",
+                        content: "PROJECT OMEGA-9\n\nUPLOAD CODE: OMEGA-9\n\nWARNING: UPLOADING THIS CODE WILL TRIGGER A SYSTEM WIPE TO COVER TRACKS."
+                    };
+                    refreshExplorer();
+                } else {
+                    printTerm("Error: Incorrect Password.");
+                    printTerm("Hint: The Creator's Location (Check Identity)");
+                }
+            } else {
+                printTerm("Error: File is not encrypted.");
+            }
+        } else {
+            printTerm(`decrypt: ${file}: No such file`);
+        }
+    }
+    else if (c === 'upload') {
+        if (arg === 'OMEGA-9') {
+            printTerm("Uploading Project OMEGA-9...");
+            let p = 0;
+            const interval = setInterval(() => {
+                p += 10;
+                printTerm(`Progress: ${p}%`);
+                if (p >= 100) {
+                    clearInterval(interval);
+                    printTerm("UPLOAD COMPLETE.");
+                    printTerm("INITIATING TRACE CLEANUP...");
+                    setTimeout(triggerBSOD, 2000);
+                }
+            }, 200);
+        } else {
+            printTerm("Error: Invalid Upload Code.");
         }
     }
     else printTerm(`Unknown command: ${c}`);
@@ -751,31 +819,93 @@ function browserGo() {
     setTimeout(() => {
         frame.style.opacity = '1';
 
-        // MISSION LOGIC: Secure Server
-        if (url.includes('secure.corp') || url.includes('192.168.0.99')) {
+        // MISSION LOGIC: Secure Server (OMEGA)
+        if (url.includes('secure.corp') || url.includes('192.168.0.200')) {
             const highScore = localStorage.getItem('snakeHighScore') || 0;
+            const requiredScore = 50;
             const html = `
                 <body style="background:black; color:#00FF41; font-family:monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;">
-                    <h1 style="border-bottom: 2px solid #00FF41; padding-bottom: 10px;">SECURE SERVER LOGIN</h1>
-                    <p>BIOMETRIC VERIFICATION REQUIRED</p>
+                    <h1 style="border-bottom: 2px solid #00FF41; padding-bottom: 10px;">SECURE SERVER (OMEGA)</h1>
+                    <p>ADVANCED BIOMETRIC VERIFICATION</p>
+                    <p>REQUIRED REFLEX SCORE: ${requiredScore}</p>
                     <p>Please enter your reflex synchronization score:</p>
                     <input type="number" id="pass" style="background:black; border:1px solid #00FF41; color:#00FF41; padding:5px; outline:none;">
                     <button onclick="check()" style="background:#00FF41; color:black; border:none; padding:5px 10px; margin-top:10px; cursor:pointer; font-weight:bold;">AUTHENTICATE</button>
                     <p id="msg" style="margin-top:20px;"></p>
                     <script>
                         function check() {
-                            const val = document.getElementById('pass').value;
-                            const required = ${highScore};
-                            const msg = document.getElementById('msg');
-                            if (val == required && required > 0) {
-                                msg.style.color = '#00FF41';
-                                msg.innerText = "ACCESS GRANTED. DOWNLOADING PAYLOAD...";
-                                setTimeout(() => {
-                                    window.parent.postMessage('mission_success', '*');
-                                }, 1500);
-                            } else {
-                                msg.style.color = 'red';
-                                msg.innerText = "ACCESS DENIED. INVALID SCORE OR SCORE TOO LOW.";
+                            try {
+                                console.log("Authenticating Omega...");
+                                const val = document.getElementById('pass').value;
+                                const required = parseInt('${highScore}') || 0;
+                                const requiredScore = ${requiredScore};
+                                const msg = document.getElementById('msg');
+                                
+                                console.log("Input:", val, "Required:", required, "Min:", requiredScore);
+
+                                if (val == required && required >= requiredScore) {
+                                    msg.style.color = '#00FF41';
+                                    msg.innerText = "ACCESS GRANTED. DOWNLOADING ENCRYPTED PAYLOAD...";
+                                    setTimeout(() => {
+                                        console.log("Posting success message...");
+                                        window.parent.postMessage('mission_success_omega', '*');
+                                        msg.innerText = "DOWNLOAD COMPLETE. CHECK YOUR FILES.";
+                                    }, 1500);
+                                } else if (required < requiredScore) {
+                                    msg.style.color = 'red';
+                                    msg.innerText = "ACCESS DENIED. REFLEX SCORE TOO LOW (" + required + "/" + requiredScore + ").";
+                                } else {
+                                    msg.style.color = 'red';
+                                    msg.innerText = "ACCESS DENIED. BIOMETRIC MISMATCH.";
+                                }
+                            } catch (e) {
+                                console.error("Auth Error:", e);
+                                alert("System Error: " + e.message);
+                            }
+                        }
+                    </script>
+                </body>
+            `;
+            frame.srcdoc = html;
+            return;
+        }
+
+        // MISSION LOGIC: Legacy Server (ALPHA)
+        if (url.includes('secure.alpha') || url.includes('192.168.0.99')) {
+            const highScore = localStorage.getItem('snakeHighScore') || 0;
+            const html = `
+                <body style="background:black; color:#00FF41; font-family:monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;">
+                    <h1 style="border-bottom: 2px solid #00FF41; padding-bottom: 10px;">SECURE SERVER (ALPHA)</h1>
+                    <p>BASIC BIOMETRIC VERIFICATION</p>
+                    <p>Please enter your reflex synchronization score:</p>
+                    <input type="number" id="pass" style="background:black; border:1px solid #00FF41; color:#00FF41; padding:5px; outline:none;">
+                    <button onclick="check()" style="background:#00FF41; color:black; border:none; padding:5px 10px; margin-top:10px; cursor:pointer; font-weight:bold;">AUTHENTICATE</button>
+                    <p id="msg" style="margin-top:20px;"></p>
+                    <script>
+                        function check() {
+                            try {
+                                console.log("Authenticating Alpha...");
+                                const val = document.getElementById('pass').value;
+                                const required = parseInt('${highScore}') || 0;
+                                const msg = document.getElementById('msg');
+                                
+                                console.log("Input:", val, "Required:", required);
+
+                                if (val == required && required > 0) {
+                                    msg.style.color = '#00FF41';
+                                    msg.innerText = "ACCESS GRANTED. DOWNLOADING PAYLOAD...";
+                                    setTimeout(() => {
+                                        console.log("Posting success message...");
+                                        window.parent.postMessage('mission_success_alpha', '*');
+                                        msg.innerText = "DOWNLOAD COMPLETE. CHECK YOUR FILES.";
+                                    }, 1500);
+                                } else {
+                                    msg.style.color = 'red';
+                                    msg.innerText = "ACCESS DENIED. INVALID SCORE.";
+                                }
+                            } catch (e) {
+                                console.error("Auth Error:", e);
+                                alert("System Error: " + e.message);
                             }
                         }
                     </script>
@@ -794,38 +924,6 @@ function browserGo() {
         }
     }, 500);
 }
-
-// Listen for mission success message from iframe
-window.addEventListener('message', (e) => {
-    if (e.data === 'mission_success') {
-        // Unlock payload
-        const dir = FileSystem.structure.root.children;
-        if (!dir['payload.txt']) {
-            dir['payload.txt'] = {
-                type: "file",
-                content: "CONGRATULATIONS!\n\nYou have successfully hacked the mainframe.\n\nREWARD CODE: PK_MASTER_HACKER_2025\n\nKeep exploring."
-            };
-            refreshExplorer();
-
-            // Notification
-            const term = document.getElementById('term-output');
-            if (term) {
-                term.innerHTML += '<div>> [SYSTEM] PAYLOAD DOWNLOADED TO ROOT DIRECTORY.</div>';
-                term.scrollTop = term.scrollHeight;
-            }
-
-            // Visual Flair
-            document.body.className = 'theme-red'; // Alert mode
-            setTimeout(() => document.body.className = 'theme-green', 3000); // Reset
-
-            // Open the file
-            setTimeout(() => {
-                openWindow('win-explorer');
-                openFile('payload.txt');
-            }, 1000);
-        }
-    }
-});
 
 function browserBack() {
     try { document.getElementById('browser-frame').contentWindow.history.back(); } catch (e) { }
@@ -881,3 +979,62 @@ function toggleMute() {
     if (!SoundManager.ctx) SoundManager.init();
     SoundManager.toggleMute();
 }
+
+// Listen for mission success message from iframe
+window.addEventListener('message', (e) => {
+    console.log("Received message:", e.data);
+    if (e.data === 'mission_success_omega') {
+        // Unlock payload (Omega)
+        const dir = FileSystem.structure.root.children;
+        if (!dir['encrypted_payload.dat']) {
+            dir['encrypted_payload.dat'] = {
+                type: "file",
+                content: "ENCRYPTED DATA\n\n[LOCKED]\n\nHint: The Creator's Location (Check Identity)"
+            };
+            refreshExplorer();
+        }
+
+        const term = document.getElementById('term-output');
+        if (term) {
+            term.innerHTML += '<div>> [SYSTEM] ENCRYPTED PAYLOAD DOWNLOADED.</div>';
+            term.scrollTop = term.scrollHeight;
+        }
+
+        // Visual Feedback (Always Run)
+        document.body.className = 'theme-red';
+        setTimeout(() => document.body.className = 'theme-green', 3000);
+
+        // Always open file
+        setTimeout(() => {
+            openWindow('win-explorer');
+            // openFile('encrypted_payload.dat'); 
+        }, 1000);
+    }
+    else if (e.data === 'mission_success_alpha') {
+        // Unlock payload (Alpha)
+        const dir = FileSystem.structure.root.children;
+        if (!dir['payload.txt']) {
+            dir['payload.txt'] = {
+                type: "file",
+                content: "CONGRATULATIONS!\n\nYou have completed the Legacy Mission (Alpha).\n\nREWARD CODE: ALPHA_LEGACY_2025"
+            };
+            refreshExplorer();
+        }
+
+        const term = document.getElementById('term-output');
+        if (term) {
+            term.innerHTML += '<div>> [SYSTEM] LEGACY PAYLOAD DOWNLOADED.</div>';
+            term.scrollTop = term.scrollHeight;
+        }
+
+        // Visual Feedback (Always Run)
+        document.body.className = 'theme-blue';
+        setTimeout(() => document.body.className = 'theme-green', 3000);
+
+        // Always open file
+        setTimeout(() => {
+            openWindow('win-explorer');
+            openFile('payload.txt');
+        }, 1000);
+    }
+});
