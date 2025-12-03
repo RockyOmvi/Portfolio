@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PK_OS v3.2 | Purushottam Kumar</title>
+    <title>PK_OS v4.0 | Purushottam Kumar</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.tailwindcss.com"></script> <!-- Utility only -->
@@ -92,6 +92,14 @@
                 <i data-lucide="file-text"></i>
                 <span>Notepad</span>
             </div>
+            <div class="desktop-icon" onclick="openWindow('win-browser')">
+                <i data-lucide="globe"></i>
+                <span>CyberDeck</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-explorer')">
+                <i data-lucide="hard-drive"></i>
+                <span>Files</span>
+            </div>
         </div>
 
         <!-- System Monitor Widget -->
@@ -149,6 +157,7 @@
                     </div>
                 </div>
             </div>
+            <div class="resize-handle"></div>
         </div>
 
         <!-- Skills Window -->
@@ -192,6 +201,7 @@
                     </div>
                 </div>
             </div>
+            <div class="resize-handle"></div>
         </div>
 
         <!-- Projects Window -->
@@ -221,6 +231,7 @@
                     <span class="text-[10px] bg-theme-dim text-black px-1">C++</span>
                 </div>
             </div>
+            <div class="resize-handle"></div>
         </div>
 
         <!-- Terminal Window -->
@@ -234,7 +245,7 @@
             </div>
             <div class="window-content bg-black font-mono text-sm flex flex-col h-full p-0">
                 <div id="term-output" class="flex-grow p-2 overflow-y-auto">
-                    Welcome to PK_OS v3.0<br>Type 'help' for commands.
+                    Welcome to PK_OS v4.0<br>Type 'help' for commands.
                 </div>
                 <div class="flex items-center p-2 border-t border-theme-dim">
                     <span class="mr-2 text-theme-color">></span>
@@ -243,6 +254,7 @@
                         autocomplete="off">
                 </div>
             </div>
+            <div class="resize-handle"></div>
         </div>
 
         <!-- Snake Window -->
@@ -274,6 +286,7 @@
                         AGAIN</button>
                 </div>
             </div>
+            <div class="resize-handle"></div>
         </div>
 
         <!-- Chat Window -->
@@ -296,6 +309,7 @@
                     <button type="submit" class="bg-theme-color text-black px-3 py-1 font-bold text-xs">SEND</button>
                 </form>
             </div>
+            <div class="resize-handle"></div>
         </div>
 
         <!-- Settings Window -->
@@ -321,6 +335,7 @@
                         RED</button>
                 </div>
             </div>
+            <div class="resize-handle"></div>
         </div>
 
         <!-- Notepad Window -->
@@ -341,6 +356,68 @@
                     <span id="notepad-status">SAVED</span>
                 </div>
             </div>
+            <div class="resize-handle"></div>
+        </div>
+
+        <!-- CyberDeck Browser Window -->
+        <div id="win-browser" class="window" style="top: 10%; left: 15%; width: 800px; height: 500px;">
+            <div class="window-header">
+                <span>CYBERDECK_NAVIGATOR</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-browser')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-browser')"></button>
+                </div>
+            </div>
+            <div class="window-content flex flex-col p-0 bg-black">
+                <!-- Browser Toolbar -->
+                <div class="flex items-center gap-2 p-2 border-b border-theme-dim bg-theme-dark/20">
+                    <button class="text-theme-color hover:text-white" onclick="browserBack()"><i
+                            data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                    <button class="text-theme-color hover:text-white" onclick="browserForward()"><i
+                            data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    <button class="text-theme-color hover:text-white" onclick="browserReload()"><i
+                            data-lucide="rotate-cw" class="w-4 h-4"></i></button>
+                    <input type="text" id="browser-url"
+                        class="flex-grow bg-black border border-theme-dim text-theme-color px-2 py-1 text-xs font-mono"
+                        value="https://www.google.com">
+                    <button class="text-theme-color hover:text-white" onclick="browserGo()"><i
+                            data-lucide="arrow-right-circle" class="w-4 h-4"></i></button>
+                </div>
+                <!-- Browser Content (Iframe) -->
+                <div class="flex-grow relative bg-white">
+                    <iframe id="browser-frame" src="https://www.google.com/webhp?igu=1"
+                        class="w-full h-full border-none"></iframe>
+                    <div id="browser-error"
+                        class="absolute inset-0 bg-black text-theme-color flex flex-col items-center justify-center hidden">
+                        <i data-lucide="wifi-off" class="w-12 h-12 mb-4"></i>
+                        <h3 class="text-xl font-bold">CONNECTION_LOST</h3>
+                        <p class="text-sm mt-2">The requested node is unreachable.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="resize-handle"></div>
+        </div>
+
+        <!-- File Explorer Window -->
+        <div id="win-explorer" class="window" style="top: 20%; left: 20%; width: 600px; height: 400px;">
+            <div class="window-header">
+                <span>FILE_EXPLORER</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-explorer')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-explorer')"></button>
+                </div>
+            </div>
+            <div class="window-content flex flex-col p-0">
+                <div class="flex items-center gap-2 p-2 border-b border-theme-dim bg-theme-dark/20 text-xs">
+                    <button onclick="explorerUp()"><i data-lucide="arrow-up" class="w-4 h-4"></i></button>
+                    <span class="text-theme-dim">PATH:</span>
+                    <span id="explorer-path" class="font-mono">/root</span>
+                </div>
+                <div id="explorer-grid" class="flex-grow p-4 grid grid-cols-4 gap-4 overflow-y-auto content-start">
+                    <!-- Files injected here -->
+                </div>
+            </div>
+            <div class="resize-handle"></div>
         </div>
 
         <!-- Audio Control Widget (Desktop) -->
@@ -379,6 +456,12 @@
         </div>
         <div class="start-item" onclick="openWindow('win-terminal'); toggleStartMenu()">
             <i data-lucide="terminal"></i> Terminal
+        </div>
+        <div class="start-item" onclick="openWindow('win-browser'); toggleStartMenu()">
+            <i data-lucide="globe"></i> CyberDeck
+        </div>
+        <div class="start-item" onclick="openWindow('win-explorer'); toggleStartMenu()">
+            <i data-lucide="hard-drive"></i> Files
         </div>
         <div class="start-divider"></div>
         <div class="start-item" onclick="location.reload()">

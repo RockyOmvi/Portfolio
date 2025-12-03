@@ -115,6 +115,11 @@ function openWindow(id) {
 
     // Add to taskbar if not exists
     addToTaskbar(id);
+
+    // Refresh File Explorer if opened
+    if (id === 'win-explorer' && typeof refreshExplorer === 'function') {
+        refreshExplorer();
+    }
 }
 
 function closeWindow(id) {
@@ -220,13 +225,128 @@ function printTerm(text) {
     termOutput.scrollTop = termOutput.scrollHeight;
 }
 
+/* --- FILE SYSTEM --- */
+const FileSystem = {
+    structure: {
+        "root": {
+            type: "dir",
+            children: {
+                "about.txt": { type: "file", content: "Identity: Purushottam Kumar\nRole: Data Scientist\nLoc: India" },
+                "skills.md": { type: "file", content: "# Capabilities\n- Python\n- SQL\n- C++\n- Generative AI\n- Deep Learning" },
+                "projects": {
+                    type: "dir",
+                    children: {
+                        "ibm_analysis.py": { type: "file", content: "import pandas as pd\n# Advanced Data Analysis Logic" },
+                        "drug_discovery.doc": { type: "file", content: "Computational Drug Discovery Pipeline..." },
+                        "usb_toolkit.cpp": { type: "file", content: "#include <iostream>\n// Portable Tools" }
+                    }
+                },
+                "system": {
+                    type: "dir",
+                    children: {
+                        "config.sys": { type: "file", content: "THEME=GREEN\nAUDIO=ON" },
+                        "kernel.log": { type: "file", content: "System booted successfully.\nAll modules loaded." }
+                    }
+                },
+                "secret.txt": { type: "file", content: "The cake is a lie." }
+            }
+        }
+    },
+    currentPath: ["root"],
+
+    getDir(path = this.currentPath) {
+        let current = this.structure.root;
+        // Skip root in path traversal as we start there
+        for (let i = 1; i < path.length; i++) {
+            if (current.children && current.children[path[i]]) {
+                current = current.children[path[i]];
+            } else {
+                return null;
+            }
+        }
+        return current;
+    },
+
+    ls() {
+        const dir = this.getDir();
+        if (!dir || dir.type !== 'dir') return "Error: Invalid directory";
+        return Object.keys(dir.children).map(name => {
+            const isDir = dir.children[name].type === 'dir';
+            return isDir ? `<span style="color: #ffff00">${name}/</span>` : name;
+        }).join('  ');
+    },
+
+    cd(name) {
+        if (name === "..") {
+            if (this.currentPath.length > 1) this.currentPath.pop();
+            return "";
+        }
+        if (name === "/") {
+            this.currentPath = ["root"];
+            return "";
+        }
+
+        const dir = this.getDir();
+        if (dir.children[name] && dir.children[name].type === 'dir') {
+            this.currentPath.push(name);
+            return "";
+        }
+        return `cd: ${name}: No such directory`;
+    },
+
+    cat(name) {
+        const dir = this.getDir();
+        if (dir.children[name] && dir.children[name].type === 'file') {
+            return dir.children[name].content;
+        }
+        return `cat: ${name}: No such file`;
+    },
+
+    mkdir(name) {
+        const dir = this.getDir();
+        if (dir.children[name]) return `mkdir: ${name}: File exists`;
+        dir.children[name] = { type: "dir", children: {} };
+        refreshExplorer(); // Update UI if open
+        return "";
+    },
+
+    touch(name) {
+        const dir = this.getDir();
+        if (dir.children[name]) return ""; // Update timestamp in real OS
+        dir.children[name] = { type: "file", content: "" };
+        refreshExplorer();
+        return "";
+    },
+
+    rm(name) {
+        const dir = this.getDir();
+        if (!dir.children[name]) return `rm: ${name}: No such file`;
+        delete dir.children[name];
+        refreshExplorer();
+        return "";
+    }
+};
+
 function handleCmd(cmd) {
-    const c = cmd.trim().toLowerCase();
-    if (c === 'help') printTerm("cmds: help, clear, reboot, snake, matrix, delete system32");
+    const args = cmd.trim().split(' ');
+    const c = args[0].toLowerCase();
+    const arg = args[1];
+
+    if (c === 'help') printTerm("cmds: ls, cd, cat, mkdir, touch, rm, clear, reboot, snake, matrix, del system32");
     else if (c === 'clear') termOutput.innerHTML = '';
     else if (c === 'reboot') location.reload();
     else if (c === 'snake') openWindow('win-snake');
-    else if (c === 'delete system32' || c === 'del system32') triggerBSOD();
+    else if (c === 'ls') printTerm(FileSystem.ls());
+    else if (c === 'cd') {
+        const err = FileSystem.cd(arg);
+        if (err) printTerm(err);
+        else printTerm(`/${FileSystem.currentPath.slice(1).join('/')}`);
+    }
+    else if (c === 'cat') printTerm(FileSystem.cat(arg));
+    else if (c === 'mkdir') printTerm(FileSystem.mkdir(arg));
+    else if (c === 'touch') printTerm(FileSystem.touch(arg));
+    else if (c === 'rm') printTerm(FileSystem.rm(arg));
+    else if (c === 'delete' && args[1] === 'system32' || c === 'del' && args[1] === 'system32') triggerBSOD();
     else printTerm(`Unknown command: ${c}`);
 }
 
@@ -520,6 +640,132 @@ document.addEventListener('keydown', () => {
     SoundManager.playType();
 });
 
+/* --- FILE EXPLORER --- */
+function refreshExplorer() {
+    const grid = document.getElementById('explorer-grid');
+    const pathSpan = document.getElementById('explorer-path');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    pathSpan.innerText = '/' + FileSystem.currentPath.slice(1).join('/');
+
+    const dir = FileSystem.getDir();
+    if (!dir) return;
+
+    Object.keys(dir.children).forEach(name => {
+        const item = dir.children[name];
+        const div = document.createElement('div');
+        div.className = 'file-item';
+        div.onclick = () => openFile(name);
+
+        const icon = document.createElement('i');
+        icon.setAttribute('data-lucide', item.type === 'dir' ? 'folder' : 'file-text');
+        div.appendChild(icon);
+
+        const span = document.createElement('span');
+        span.innerText = name;
+        span.className = "text-xs mt-1 text-center break-all";
+        div.appendChild(span);
+
+        grid.appendChild(div);
+    });
+    lucide.createIcons();
+}
+
+function explorerUp() {
+    FileSystem.cd('..');
+    refreshExplorer();
+}
+
+function openFile(name) {
+    const dir = FileSystem.getDir();
+    const item = dir.children[name];
+    if (item.type === 'dir') {
+        FileSystem.cd(name);
+        refreshExplorer();
+    } else {
+        // Open file content in Notepad
+        document.getElementById('notepad-area').value = item.content;
+        openWindow('win-notepad');
+    }
+}
+
+/* --- CYBERDECK BROWSER --- */
+function browserGo() {
+    const url = document.getElementById('browser-url').value;
+    const frame = document.getElementById('browser-frame');
+    const error = document.getElementById('browser-error');
+
+    // Simple validation
+    if (!url.startsWith('http')) {
+        document.getElementById('browser-url').value = 'https://' + url;
+    }
+
+    // Simulate loading
+    frame.style.opacity = '0.5';
+    setTimeout(() => {
+        frame.style.opacity = '1';
+        // In a real scenario we can't easily embed arbitrary sites due to X-Frame-Options
+        // But for this simulation we just try. If it fails (likely), we show error.
+        try {
+            frame.src = document.getElementById('browser-url').value;
+            error.classList.add('hidden');
+        } catch (e) {
+            error.classList.remove('hidden');
+        }
+    }, 500);
+}
+
+function browserBack() {
+    try { document.getElementById('browser-frame').contentWindow.history.back(); } catch (e) { }
+}
+
+function browserForward() {
+    try { document.getElementById('browser-frame').contentWindow.history.forward(); } catch (e) { }
+}
+
+function browserReload() {
+    const frame = document.getElementById('browser-frame');
+    frame.src = frame.src;
+}
+
+document.getElementById('browser-url').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') browserGo();
+});
+
+/* --- WINDOW RESIZING --- */
+document.querySelectorAll('.window').forEach(win => {
+    const handle = win.querySelector('.resize-handle');
+    if (!handle) return;
+
+    let isResizing = false;
+    let originalWidth, originalHeight, originalX, originalY;
+
+    handle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent drag
+        isResizing = true;
+        originalWidth = parseFloat(getComputedStyle(win, null).getPropertyValue('width').replace('px', ''));
+        originalHeight = parseFloat(getComputedStyle(win, null).getPropertyValue('height').replace('px', ''));
+        originalX = e.clientX;
+        originalY = e.clientY;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const width = originalWidth + (e.clientX - originalX);
+        const height = originalHeight + (e.clientY - originalY);
+
+        if (width > 200) win.style.width = width + 'px';
+        if (height > 150) win.style.height = height + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isResizing = false;
+    });
+});
+
+/* --- UTILS --- */
 function toggleMute() {
     if (!SoundManager.ctx) SoundManager.init();
     SoundManager.toggleMute();
