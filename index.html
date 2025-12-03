@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PK_OS v3.2 | Purushottam Kumar</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Utility only -->
+</head>
+
+<body class="theme-green">
+
+    <!-- Custom Cursor -->
+    <div id="cursor"></div>
+
+    <!-- Backgrounds -->
+    <canvas id="matrixCanvas"></canvas>
+    <div class="crt"></div>
+
+    <!-- SCREENSAVER -->
+    <div id="screensaver"></div>
+
+    <!-- BSOD -->
+    <div id="bsod">
+        <p>A problem has been detected and windows has been shut down to prevent damage to your computer.</p>
+        <br>
+        <p>SYSTEM_THREAD_EXCEPTION_NOT_HANDLED</p>
+        <br>
+        <p>If this is the first time you've seen this stop error screen, restart your computer. If this screen appears
+            again, follow these steps:</p>
+        <br>
+        <p>Check to make sure any new hardware or software is properly installed. If this is a new installation, ask
+            your hardware or software manufacturer for any windows updates you might need.</p>
+        <br>
+        <p>Technical Information:</p>
+        <p>*** STOP: 0x0000007E (0xFFFFFFFFC0000005, 0xFFFFF80002E55151, 0xFFFFF880009A99D8, 0xFFFFF880009A9230)</p>
+    </div>
+
+    <!-- 1. BOOT SCREEN -->
+    <div id="boot-screen">
+        <div id="boot-text"></div>
+    </div>
+
+    <!-- 2. LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <h2 class="text-2xl font-bold mb-4">SECURE ACCESS</h2>
+            <i data-lucide="lock" class="w-12 h-12 mx-auto mb-4 text-theme-color"></i>
+            <p class="text-sm mb-4">User: GUEST</p>
+            <input type="password" id="password-input" class="login-input" placeholder="Enter Password (hint: 1234)">
+            <button onclick="attemptLogin()"
+                class="w-full bg-theme-color text-black font-bold py-2 hover:bg-white transition-colors">LOGIN</button>
+            <p id="login-msg" class="text-xs text-red-500 mt-2 h-4"></p>
+        </div>
+    </div>
+
+    <!-- 3. DESKTOP ENVIRONMENT -->
+    <div id="desktop">
+        <!-- Desktop Icons -->
+        <div class="absolute top-4 left-4 flex flex-col gap-4">
+            <div class="desktop-icon" onclick="openWindow('win-about')">
+                <i data-lucide="user"></i>
+                <span>Identity</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-skills')">
+                <i data-lucide="cpu"></i>
+                <span>Modules</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-projects')">
+                <i data-lucide="folder-git-2"></i>
+                <span>Archives</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-terminal')">
+                <i data-lucide="terminal"></i>
+                <span>Terminal</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-snake')">
+                <i data-lucide="gamepad-2"></i>
+                <span>Snake</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-chat')">
+                <i data-lucide="message-square"></i>
+                <span>Secure Chat</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-settings')">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-notepad')">
+                <i data-lucide="file-text"></i>
+                <span>Notepad</span>
+            </div>
+        </div>
+
+        <!-- System Monitor Widget -->
+        <div id="sys-monitor"
+            class="absolute top-4 right-4 w-48 bg-black/80 border border-theme-color p-2 text-xs font-mono">
+            <div class="mb-2 border-b border-theme-dim pb-1 font-bold">SYSTEM_MONITOR</div>
+            <div class="flex justify-between mb-1">
+                <span>CPU:</span>
+                <span id="cpu-val">12%</span>
+            </div>
+            <div class="w-full h-2 bg-theme-dark mb-2">
+                <div id="cpu-bar" class="h-full bg-theme-color" style="width: 12%"></div>
+            </div>
+            <div class="flex justify-between mb-1">
+                <span>RAM:</span>
+                <span id="ram-val">4.2GB</span>
+            </div>
+            <div class="w-full h-2 bg-theme-dark">
+                <div id="ram-bar" class="h-full bg-theme-color" style="width: 45%"></div>
+            </div>
+        </div>
+
+        <!-- WINDOWS -->
+
+        <!-- About Window -->
+        <div id="win-about" class="window" style="top: 10%; left: 20%; width: 600px; height: 400px;">
+            <div class="window-header">
+                <span>IDENTITY.EXE</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-about')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-about')"></button>
+                </div>
+            </div>
+            <div class="window-content flex gap-6">
+                <div class="w-1/3">
+                    <img src="https://images.unsplash.com/photo-1531297461136-82lw9z1.jpg?w=500&auto=format&fit=crop&q=60"
+                        class="w-full border border-theme-dim">
+                    <div class="mt-4 text-xs">
+                        <p><strong>STATUS:</strong> ONLINE</p>
+                        <p><strong>ROLE:</strong> DATA SCIENTIST</p>
+                        <p><strong>LOC:</strong> INDIA</p>
+                    </div>
+                </div>
+                <div class="w-2/3">
+                    <h2 class="text-xl font-bold mb-4">Purushottam Kumar</h2>
+                    <p>Data Scientist and Full Stack Developer with a strong foundation in Python, SQL, C++, and
+                        Generative AI.</p>
+                    <p>Certified by IBM, Google, Microsoft, and ISC2. Proven ability to develop scalable AI models and
+                        build interactive dashboards.</p>
+                    <div class="flex gap-2 mt-4">
+                        <a href="https://github.com/RockyOmvi" target="_blank"
+                            class="border border-theme-color px-2 py-1 text-xs hover:bg-theme-color hover:text-black">GITHUB</a>
+                        <a href="https://www.linkedin.com/in/purushottamkumardatascience" target="_blank"
+                            class="border border-theme-color px-2 py-1 text-xs hover:bg-theme-color hover:text-black">LINKEDIN</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Window -->
+        <div id="win-skills" class="window" style="top: 15%; left: 25%; width: 500px; height: 400px;">
+            <div class="window-header">
+                <span>MODULES.DAT</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-skills')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-skills')"></button>
+                </div>
+            </div>
+            <div class="window-content">
+                <h2 class="text-lg font-bold mb-4">Loaded Capabilities</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="border border-theme-dim p-2">
+                        <h3 class="font-bold text-theme-color">Languages</h3>
+                        <ul class="text-sm list-disc pl-4">
+                            <li>Python</li>
+                            <li>SQL</li>
+                            <li>C++</li>
+                            <li>JavaScript</li>
+                        </ul>
+                    </div>
+                    <div class="border border-theme-dim p-2">
+                        <h3 class="font-bold text-theme-color">AI / ML</h3>
+                        <ul class="text-sm list-disc pl-4">
+                            <li>Generative AI</li>
+                            <li>Deep Learning</li>
+                            <li>PyTorch / TensorFlow</li>
+                            <li>NLP</li>
+                        </ul>
+                    </div>
+                    <div class="border border-theme-dim p-2">
+                        <h3 class="font-bold text-theme-color">Tools</h3>
+                        <ul class="text-sm list-disc pl-4">
+                            <li>Power BI</li>
+                            <li>Tableau</li>
+                            <li>Git / GitHub</li>
+                            <li>Docker</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Window -->
+        <div id="win-projects" class="window" style="top: 20%; left: 30%; width: 700px; height: 500px;">
+            <div class="window-header">
+                <span>ARCHIVES.DIR</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-projects')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-projects')"></button>
+                </div>
+            </div>
+            <div class="window-content grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Project Cards -->
+                <div class="border border-theme-dim p-4 hover:bg-white/5 transition-colors cursor-pointer">
+                    <h3 class="font-bold text-theme-color mb-2">IBM_Project</h3>
+                    <p class="text-xs mb-2">Advanced data analysis and machine learning implementation.</p>
+                    <span class="text-[10px] bg-theme-dim text-black px-1">Python</span>
+                </div>
+                <div class="border border-theme-dim p-4 hover:bg-white/5 transition-colors cursor-pointer">
+                    <h3 class="font-bold text-theme-color mb-2">Drug_Discovery</h3>
+                    <p class="text-xs mb-2">Computational drug discovery pipeline using ML.</p>
+                    <span class="text-[10px] bg-theme-dim text-black px-1">Bioinformatics</span>
+                </div>
+                <div class="border border-theme-dim p-4 hover:bg-white/5 transition-colors cursor-pointer">
+                    <h3 class="font-bold text-theme-color mb-2">Portable_USB</h3>
+                    <p class="text-xs mb-2">Portable software toolkit for efficiency.</p>
+                    <span class="text-[10px] bg-theme-dim text-black px-1">C++</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terminal Window -->
+        <div id="win-terminal" class="window" style="top: 30%; left: 40%; width: 500px; height: 300px;">
+            <div class="window-header">
+                <span>TERMINAL.EXE</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-terminal')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-terminal')"></button>
+                </div>
+            </div>
+            <div class="window-content bg-black font-mono text-sm flex flex-col h-full p-0">
+                <div id="term-output" class="flex-grow p-2 overflow-y-auto">
+                    Welcome to PK_OS v3.0<br>Type 'help' for commands.
+                </div>
+                <div class="flex items-center p-2 border-t border-theme-dim">
+                    <span class="mr-2 text-theme-color">></span>
+                    <input type="text" id="term-input"
+                        class="bg-transparent border-none outline-none text-white flex-grow font-mono"
+                        autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+        <!-- Snake Window -->
+        <div id="win-snake" class="window" style="top: 25%; left: 35%; width: 400px; height: 450px;">
+            <div class="window-header">
+                <span>SNAKE.GAME</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-snake')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-snake')"></button>
+                </div>
+            </div>
+            <div class="window-content flex flex-col items-center justify-center bg-black relative">
+                <canvas id="snake-canvas" width="300" height="300"></canvas>
+                <div class="mt-4 flex gap-2">
+                    <button onclick="startSnake()"
+                        class="border border-theme-color px-4 py-1 text-xs hover:bg-theme-color hover:text-black">START</button>
+                    <p class="text-xs">Score: <span id="snake-score">0</span></p>
+                    <p class="text-xs">High: <span id="snake-high">0</span></p>
+                </div>
+                <p class="text-[10px] mt-2 text-gray-500">Use Arrow Keys</p>
+
+                <!-- Game Over Overlay -->
+                <div id="snake-overlay"
+                    style="display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.8); flex-direction: column; align-items: center; justify-content: center; color: var(--theme-color);">
+                    <h2 class="text-2xl font-bold mb-2">GAME OVER</h2>
+                    <p class="mb-4">Score: <span id="final-score">0</span></p>
+                    <button onclick="startSnake()"
+                        class="border border-theme-color px-4 py-2 hover:bg-theme-color hover:text-black">TRY
+                        AGAIN</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Window -->
+        <div id="win-chat" class="window" style="top: 35%; left: 45%; width: 350px; height: 500px;">
+            <div class="window-header">
+                <span>SECURE_CHAT.APP</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-chat')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-chat')"></button>
+                </div>
+            </div>
+            <div class="window-content flex flex-col p-0">
+                <div id="chat-history" class="flex-grow p-4 overflow-y-auto bg-black/50 space-y-2">
+                    <div class="chat-msg received">Connection established. Send a message to the Operator.</div>
+                </div>
+                <form onsubmit="sendChat(event)" class="p-2 border-t border-theme-dim flex gap-2 bg-black">
+                    <input type="text" id="chat-input"
+                        class="flex-grow bg-transparent border border-theme-dim px-2 py-1 text-sm outline-none"
+                        placeholder="Message...">
+                    <button type="submit" class="bg-theme-color text-black px-3 py-1 font-bold text-xs">SEND</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Settings Window -->
+        <div id="win-settings" class="window" style="top: 40%; left: 50%; width: 300px; height: 250px;">
+            <div class="window-header">
+                <span>CONFIG.SYS</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-settings')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-settings')"></button>
+                </div>
+            </div>
+            <div class="window-content text-center">
+                <h3 class="font-bold mb-4">System Theme</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="setTheme('green')"
+                        class="border border-[#00FF41] text-[#00FF41] py-1 hover:bg-[#00FF41] hover:text-black">MATRIX
+                        GREEN</button>
+                    <button onclick="setTheme('blue')"
+                        class="border border-[#00f3ff] text-[#00f3ff] py-1 hover:bg-[#00f3ff] hover:text-black">CYBERPUNK
+                        BLUE</button>
+                    <button onclick="setTheme('red')"
+                        class="border border-[#ff003c] text-[#ff003c] py-1 hover:bg-[#ff003c] hover:text-black">SITH
+                        RED</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notepad Window -->
+        <div id="win-notepad" class="window" style="top: 15%; left: 55%; width: 400px; height: 300px;">
+            <div class="window-header">
+                <span>NOTEPAD.EXE</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-notepad')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-notepad')"></button>
+                </div>
+            </div>
+            <div class="window-content flex flex-col p-0">
+                <textarea id="notepad-area"
+                    class="flex-grow bg-black text-theme-color p-2 font-mono outline-none resize-none border-none"
+                    placeholder="Type notes here... (Auto-saved)"></textarea>
+                <div class="p-1 border-t border-theme-dim text-[10px] flex justify-between">
+                    <span>UTF-8</span>
+                    <span id="notepad-status">SAVED</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Control Widget (Desktop) -->
+        <div id="music-widget" class="absolute bottom-16 right-4 w-48 bg-black border border-theme-color p-2 z-0">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold">AUDIO_SYS</span>
+                <div class="flex gap-1">
+                    <button class="w-2 h-2 bg-theme-dim"></button>
+                    <button class="w-2 h-2 bg-theme-dim"></button>
+                </div>
+            </div>
+            <div class="h-8 flex items-end justify-between gap-1 mb-2" id="visualizer">
+                <!-- Bars injected by JS -->
+            </div>
+            <div class="flex justify-between text-[10px]">
+                <span>TRACK: 01</span>
+                <span>00:42</span>
+            </div>
+            <div class="flex justify-center gap-2 mt-1">
+                <button onclick="toggleMute()" id="mute-btn"
+                    class="text-theme-color hover:text-white border border-theme-color px-2 py-1 text-[10px]">
+                    MUTE / UNMUTE
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 4. TASKBAR -->
+    <div id="start-menu">
+        <div class="start-item" onclick="openWindow('win-about'); toggleStartMenu()">
+            <i data-lucide="user"></i> Identity
+        </div>
+        <div class="start-item" onclick="openWindow('win-projects'); toggleStartMenu()">
+            <i data-lucide="folder-git-2"></i> Archives
+        </div>
+        <div class="start-item" onclick="openWindow('win-terminal'); toggleStartMenu()">
+            <i data-lucide="terminal"></i> Terminal
+        </div>
+        <div class="start-divider"></div>
+        <div class="start-item" onclick="location.reload()">
+            <i data-lucide="refresh-cw"></i> Restart System
+        </div>
+        <div class="start-item" onclick="window.close()">
+            <i data-lucide="power"></i> Shut Down
+        </div>
+    </div>
+
+    <div id="taskbar">
+        <button id="start-btn" onclick="toggleStartMenu()">
+            <i data-lucide="aperture" class="w-4 h-4"></i> START
+        </button>
+        <div id="taskbar-apps" class="flex">
+            <!-- App tabs go here -->
+        </div>
+        <div id="clock">00:00:00</div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="os.js"></script>
+</body>
+
+</html>

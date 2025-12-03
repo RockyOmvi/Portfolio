@@ -1,0 +1,448 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700;900&display=swap');
+
+:root {
+    --theme-color: #00FF41;
+    --theme-dim: #008F11;
+    --theme-dark: #003B00;
+    --bg-color: #000000;
+    --glass-bg: rgba(0, 20, 0, 0.85);
+    --glass-border: rgba(0, 255, 65, 0.3);
+    --font-main: 'Share Tech Mono', monospace;
+    --font-header: 'Orbitron', sans-serif;
+}
+
+/* THEMES */
+body.theme-blue {
+    --theme-color: #00f3ff;
+    --theme-dim: #007c85;
+    --theme-dark: #002e33;
+    --glass-bg: rgba(0, 20, 30, 0.85);
+    --glass-border: rgba(0, 243, 255, 0.3);
+}
+
+body.theme-red {
+    --theme-color: #ff003c;
+    --theme-dim: #8f0022;
+    --theme-dark: #3b000e;
+    --glass-bg: rgba(30, 0, 0, 0.85);
+    --glass-border: rgba(255, 0, 60, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    cursor: none;
+    user-select: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--theme-color);
+    font-family: var(--font-main);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- CURSOR --- */
+#cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--theme-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 2147483647;
+    /* Max Z-Index */
+    transition: width 0.2s, height 0.2s, background-color 0.2s;
+    mix-blend-mode: difference;
+}
+
+#cursor.hovered {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#cursor::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: var(--theme-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* --- CRT & MATRIX BG --- */
+.crt::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 9998;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+}
+
+#matrixCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* --- BOOT SCREEN --- */
+#boot-screen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    z-index: 10000;
+    padding: 2rem;
+    font-family: monospace;
+    color: var(--theme-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.boot-line {
+    margin-bottom: 5px;
+    opacity: 0;
+    animation: fadeIn 0.1s forwards;
+}
+
+/* --- SCREENSAVER --- */
+#screensaver {
+    position: fixed;
+    inset: 0;
+    background: black;
+    z-index: 19000;
+    display: none;
+}
+
+/* --- BSOD --- */
+#bsod {
+    position: fixed;
+    inset: 0;
+    background: #000082;
+    color: white;
+    font-family: 'Lucida Console', monospace;
+    padding: 2rem;
+    z-index: 20000;
+    display: none;
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+/* --- LOGIN SCREEN --- */
+#login-screen {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9000;
+    display: none;
+    /* Flex when active */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    border: 1px solid var(--theme-color);
+    padding: 2rem;
+    background: var(--glass-bg);
+    box-shadow: 0 0 20px var(--theme-dim);
+    text-align: center;
+    width: 300px;
+}
+
+.login-input {
+    background: black;
+    border: 1px solid var(--theme-dim);
+    color: var(--theme-color);
+    padding: 10px;
+    width: 100%;
+    margin: 1rem 0;
+    font-family: inherit;
+    text-align: center;
+    outline: none;
+}
+
+.login-input:focus {
+    border-color: var(--theme-color);
+}
+
+/* --- DESKTOP --- */
+#desktop {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    padding: 20px;
+    display: none;
+    /* Block when active */
+}
+
+/* ICONS */
+.desktop-icon {
+    width: 80px;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--theme-color);
+    text-shadow: 0 0 5px var(--theme-dim);
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.desktop-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--theme-dim);
+    transform: scale(1.05);
+}
+
+.desktop-icon i {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+}
+
+.desktop-icon span {
+    font-size: 12px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 4px;
+}
+
+/* WINDOWS */
+.window {
+    position: absolute;
+    background: var(--glass-bg);
+    border: 1px solid var(--theme-color);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    min-height: 200px;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.2s, transform 0.2s;
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+    /* Initially hidden */
+}
+
+.window.open {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: all;
+}
+
+.window.minimized {
+    opacity: 0;
+    transform: scale(0.8) translateY(200px);
+    pointer-events: none;
+}
+
+.window-header {
+    background: var(--theme-dim);
+    color: black;
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    cursor: grab;
+    /* For dragging */
+}
+
+.window-header:active {
+    cursor: grabbing;
+}
+
+.window-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.win-btn {
+    width: 16px;
+    height: 16px;
+    border: 1px solid black;
+    background: transparent;
+    cursor: pointer;
+}
+
+.win-btn:hover {
+    background: black;
+}
+
+.window-content {
+    flex-grow: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    color: white;
+}
+
+/* Specific Window Styles */
+.window-content h2 {
+    color: var(--theme-color);
+    border-bottom: 1px solid var(--theme-dim);
+    padding-bottom: 5px;
+}
+
+.window-content p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+/* --- START MENU --- */
+#start-menu {
+    position: fixed;
+    bottom: 40px;
+    left: 0;
+    width: 200px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid var(--theme-color);
+    border-bottom: none;
+    display: none;
+    /* Flex when active */
+    flex-direction: column;
+    z-index: 9995;
+    padding: 5px 0;
+}
+
+.start-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--theme-dim);
+    transition: all 0.2s;
+}
+
+.start-item:hover {
+    background: var(--theme-color);
+    color: black;
+}
+
+.start-divider {
+    height: 1px;
+    background: var(--theme-dim);
+    margin: 5px 0;
+}
+
+/* TASKBAR */
+#taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    border-top: 1px solid var(--theme-color);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 9990;
+    display: none;
+    /* Flex when active */
+}
+
+#start-btn {
+    background: var(--theme-color);
+    color: black;
+    border: none;
+    padding: 5px 15px;
+    font-weight: bold;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.taskbar-item {
+    padding: 5px 15px;
+    color: var(--theme-dim);
+    border-right: 1px solid var(--theme-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.taskbar-item:hover,
+.taskbar-item.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--theme-color);
+}
+
+#clock {
+    margin-left: auto;
+    color: var(--theme-color);
+    font-size: 0.9rem;
+}
+
+/* --- WIDGETS --- */
+/* Snake Game */
+#snake-canvas {
+    background: black;
+    border: 1px solid var(--theme-dim);
+    display: block;
+    margin: 0 auto;
+}
+
+/* Music Player */
+.visualizer-bar {
+    width: 10px;
+    background: var(--theme-color);
+    display: inline-block;
+    margin: 0 2px;
+    transition: height 0.1s;
+}
+
+/* Chat */
+.chat-msg {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    max-width: 80%;
+}
+
+.chat-msg.sent {
+    background: var(--theme-dim);
+    color: black;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.chat-msg.received {
+    border: 1px solid var(--theme-dim);
+    color: var(--theme-color);
+}
+
+/* UTILS */
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
