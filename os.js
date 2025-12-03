@@ -247,9 +247,17 @@ const MissionGenerator = {
     nouns: ['Storm', 'Viper', 'Echo', 'Protocol', 'Citadel', 'Fortress', 'Shadow', 'Dragon', 'Wolf', 'Hawk', 'Core', 'Nexus', 'Gate', 'Grid', 'Pulse'],
     domains: ['.com', '.net', '.org', '.io', '.biz', '.gov', '.mil', '.edu', '.corp', '.xyz'],
 
+    trivia: [
+        { q: "What is the default port for SSH?", a: "22", o: ["21", "22", "80", "443"] },
+        { q: "Which command lists files in Linux?", a: "ls", o: ["dir", "list", "ls", "show"] },
+        { q: "What does HTML stand for?", a: "HyperText Markup Language", o: ["HighText Machine Language", "HyperText Markup Language", "HyperTool Multi Language", "None"] },
+        { q: "Who created Linux?", a: "Linus Torvalds", o: ["Steve Jobs", "Bill Gates", "Linus Torvalds", "Ada Lovelace"] },
+        { q: "What is a DDoS attack?", a: "Distributed Denial of Service", o: ["Direct Denial of Service", "Distributed Denial of Service", "Data Destruction on Server", "Digital Data on Site"] }
+    ],
+
     init: function () {
-        console.log("Generating 100 missions...");
-        for (let i = 0; i < 100; i++) {
+        console.log("Generating 1000 missions...");
+        for (let i = 0; i < 1000; i++) {
             this.generateOne(i);
         }
     },
@@ -269,32 +277,58 @@ const MissionGenerator = {
         // Unique Domain
         const domain = `${adj.toLowerCase()}${noun.toLowerCase()}${Math.floor(Math.random() * 999)}${this.domains[Math.floor(Math.random() * this.domains.length)]}`;
 
-        // Type: 80% Standard, 20% Timed
-        const isTimed = Math.random() > 0.8;
+        // Mission Type Distribution
+        const rand = Math.random();
+        let type = 'standard'; // 40%
+        if (rand > 0.4) type = 'timed'; // 10% (SQLi)
+        if (rand > 0.5) type = 'bruteforce'; // 10%
+        if (rand > 0.6) type = 'decipher'; // 10%
+        if (rand > 0.7) type = 'frequency'; // 10%
+        if (rand > 0.8) type = 'trivia'; // 10%
+        if (rand > 0.9) type = 'grid'; // 10%
 
-        if (isTimed) {
-            MISSIONS[id] = {
-                id: id,
-                ip: ip,
-                domain: domain,
-                title: title,
-                type: 'timed',
-                duration: Math.floor(Math.random() * 480) + 120, // 2-10 mins
-                reward: `loot_${id}.zip`,
-                theme: 'red'
-            };
-        } else {
-            MISSIONS[id] = {
-                id: id,
-                ip: ip,
-                domain: domain,
-                title: title,
-                type: 'standard',
-                score: Math.floor(Math.random() * 90) + 5,
-                reward: `data_${id}.txt`,
-                theme: 'green'
-            };
+        const mission = {
+            id: id,
+            ip: ip,
+            domain: domain,
+            title: title,
+            type: type,
+            reward: `loot_${id}.zip`,
+            theme: ['red', 'blue', 'green', 'purple', 'yellow', 'orange', 'cyan', 'pink', 'white'][Math.floor(Math.random() * 9)]
+        };
+
+        // Type-Specific Data
+        if (type === 'standard') {
+            mission.score = Math.floor(Math.random() * 90) + 5;
+            mission.reward = `data_${id}.txt`;
         }
+        else if (type === 'timed') {
+            mission.duration = Math.floor(Math.random() * 480) + 120;
+        }
+        else if (type === 'bruteforce') {
+            mission.pin = Math.floor(1000 + Math.random() * 9000).toString();
+        }
+        else if (type === 'decipher') {
+            const phrases = ["ACCESS GRANTED", "SYSTEM FAILURE", "HELLO WORLD", "PROJECT OMEGA", "SECURITY BREACH"];
+            mission.plaintext = phrases[Math.floor(Math.random() * phrases.length)];
+            // Simple ROT13 implementation
+            mission.ciphertext = mission.plaintext.replace(/[A-Z]/g, c => String.fromCharCode((c.charCodeAt(0) - 65 + 13) % 26 + 65));
+        }
+        else if (type === 'frequency') {
+            mission.targetFreq = Math.floor(Math.random() * 90) + 10; // 10-100 Hz
+        }
+        else if (type === 'trivia') {
+            const t = this.trivia[Math.floor(Math.random() * this.trivia.length)];
+            mission.question = t.q;
+            mission.answer = t.a;
+            mission.options = t.o;
+        }
+        else if (type === 'grid') {
+            mission.pattern = [];
+            for (let k = 0; k < 5; k++) mission.pattern.push(Math.floor(Math.random() * 16)); // 5-step pattern
+        }
+
+        MISSIONS[id] = mission;
     }
 };
 
@@ -608,6 +642,39 @@ function handleCmd(cmd) {
                 }
             }, 500);
         }
+        else if (arg === 'LOOT' && MissionEngine.active && MISSIONS[MissionEngine.currentOp]) {
+            printTerm("Uploading Mission Loot...");
+            let p = 0;
+            const interval = setInterval(() => {
+                p += 10;
+                printTerm(`Progress: ${p}%`);
+                MissionEngine.traceLevel += 1;
+                MissionEngine.renderHUD();
+
+                if (p >= 100) {
+                    clearInterval(interval);
+                    printTerm(MissionEngine.stop(true));
+                    printTerm("MISSION COMPLETE. REWARD TRANSFERRED.");
+
+                    // Unlock Reward
+                    const m = MISSIONS[MissionEngine.currentOp];
+                    const dir = FileSystem.structure.root.children;
+                    if (!dir[m.reward]) {
+                        dir[m.reward] = {
+                            type: "file",
+                            content: `MISSION COMPLETE: ${m.title}\n\nLOOT SECURED.\n\n[DATA ENCRYPTED]`
+                        };
+                        refreshExplorer();
+                    }
+
+                    // Theme Change
+                    if (m.theme) {
+                        document.body.className = `theme-${m.theme}`;
+                        setTimeout(() => document.body.className = 'theme-green', 3000);
+                    }
+                }
+            }, 200);
+        }
         else {
             printTerm("Error: Invalid Upload Code.");
         }
@@ -619,7 +686,7 @@ function handleCmd(cmd) {
             if (m.type === 'timed') {
                 printTerm(MissionEngine.start(opId));
             } else {
-                printTerm(`Operation ${m.title} is a Standard Biometric Mission.`);
+                printTerm(`Operation ${m.title} is a ${m.type.toUpperCase()} Mission.`);
                 printTerm(`Use 'connect ${m.ip}' or 'connect ${m.domain}' to begin.`);
             }
         } else {
@@ -627,10 +694,34 @@ function handleCmd(cmd) {
             printTerm("Example: start_op deep_web");
         }
     }
+    else if (c === 'random') {
+        const keys = Object.keys(MISSIONS).filter(k => k.startsWith('op_'));
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        const m = MISSIONS[randomKey];
+        printTerm(`Selecting random target... ${m.title}`);
+
+        if (m.type === 'timed') {
+            printTerm(MissionEngine.start(randomKey));
+        } else {
+            printTerm(`Operation ${m.title} is a ${m.type.toUpperCase()} Mission.`);
+            printTerm(`Use 'connect ${m.ip}' or 'connect ${m.domain}' to begin.`);
+        }
+    }
     else if (c === 'contracts') {
         const page = parseInt(arg) || 1;
         const pageSize = 10;
-        const allMissions = Object.values(MISSIONS);
+
+        // Natural Sort: Alpha/Beta first, then op_1, op_2...
+        const allMissions = Object.values(MISSIONS).sort((a, b) => {
+            const aNum = parseInt(a.id.replace('op_', ''));
+            const bNum = parseInt(b.id.replace('op_', ''));
+
+            if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+            if (!isNaN(aNum)) return 1; // b is static (alpha), comes first
+            if (!isNaN(bNum)) return -1; // a is static, comes first
+            return a.id.localeCompare(b.id); // Both static, alpha sort
+        });
+
         const totalPages = Math.ceil(allMissions.length / pageSize);
 
         if (page < 1 || page > totalPages) {
@@ -650,7 +741,7 @@ function handleCmd(cmd) {
             const id = m.id.padEnd(12);
             const title = m.title.replace('OPERATION ', '').padEnd(30);
             const target = m.ip.padEnd(15);
-            const type = (m.type === 'timed' ? 'TIMED OP' : 'BIOMETRIC').padEnd(10);
+            const type = m.type.toUpperCase().padEnd(10);
             printTerm(`${id} | ${title} | ${target} | ${type}`);
         });
 
@@ -1107,29 +1198,26 @@ function browserGo() {
                             const p = document.getElementById('p').value;
                             const msg = document.getElementById('msg');
                             
-                                // SQL Injection Check
-                                if (u.includes("' OR '1'='1") || p.includes("' OR '1'='1")) {
-                                    const rewardName = '${mission ? mission.reward : "PROJECT_GENESIS.zip"}';
-                                    const uploadCmd = '${mission && mission.id !== "deep_web" ? "LOOT" : "GENESIS"}';
-                                    
-                                    document.body.innerHTML = \`
-                                        <body style="background:black; color:#00FF41; font-family:monospace; padding:20px;">
-                                            <h1>SQL INJECTION SUCCESSFUL</h1>
-                                            <p>Dumping User Database...</p>
-                                            <pre>
+                            // SQL Injection Check
+                            if (u.includes("' OR '1'='1") || p.includes("' OR '1'='1")) {
+                                const rewardName = '${mission ? mission.reward : "PROJECT_GENESIS.zip"}';
+                                const uploadCmd = '${mission && mission.id !== "deep_web" ? "LOOT" : "GENESIS"}';
+                                
+                                document.body.innerHTML = \`
+                                    <body style="background:black; color:#00FF41; font-family:monospace; padding:20px;">
+                                        <h1>SQL INJECTION SUCCESSFUL</h1>
+                                        <p>Dumping User Database...</p>
+                                        <pre>
 ID | USER | ROLE
 1  | admin| SYSADMIN
 2  | jdoe | USER
 3  | root | SUPERUSER
-                                            </pre>
-                                            <p><strong>VAULT IP FOUND: 10.0.0.99</strong></p>
-                                            <p>Target File: <strong>\${rewardName}</strong></p>
-                                            <p>To Exfiltrate: Run <strong>upload \${uploadCmd}</strong> in Terminal.</p>
-                                        </body>
-                                    \`;
-                                    window.parent.postMessage('deep_web_sqli', '*');
-                                    return;
-                                }
+                                        </pre>
+                                        <p><strong>VAULT IP FOUND: 10.0.0.99</strong></p>
+                                        <p>Target File: <strong>\${rewardName}</strong></p>
+                                        <p>To Exfiltrate: Run <strong>upload \${uploadCmd}</strong> in Terminal.</p>
+                                    </body>
+                                \`;
                                 window.parent.postMessage('deep_web_sqli', '*');
                                 return;
                             }
@@ -1153,51 +1241,191 @@ ID | USER | ROLE
         }
 
         if (mission) {
-            const highScore = localStorage.getItem('snakeHighScore') || 0;
-            const requiredScore = mission.score;
-            const html = `
-                <body style="background:black; color:#00FF41; font-family:monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;">
-                    <h1 style="border-bottom: 2px solid #00FF41; padding-bottom: 10px;">${mission.title}</h1>
-                    <p>BIOMETRIC VERIFICATION REQUIRED</p>
-                    <p>REQUIRED REFLEX SCORE: ${requiredScore}</p>
-                    <p>Please enter your reflex synchronization score:</p>
-                    <input type="number" id="pass" style="background:black; border:1px solid #00FF41; color:#00FF41; padding:5px; outline:none;">
-                    <button onclick="check()" style="background:#00FF41; color:black; border:none; padding:5px 10px; margin-top:10px; cursor:pointer; font-weight:bold;">AUTHENTICATE</button>
-                    <p id="msg" style="margin-top:20px;"></p>
-                    <script>
-                        function check() {
-                            try {
-                                console.log("Authenticating ${mission.id}...");
-                                const val = document.getElementById('pass').value;
-                                const required = parseInt('${highScore}') || 0;
-                                const requiredScore = ${requiredScore};
-                                const msg = document.getElementById('msg');
-                                
-                                console.log("Input:", val, "Required:", required, "Min:", requiredScore);
+            let html = '';
+            const commonStyle = 'background:black; color:#00FF41; font-family:monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;';
 
-                                if (val == required && required >= requiredScore) {
-                                    msg.style.color = '#00FF41';
-                                    msg.innerText = "ACCESS GRANTED. DOWNLOADING PAYLOAD...";
-                                    setTimeout(() => {
-                                        console.log("Posting success message...");
-                                        window.parent.postMessage('mission_success_${mission.id}', '*');
-                                        msg.innerText = "DOWNLOAD COMPLETE. CHECK YOUR FILES.";
-                                    }, 1500);
-                                } else if (required < requiredScore) {
-                                    msg.style.color = 'red';
-                                    msg.innerText = "ACCESS DENIED. REFLEX SCORE TOO LOW (" + required + "/" + requiredScore + ").";
+            if (mission.type === 'standard') {
+                const highScore = localStorage.getItem('snakeHighScore') || 0;
+                html = `
+                    <body style="${commonStyle}">
+                        <h1>${mission.title}</h1>
+                        <p>BIOMETRIC VERIFICATION REQUIRED</p>
+                        <p>REQUIRED SCORE: ${mission.score}</p>
+                        <input type="number" id="pass" placeholder="Enter Score" style="background:black; border:1px solid #00FF41; color:#00FF41; padding:5px;">
+                        <button onclick="check()" style="margin-top:10px; cursor:pointer;">AUTHENTICATE</button>
+                        <p id="msg"></p>
+                        <script>
+                            function check() {
+                                const val = parseInt(document.getElementById('pass').value);
+                                const req = ${highScore};
+                                if (val == req && req >= ${mission.score}) {
+                                    window.parent.postMessage('mission_success_${mission.id}', '*');
+                                    document.getElementById('msg').innerText = "ACCESS GRANTED.";
                                 } else {
-                                    msg.style.color = 'red';
-                                    msg.innerText = "ACCESS DENIED. BIOMETRIC MISMATCH.";
+                                    document.getElementById('msg').innerText = "ACCESS DENIED.";
                                 }
-                            } catch (e) {
-                                console.error("Auth Error:", e);
-                                alert("System Error: " + e.message);
                             }
-                        }
-                    </script>
-                </body>
-            `;
+                        </script>
+                    </body>`;
+            }
+            else if (mission.type === 'bruteforce') {
+                html = `
+                    <body style="${commonStyle}">
+                        <h1>${mission.title}</h1>
+                        <p>ENTER 4-DIGIT PIN</p>
+                        <div id="display" style="font-size:32px; margin-bottom:20px;">____</div>
+                        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+                            ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button onclick="press(${n})" style="padding:10px; background:#003300; color:#00FF41; border:1px solid #00FF41;">${n}</button>`).join('')}
+                            <button onclick="clearPin()" style="background:red; color:white;">C</button>
+                            <button onclick="press(0)" style="padding:10px; background:#003300; color:#00FF41; border:1px solid #00FF41;">0</button>
+                            <button onclick="submit()" style="background:green; color:white;">OK</button>
+                        </div>
+                        <p id="msg"></p>
+                        <script>
+                            let pin = "";
+                            const target = "${mission.pin}";
+                            function press(n) { if(pin.length < 4) { pin += n; update(); } }
+                            function clearPin() { pin = ""; update(); }
+                            function update() { document.getElementById('display').innerText = pin.padEnd(4, '_'); }
+                            function submit() {
+                                if (pin === target) {
+                                    window.parent.postMessage('mission_success_${mission.id}', '*');
+                                    document.getElementById('msg').innerText = "ACCESS GRANTED.";
+                                } else {
+                                    const hint = pin < target ? "HIGHER" : "LOWER";
+                                    document.getElementById('msg').innerText = "ACCESS DENIED. TRY " + hint;
+                                    pin = ""; update();
+                                }
+                            }
+                        </script>
+                    </body>`;
+            }
+            else if (mission.type === 'decipher') {
+                html = `
+                    <body style="${commonStyle}">
+                        <h1>${mission.title}</h1>
+                        <p>DECRYPT THE MESSAGE</p>
+                        <h2 style="color:red;">${mission.ciphertext}</h2>
+                        <input type="text" id="ans" placeholder="PLAINTEXT" style="background:black; border:1px solid #00FF41; color:#00FF41; padding:5px; text-transform:uppercase;">
+                        <button onclick="check()" style="margin-top:10px;">SUBMIT</button>
+                        <p id="msg"></p>
+                        <script>
+                            function check() {
+                                if (document.getElementById('ans').value.toUpperCase() === "${mission.plaintext}") {
+                                    window.parent.postMessage('mission_success_${mission.id}', '*');
+                                    document.getElementById('msg').innerText = "ACCESS GRANTED.";
+                                } else {
+                                    document.getElementById('msg').innerText = "INCORRECT.";
+                                }
+                            }
+                        </script>
+                    </body>`;
+            }
+            else if (mission.type === 'frequency') {
+                html = `
+                    <body style="${commonStyle}">
+                        <h1>${mission.title}</h1>
+                        <p>MATCH THE FREQUENCY</p>
+                        <div style="width:300px; height:100px; border:1px solid #00FF41; position:relative; overflow:hidden;">
+                            <canvas id="c" width="300" height="100"></canvas>
+                        </div>
+                        <input type="range" min="10" max="100" value="50" style="width:300px; margin-top:20px;" oninput="update(this.value)">
+                        <p>TARGET: <span id="t">???</span> Hz | CURRENT: <span id="v">50</span> Hz</p>
+                        <button onclick="check()" style="margin-top:10px;">LOCK SIGNAL</button>
+                        <p id="msg"></p>
+                        <script>
+                            const ctx = document.getElementById('c').getContext('2d');
+                            const target = ${mission.targetFreq};
+                            let current = 50;
+                            function draw() {
+                                ctx.fillStyle = 'black'; ctx.fillRect(0,0,300,100);
+                                ctx.strokeStyle = 'red'; ctx.beginPath();
+                                for(let x=0; x<300; x++) ctx.lineTo(x, 50 + Math.sin(x * target * 0.01) * 40);
+                                ctx.stroke();
+                                ctx.strokeStyle = '#00FF41'; ctx.beginPath();
+                                for(let x=0; x<300; x++) ctx.lineTo(x, 50 + Math.sin(x * current * 0.01) * 40);
+                                ctx.stroke();
+                                requestAnimationFrame(draw);
+                            }
+                            draw();
+                            function update(v) { current = v; document.getElementById('v').innerText = v; }
+                            function check() {
+                                if (Math.abs(current - target) < 5) {
+                                    window.parent.postMessage('mission_success_${mission.id}', '*');
+                                    document.getElementById('msg').innerText = "SIGNAL LOCKED.";
+                                } else {
+                                    document.getElementById('msg').innerText = "SIGNAL UNSTABLE.";
+                                }
+                            }
+                        </script>
+                    </body>`;
+            }
+            else if (mission.type === 'trivia') {
+                html = `
+                    <body style="${commonStyle}">
+                        <h1>${mission.title}</h1>
+                        <p>SECURITY QUESTION</p>
+                        <h3>${mission.question}</h3>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            ${mission.options.map(o => `<button onclick="check('${o}')" style="padding:10px; background:#003300; color:#00FF41; border:1px solid #00FF41;">${o}</button>`).join('')}
+                        </div>
+                        <p id="msg"></p>
+                        <script>
+                            function check(ans) {
+                                if (ans === "${mission.answer}") {
+                                    window.parent.postMessage('mission_success_${mission.id}', '*');
+                                    document.getElementById('msg').innerText = "ACCESS GRANTED.";
+                                } else {
+                                    document.getElementById('msg').innerText = "ACCESS DENIED. LOCKOUT INITIATED.";
+                                    document.body.style.pointerEvents = 'none';
+                                }
+                            }
+                        </script>
+                    </body>`;
+            }
+            else if (mission.type === 'grid') {
+                html = `
+                    <body style="${commonStyle}">
+                        <h1>${mission.title}</h1>
+                        <p>REPEAT THE PATTERN</p>
+                        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:5px;">
+                            ${Array(16).fill(0).map((_, i) => `<div id="b${i}" onclick="clickB(${i})" style="width:40px; height:40px; border:1px solid #00FF41; cursor:pointer;"></div>`).join('')}
+                        </div>
+                        <button onclick="play()" style="margin-top:20px;">PLAY PATTERN</button>
+                        <p id="msg"></p>
+                        <script>
+                            const pattern = [${mission.pattern}];
+                            let input = [];
+                            function flash(i) {
+                                const b = document.getElementById('b'+i);
+                                b.style.background = '#00FF41';
+                                setTimeout(() => b.style.background = 'transparent', 300);
+                            }
+                            function play() {
+                                input = [];
+                                let i = 0;
+                                const iv = setInterval(() => {
+                                    if(i >= pattern.length) clearInterval(iv);
+                                    else flash(pattern[i++]);
+                                }, 600);
+                            }
+                            function clickB(i) {
+                                flash(i);
+                                input.push(i);
+                                if (input.length === pattern.length) {
+                                    if (JSON.stringify(input) === JSON.stringify(pattern)) {
+                                        window.parent.postMessage('mission_success_${mission.id}', '*');
+                                        document.getElementById('msg').innerText = "ACCESS GRANTED.";
+                                    } else {
+                                        document.getElementById('msg').innerText = "PATTERN MISMATCH.";
+                                        input = [];
+                                    }
+                                }
+                            }
+                        </script>
+                    </body>`;
+            }
+
             frame.srcdoc = html;
             return;
         }
