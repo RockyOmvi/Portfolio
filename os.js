@@ -393,13 +393,19 @@ function handleCmd(cmd) {
         if (dir.children[file]) {
             if (file === 'encrypted_payload.dat') {
                 if (pass && pass.toLowerCase() === 'india') {
-                    printTerm("Decryption Successful.");
-                    printTerm("Extracting data...");
-                    FileSystem.structure.root.children['payload_decrypted.txt'] = {
-                        type: "file",
-                        content: "PROJECT OMEGA-9\n\nUPLOAD CODE: OMEGA-9\n\nWARNING: UPLOADING THIS CODE WILL TRIGGER A SYSTEM WIPE TO COVER TRACKS."
-                    };
-                    refreshExplorer();
+                    printTerm("Verifying key...");
+                    setTimeout(() => {
+                        printTerm("KEY ACCEPTED.");
+                        printTerm("Decryption Successful.");
+                        printTerm("Output: payload_decrypted.txt");
+                        FileSystem.structure.root.children['payload_decrypted.txt'] = {
+                            type: "file",
+                            content: "PROJECT OMEGA-9\n\nUPLOAD CODE: OMEGA-9\n\nWARNING: UPLOADING THIS CODE WILL TRIGGER A SYSTEM WIPE TO COVER TRACKS."
+                        };
+                        refreshExplorer();
+                        // Auto-open for convenience
+                        setTimeout(() => openFile('payload_decrypted.txt'), 1000);
+                    }, 800);
                 } else {
                     printTerm("Error: Incorrect Password.");
                     printTerm("Hint: The Creator's Location (Check Identity)");
