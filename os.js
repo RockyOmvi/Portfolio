@@ -240,6 +240,91 @@ const MISSIONS = {
     "kappa": { id: "kappa", ip: "192.168.0.66", domain: "kappa.xyz", score: 90, reward: "kappa_source.js", theme: "white", title: "KAPPA LABS" }
 };
 
+// ADVANCED MISSION ENGINE
+const MissionEngine = {
+    active: false,
+    currentOp: null,
+    stage: 0,
+    timer: 0,
+    interval: null,
+    traceLevel: 0,
+    objective: "",
+
+    start: function (opId) {
+        if (this.active) return "Operation already in progress.";
+
+        this.active = true;
+        this.currentOp = opId;
+        this.stage = 1;
+        this.traceLevel = 0;
+
+        if (opId === 'deep_web') {
+            this.timer = 300; // 5 minutes
+            this.objective = "Scan network for entry point.";
+        }
+
+        this.interval = setInterval(() => this.tick(), 1000);
+        this.renderHUD();
+        return `OPERATION ${opId.toUpperCase()} INITIATED. GOOD LUCK.`;
+    },
+
+    stop: function (success) {
+        this.active = false;
+        clearInterval(this.interval);
+        const hud = document.getElementById('mission-hud');
+        if (hud) hud.remove();
+
+        if (success) {
+            return "OPERATION COMPLETE. SYSTEM WIPE INITIATED...";
+        } else {
+            return "OPERATION FAILED. CONNECTION TERMINATED.";
+        }
+    },
+
+    tick: function () {
+        this.timer--;
+        if (this.timer <= 0) {
+            this.stop(false);
+            alert("MISSION FAILED: TIME EXPIRED");
+            location.reload();
+        }
+        this.renderHUD();
+    },
+
+    renderHUD: function () {
+        let hud = document.getElementById('mission-hud');
+        if (!hud) {
+            hud = document.createElement('div');
+            hud.id = 'mission-hud';
+            hud.style.position = 'fixed';
+            hud.style.top = '20px';
+            hud.style.right = '20px';
+            hud.style.background = 'rgba(0, 20, 0, 0.9)';
+            hud.style.border = '1px solid #00FF41';
+            hud.style.padding = '15px';
+            hud.style.color = '#00FF41';
+            hud.style.fontFamily = 'monospace';
+            hud.style.zIndex = '10000';
+            hud.style.width = '250px';
+            document.body.appendChild(hud);
+        }
+
+        const min = Math.floor(this.timer / 60);
+        const sec = this.timer % 60;
+        const timeStr = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+
+        hud.innerHTML = `
+            <div style="border-bottom: 1px solid #00FF41; margin-bottom: 10px; font-weight:bold;">OPERATION: ${this.currentOp.toUpperCase()}</div>
+            <div style="font-size: 24px; margin-bottom: 10px;">${timeStr}</div>
+            <div style="font-size: 12px; margin-bottom: 5px;">OBJ: ${this.objective}</div>
+            <div style="font-size: 12px;">TRACE: ${this.traceLevel}%</div>
+            <div style="width: 100%; background: #003300; height: 5px; margin-top: 5px;">
+                <div style="width: ${this.traceLevel}%; background: red; height: 100%;"></div>
+            </div>
+        `;
+    }
+};
+
 const FileSystem = {
     structure: {
         "root": {
@@ -439,9 +524,48 @@ function handleCmd(cmd) {
                     setTimeout(triggerBSOD, 2000);
                 }
             }, 200);
-        } else {
+        }
+        else if (arg === 'GENESIS' && MissionEngine.active && MissionEngine.currentOp === 'deep_web') {
+            printTerm("Uploading PROJECT GENESIS...");
+            let p = 0;
+            const interval = setInterval(() => {
+                p += 5; // Slower upload
+                printTerm(`Progress: ${p}%`);
+                MissionEngine.traceLevel += 2; // Trace increases during upload
+                MissionEngine.renderHUD();
+
+                if (p >= 100) {
+                    clearInterval(interval);
+                    printTerm(MissionEngine.stop(true));
+                    setTimeout(triggerBSOD, 3000);
+                }
+            }, 500);
+        }
+        else {
             printTerm("Error: Invalid Upload Code.");
         }
+    }
+    else if (c === 'start_op') {
+        if (arg === 'deep_web') {
+            printTerm(MissionEngine.start('deep_web'));
+        } else {
+            printTerm("Usage: start_op <operation_id>");
+            printTerm("Available Operations: deep_web");
+        }
+    }
+    else if (c === 'scan_network') {
+        printTerm("Scanning local subnet...");
+        setTimeout(() => {
+            printTerm("Found: 192.168.0.1 (Gateway)");
+            printTerm("Found: 192.168.0.105 (Self)");
+            if (MissionEngine.active && MissionEngine.currentOp === 'deep_web' && MissionEngine.stage === 1) {
+                printTerm("Found: 10.0.0.66 (HIDDEN) - PORT 80 OPEN");
+                printTerm("Resolving hostname... portal.dark.net");
+                MissionEngine.stage = 2;
+                MissionEngine.objective = "Hack Employee Portal (portal.dark.net)";
+                MissionEngine.renderHUD();
+            }
+        }, 2000);
     }
     else printTerm(`Unknown command: ${c}`);
 }
@@ -832,6 +956,72 @@ function browserGo() {
 
     setTimeout(() => {
         frame.style.opacity = '1';
+
+        // DEEP WEB PORTAL (Advanced Op)
+        if (url.includes('portal.dark.net')) {
+            const html = `
+                <body style="background:#1a1a1a; color:#ccc; font-family:sans-serif; padding:20px;">
+                    <div style="background:#333; padding:10px; border-bottom:2px solid #555;">
+                        <h2 style="margin:0; color:#fff;">DarkCorp Employee Portal</h2>
+                    </div>
+                    <div style="margin-top:20px;">
+                        <div style="background:#222; padding:10px; margin-bottom:10px;">
+                            <h3 style="margin:0; color:#aaa;">Login</h3>
+                            <input type="text" id="u" placeholder="Username" style="width:100%; margin:5px 0; padding:5px;">
+                            <input type="password" id="p" placeholder="Password" style="width:100%; margin:5px 0; padding:5px;">
+                            <button onclick="login()" style="width:100%; padding:5px; background:#444; color:#fff; border:none; cursor:pointer;">Sign In</button>
+                            <p id="msg" style="color:red; font-size:12px;"></p>
+                        </div>
+                        <div style="background:#222; padding:10px;">
+                            <h3 style="margin:0; color:#aaa;">Recent Announcements</h3>
+                            <p style="font-size:12px;"><strong>From: IT Support</strong><br>Reminder: Password rotation is mandatory. Do not use pet names!</p>
+                            <hr style="border-color:#444;">
+                            <p style="font-size:12px;"><strong>From: jdoe</strong><br>Ugh, I hate these new rules. I just set mine to 'Fluffy123' so I don't forget it again.</p>
+                        </div>
+                    </div>
+                    <script>
+                        function login() {
+                            const u = document.getElementById('u').value;
+                            const p = document.getElementById('p').value;
+                            const msg = document.getElementById('msg');
+                            
+                            // SQL Injection Check
+                            if (u.includes("' OR '1'='1") || p.includes("' OR '1'='1")) {
+                                document.body.innerHTML = \`
+                                    <body style="background:black; color:#00FF41; font-family:monospace; padding:20px;">
+                                        <h1>SQL INJECTION SUCCESSFUL</h1>
+                                        <p>Dumping User Database...</p>
+                                        <pre>
+ID | USER | ROLE
+1  | admin| SYSADMIN
+2  | jdoe | USER
+3  | root | SUPERUSER
+                                        </pre>
+                                        <p><strong>VAULT IP FOUND: 10.0.0.99</strong></p>
+                                        <p>Project Genesis is stored in the Vault.</p>
+                                    </body>
+                                \`;
+                                window.parent.postMessage('deep_web_sqli', '*');
+                                return;
+                            }
+                            
+                            // Standard Login
+                            if (u === 'jdoe' && p === 'Fluffy123') {
+                                msg.style.color = 'green';
+                                msg.innerText = "Login Successful. Welcome, John.";
+                                setTimeout(() => {
+                                    document.body.innerHTML = '<h1 style="color:white;">Welcome to Intranet</h1><p style="color:#ccc;">Search the database for files.</p><input placeholder="Search..." style="padding:5px;"><button>Search</button>';
+                                }, 1000);
+                            } else {
+                                msg.innerText = "Invalid Credentials.";
+                            }
+                        }
+                    </script>
+                </body>
+             `;
+            frame.srcdoc = html;
+            return;
+        }
 
         // MISSION LOGIC: Dynamic Registry Lookup
         const mission = Object.values(MISSIONS).find(m => url.includes(m.domain) || url.includes(m.ip));
