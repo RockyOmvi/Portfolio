@@ -226,6 +226,20 @@ function printTerm(text) {
 }
 
 /* --- FILE SYSTEM --- */
+// MISSION REGISTRY
+const MISSIONS = {
+    "alpha": { id: "alpha", ip: "192.168.0.99", domain: "secure.alpha", score: 0, reward: "payload.txt", theme: "blue", title: "SECURE SERVER (ALPHA)" },
+    "gamma": { id: "gamma", ip: "192.168.0.55", domain: "gamma.net", score: 10, reward: "gamma_intel.txt", theme: "purple", title: "GAMMA NETWORKS" },
+    "delta": { id: "delta", ip: "192.168.0.101", domain: "delta.sys", score: 20, reward: "delta_plans.pdf", theme: "yellow", title: "DELTA SYSTEMS" },
+    "epsilon": { id: "epsilon", ip: "192.168.0.44", domain: "epsilon.io", score: 30, reward: "epsilon_key.key", theme: "orange", title: "EPSILON IO" },
+    "zeta": { id: "zeta", ip: "192.168.0.77", domain: "zeta.org", score: 40, reward: "zeta_coords.csv", theme: "cyan", title: "ZETA ORG" },
+    "omega": { id: "omega", ip: "192.168.0.200", domain: "target.corp", score: 50, reward: "encrypted_payload.dat", theme: "red", title: "SECURE SERVER (OMEGA)" },
+    "eta": { id: "eta", ip: "192.168.0.88", domain: "eta.edu", score: 60, reward: "eta_virus.exe", theme: "pink", title: "ETA RESEARCH" },
+    "theta": { id: "theta", ip: "192.168.0.33", domain: "theta.gov", score: 70, reward: "theta_logs.log", theme: "brown", title: "THETA GOV" },
+    "iota": { id: "iota", ip: "192.168.0.11", domain: "iota.mil", score: 80, reward: "iota_blueprint.cad", theme: "gray", title: "IOTA MILITARY" },
+    "kappa": { id: "kappa", ip: "192.168.0.66", domain: "kappa.xyz", score: 90, reward: "kappa_source.js", theme: "white", title: "KAPPA LABS" }
+};
+
 const FileSystem = {
     structure: {
         "root": {
@@ -246,11 +260,11 @@ const FileSystem = {
                     children: {
                         "config.sys": { type: "file", content: "THEME=GREEN\nAUDIO=ON" },
                         "kernel.log": { type: "file", content: "System booted successfully.\nAll modules loaded." },
-                        "network.log": { type: "file", content: "DHCP: 192.168.0.105\nGATEWAY: 192.168.0.1\nTARGET_DETECTED: 192.168.0.99 [LEGACY_SERVER]\nPROXY_DETECTED: target.corp [IP MASKED]" }
+                        "network.log": { type: "file", content: "DHCP: 192.168.0.105\nGATEWAY: 192.168.0.1\n\nKNOWN TARGETS:\n192.168.0.99  [ALPHA]\n192.168.0.55  [GAMMA]\n192.168.0.101 [DELTA]\n192.168.0.44  [EPSILON]\n192.168.0.77  [ZETA]\n192.168.0.200 [OMEGA]\n192.168.0.88  [ETA]\n192.168.0.33  [THETA]\n192.168.0.11  [IOTA]\n192.168.0.66  [KAPPA]" }
                     }
                 },
                 "secret.txt": { type: "file", content: "The cake is a lie." },
-                "mission_brief.txt": { type: "file", content: "AVAILABLE CONTRACTS:\n\n--- CONTRACT ALPHA (LEGACY) ---\nTARGET: 192.168.0.99\nOBJECTIVE: Retrieve payload.txt\nSECURITY: Basic Biometric (Score > 0)\n\n--- CONTRACT OMEGA (NEW) ---\nTARGET: target.corp\nOBJECTIVE: Exfiltrate Project OMEGA-9\nINTEL:\n1. Ping target.corp to find IP.\n2. Connect and bypass Advanced Biometric (Score > 50).\n3. Decrypt payload (Hint: Identity).\n4. Upload OMEGA-9." }
+                "mission_brief.txt": { type: "file", content: "DECA-HEIST CAMPAIGN CONTRACTS:\n\n[1] ALPHA (Legacy)\nTarget: 192.168.0.99\nScore: >0\n\n[2] GAMMA\nTarget: gamma.net\nScore: >10\n\n[3] DELTA\nTarget: delta.sys\nScore: >20\n\n[4] EPSILON\nTarget: epsilon.io\nScore: >30\n\n[5] ZETA\nTarget: zeta.org\nScore: >40\n\n[6] OMEGA (Heist)\nTarget: target.corp\nScore: >50\n\n[7] ETA\nTarget: eta.edu\nScore: >60\n\n[8] THETA\nTarget: theta.gov\nScore: >70\n\n[9] IOTA\nTarget: iota.mil\nScore: >80\n\n[10] KAPPA\nTarget: kappa.xyz\nScore: >90" }
             }
         }
     },
@@ -352,28 +366,22 @@ function handleCmd(cmd) {
     else if (c === 'rm') printTerm(FileSystem.rm(arg));
     else if (c === 'delete' && args[1] === 'system32' || c === 'del' && args[1] === 'system32') triggerBSOD();
     else if (c === 'ping') {
-        if (arg === 'target.corp') {
-            printTerm("Pinging target.corp [192.168.0.200] with 32 bytes of data:");
-            setTimeout(() => printTerm("Reply from 192.168.0.200: bytes=32 time=12ms TTL=54"), 500);
-            setTimeout(() => printTerm("Reply from 192.168.0.200: bytes=32 time=15ms TTL=54"), 1000);
-            setTimeout(() => printTerm("Reply from 192.168.0.200: bytes=32 time=11ms TTL=54"), 1500);
+        const mission = Object.values(MISSIONS).find(m => m.domain === arg);
+        if (mission) {
+            printTerm(`Pinging ${arg} [${mission.ip}] with 32 bytes of data:`);
+            setTimeout(() => printTerm(`Reply from ${mission.ip}: bytes=32 time=12ms TTL=54`), 500);
+            setTimeout(() => printTerm(`Reply from ${mission.ip}: bytes=32 time=15ms TTL=54`), 1000);
+            setTimeout(() => printTerm(`Reply from ${mission.ip}: bytes=32 time=11ms TTL=54`), 1500);
         } else {
             printTerm(`Ping request could not find host ${arg}. Please check the name and try again.`);
         }
     }
     else if (c === 'connect') {
-        if (arg === '192.168.0.99') {
-            printTerm("Initiating secure connection (Legacy)...");
+        const mission = Object.values(MISSIONS).find(m => m.ip === arg);
+        if (mission) {
+            printTerm(`Initiating secure connection to ${mission.domain.toUpperCase()}...`);
             setTimeout(() => {
-                document.getElementById('browser-url').value = 'secure.alpha';
-                openWindow('win-browser');
-                browserGo();
-            }, 1000);
-        }
-        else if (arg === '192.168.0.200') {
-            printTerm("Initiating secure connection (Omega)...");
-            setTimeout(() => {
-                document.getElementById('browser-url').value = 'secure.corp';
+                document.getElementById('browser-url').value = mission.domain;
                 openWindow('win-browser');
                 browserGo();
             }, 1000);
@@ -825,14 +833,16 @@ function browserGo() {
     setTimeout(() => {
         frame.style.opacity = '1';
 
-        // MISSION LOGIC: Secure Server (OMEGA)
-        if (url.includes('secure.corp') || url.includes('192.168.0.200')) {
+        // MISSION LOGIC: Dynamic Registry Lookup
+        const mission = Object.values(MISSIONS).find(m => url.includes(m.domain) || url.includes(m.ip));
+
+        if (mission) {
             const highScore = localStorage.getItem('snakeHighScore') || 0;
-            const requiredScore = 50;
+            const requiredScore = mission.score;
             const html = `
                 <body style="background:black; color:#00FF41; font-family:monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;">
-                    <h1 style="border-bottom: 2px solid #00FF41; padding-bottom: 10px;">SECURE SERVER (OMEGA)</h1>
-                    <p>ADVANCED BIOMETRIC VERIFICATION</p>
+                    <h1 style="border-bottom: 2px solid #00FF41; padding-bottom: 10px;">${mission.title}</h1>
+                    <p>BIOMETRIC VERIFICATION REQUIRED</p>
                     <p>REQUIRED REFLEX SCORE: ${requiredScore}</p>
                     <p>Please enter your reflex synchronization score:</p>
                     <input type="number" id="pass" style="background:black; border:1px solid #00FF41; color:#00FF41; padding:5px; outline:none;">
@@ -841,7 +851,7 @@ function browserGo() {
                     <script>
                         function check() {
                             try {
-                                console.log("Authenticating Omega...");
+                                console.log("Authenticating ${mission.id}...");
                                 const val = document.getElementById('pass').value;
                                 const required = parseInt('${highScore}') || 0;
                                 const requiredScore = ${requiredScore};
@@ -851,10 +861,10 @@ function browserGo() {
 
                                 if (val == required && required >= requiredScore) {
                                     msg.style.color = '#00FF41';
-                                    msg.innerText = "ACCESS GRANTED. DOWNLOADING ENCRYPTED PAYLOAD...";
+                                    msg.innerText = "ACCESS GRANTED. DOWNLOADING PAYLOAD...";
                                     setTimeout(() => {
                                         console.log("Posting success message...");
-                                        window.parent.postMessage('mission_success_omega', '*');
+                                        window.parent.postMessage('mission_success_${mission.id}', '*');
                                         msg.innerText = "DOWNLOAD COMPLETE. CHECK YOUR FILES.";
                                     }, 1500);
                                 } else if (required < requiredScore) {
@@ -863,51 +873,6 @@ function browserGo() {
                                 } else {
                                     msg.style.color = 'red';
                                     msg.innerText = "ACCESS DENIED. BIOMETRIC MISMATCH.";
-                                }
-                            } catch (e) {
-                                console.error("Auth Error:", e);
-                                alert("System Error: " + e.message);
-                            }
-                        }
-                    </script>
-                </body>
-            `;
-            frame.srcdoc = html;
-            return;
-        }
-
-        // MISSION LOGIC: Legacy Server (ALPHA)
-        if (url.includes('secure.alpha') || url.includes('192.168.0.99')) {
-            const highScore = localStorage.getItem('snakeHighScore') || 0;
-            const html = `
-                <body style="background:black; color:#00FF41; font-family:monospace; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0;">
-                    <h1 style="border-bottom: 2px solid #00FF41; padding-bottom: 10px;">SECURE SERVER (ALPHA)</h1>
-                    <p>BASIC BIOMETRIC VERIFICATION</p>
-                    <p>Please enter your reflex synchronization score:</p>
-                    <input type="number" id="pass" style="background:black; border:1px solid #00FF41; color:#00FF41; padding:5px; outline:none;">
-                    <button onclick="check()" style="background:#00FF41; color:black; border:none; padding:5px 10px; margin-top:10px; cursor:pointer; font-weight:bold;">AUTHENTICATE</button>
-                    <p id="msg" style="margin-top:20px;"></p>
-                    <script>
-                        function check() {
-                            try {
-                                console.log("Authenticating Alpha...");
-                                const val = document.getElementById('pass').value;
-                                const required = parseInt('${highScore}') || 0;
-                                const msg = document.getElementById('msg');
-                                
-                                console.log("Input:", val, "Required:", required);
-
-                                if (val == required && required > 0) {
-                                    msg.style.color = '#00FF41';
-                                    msg.innerText = "ACCESS GRANTED. DOWNLOADING PAYLOAD...";
-                                    setTimeout(() => {
-                                        console.log("Posting success message...");
-                                        window.parent.postMessage('mission_success_alpha', '*');
-                                        msg.innerText = "DOWNLOAD COMPLETE. CHECK YOUR FILES.";
-                                    }, 1500);
-                                } else {
-                                    msg.style.color = 'red';
-                                    msg.innerText = "ACCESS DENIED. INVALID SCORE.";
                                 }
                             } catch (e) {
                                 console.error("Auth Error:", e);
@@ -987,60 +952,51 @@ function toggleMute() {
 }
 
 // Listen for mission success message from iframe
+// Listen for mission success message from iframe
 window.addEventListener('message', (e) => {
     console.log("Received message:", e.data);
-    if (e.data === 'mission_success_omega') {
-        // Unlock payload (Omega)
-        const dir = FileSystem.structure.root.children;
-        if (!dir['encrypted_payload.dat']) {
-            dir['encrypted_payload.dat'] = {
-                type: "file",
-                content: "ENCRYPTED DATA\n\n[LOCKED]\n\nHint: The Creator's Location (Check Identity)"
-            };
-            refreshExplorer();
+
+    if (typeof e.data === 'string' && e.data.startsWith('mission_success_')) {
+        const missionId = e.data.replace('mission_success_', '');
+        const mission = MISSIONS[missionId];
+
+        if (mission) {
+            // Unlock payload
+            const dir = FileSystem.structure.root.children;
+            if (!dir[mission.reward]) {
+                dir[mission.reward] = {
+                    type: "file",
+                    content: `MISSION COMPLETE: ${mission.title}\n\nREWARD DATA: [${mission.reward.toUpperCase()}]\n\nACCESS GRANTED.`
+                };
+
+                // Special content for Omega (Encrypted)
+                if (mission.id === 'omega') {
+                    dir[mission.reward].content = "ENCRYPTED DATA\n\n[LOCKED]\n\nHint: The Creator's Location (Check Identity)";
+                }
+
+                refreshExplorer();
+            }
+
+            const term = document.getElementById('term-output');
+            if (term) {
+                term.innerHTML += `<div>> [SYSTEM] ${mission.reward.toUpperCase()} DOWNLOADED.</div>`;
+                term.scrollTop = term.scrollHeight;
+            }
+
+            // Visual Feedback (Always Run)
+            // Fallback to blue/red or just flash green
+            let themeClass = 'theme-green';
+            if (mission.theme === 'red') themeClass = 'theme-red';
+            if (mission.theme === 'blue') themeClass = 'theme-blue';
+
+            document.body.className = themeClass;
+            setTimeout(() => document.body.className = 'theme-green', 3000);
+
+            // Always open file
+            setTimeout(() => {
+                openWindow('win-explorer');
+                openFile(mission.reward);
+            }, 1000);
         }
-
-        const term = document.getElementById('term-output');
-        if (term) {
-            term.innerHTML += '<div>> [SYSTEM] ENCRYPTED PAYLOAD DOWNLOADED.</div>';
-            term.scrollTop = term.scrollHeight;
-        }
-
-        // Visual Feedback (Always Run)
-        document.body.className = 'theme-red';
-        setTimeout(() => document.body.className = 'theme-green', 3000);
-
-        // Always open file
-        setTimeout(() => {
-            openWindow('win-explorer');
-            // openFile('encrypted_payload.dat'); 
-        }, 1000);
-    }
-    else if (e.data === 'mission_success_alpha') {
-        // Unlock payload (Alpha)
-        const dir = FileSystem.structure.root.children;
-        if (!dir['payload.txt']) {
-            dir['payload.txt'] = {
-                type: "file",
-                content: "CONGRATULATIONS!\n\nYou have completed the Legacy Mission (Alpha).\n\nREWARD CODE: ALPHA_LEGACY_2025"
-            };
-            refreshExplorer();
-        }
-
-        const term = document.getElementById('term-output');
-        if (term) {
-            term.innerHTML += '<div>> [SYSTEM] LEGACY PAYLOAD DOWNLOADED.</div>';
-            term.scrollTop = term.scrollHeight;
-        }
-
-        // Visual Feedback (Always Run)
-        document.body.className = 'theme-blue';
-        setTimeout(() => document.body.className = 'theme-green', 3000);
-
-        // Always open file
-        setTimeout(() => {
-            openWindow('win-explorer');
-            openFile('payload.txt');
-        }, 1000);
     }
 });
