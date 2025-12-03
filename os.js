@@ -692,25 +692,54 @@ function openFile(name) {
 
 /* --- CYBERDECK BROWSER --- */
 function browserGo() {
-    const url = document.getElementById('browser-url').value;
+    let url = document.getElementById('browser-url').value;
     const frame = document.getElementById('browser-frame');
     const error = document.getElementById('browser-error');
 
-    // Simple validation
-    if (!url.startsWith('http')) {
-        document.getElementById('browser-url').value = 'https://' + url;
+    // 1. Protocol Handler
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
     }
+
+    // 2. Smart URL Rewrites for Iframe Compatibility
+
+    // Google: Use the /webhp?igu=1 hack which often allows embedding
+    if (url.includes('google.com') && !url.includes('igu=1')) {
+        if (url.includes('?')) url += '&igu=1';
+        else url += '/webhp?igu=1';
+    }
+
+    // YouTube: Convert standard watch URLs to embed URLs
+    if (url.includes('youtube.com/watch')) {
+        const videoId = new URL(url).searchParams.get('v');
+        if (videoId) {
+            url = `https://www.youtube.com/embed/${videoId}`;
+        }
+    } else if (url.includes('youtu.be/')) {
+        const videoId = url.split('youtu.be/')[1];
+        if (videoId) {
+            url = `https://www.youtube.com/embed/${videoId}`;
+        }
+    }
+
+    // Wikipedia: Mobile version often looks better in small windows
+    if (url.includes('wikipedia.org') && !url.includes('.m.wikipedia.org')) {
+        url = url.replace('wikipedia.org', '.m.wikipedia.org');
+    }
+
+    // Update input to show what we're actually loading (optional, maybe keep user input)
+    // document.getElementById('browser-url').value = url; 
 
     // Simulate loading
     frame.style.opacity = '0.5';
+    error.classList.add('hidden'); // Reset error state
+
     setTimeout(() => {
         frame.style.opacity = '1';
-        // In a real scenario we can't easily embed arbitrary sites due to X-Frame-Options
-        // But for this simulation we just try. If it fails (likely), we show error.
         try {
-            frame.src = document.getElementById('browser-url').value;
-            error.classList.add('hidden');
+            frame.src = url;
         } catch (e) {
+            console.error("Load error:", e);
             error.classList.remove('hidden');
         }
     }, 500);
