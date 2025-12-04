@@ -1257,7 +1257,7 @@ ID | USER | ROLE
                         <script>
                             function check() {
                                 const val = parseInt(document.getElementById('pass').value);
-                                const req = ${highScore};
+                                const req = parseInt(localStorage.getItem('snakeHighScore') || 0);
                                 if (val == req && req >= ${mission.score}) {
                                     window.parent.postMessage('mission_success_${mission.id}', '*');
                                     document.getElementById('msg').innerText = "ACCESS GRANTED.";
