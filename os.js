@@ -57,6 +57,7 @@ function attemptLogin() {
 window.onload = () => {
     lucide.createIcons();
     bootSystem();
+    AchievementSystem.check('boot');
     startClock();
     initMatrix();
     initVisualizer();
@@ -96,6 +97,10 @@ function initCursor() {
 
     // Hover effects
     document.addEventListener('mouseover', (e) => {
+        if (e.target.closest('#win-about')) AchievementSystem.check('check_id');
+        if (e.target.closest('#win-skills')) AchievementSystem.check('check_skills');
+        if (e.target.closest('#win-projects')) AchievementSystem.check('check_projects');
+
         if (e.target.matches('button, a, .desktop-icon, .window-header, .taskbar-item, input, .start-item')) {
             cursor.classList.add('hovered');
         } else {
@@ -438,6 +443,7 @@ const MissionEngine = {
 
     tick: function () {
         this.timer--;
+        if (this.timer % 60 === 0) AchievementSystem.check('uptime_tick'); // Check uptime every minute (approx)
         if (this.timer <= 0) {
             this.stop(false);
             alert("MISSION FAILED: TIME EXPIRED");
@@ -578,6 +584,7 @@ const FileSystem = {
         const dir = this.getDir();
         if (!dir.children[name]) return `rm: ${name}: No such file`;
         delete dir.children[name];
+        AchievementSystem.check('file_deleted');
         refreshExplorer();
         return "";
     }
@@ -589,23 +596,33 @@ function handleCmd(cmd) {
     const arg = args[1];
 
     AchievementSystem.check('command_run');
+    AchievementSystem.check('spam_check', cmd);
 
     if (c === 'help') {
         printTerm("cmds: ls, cd, cat, mkdir, touch, rm, clear, reboot, snake, matrix, market, wallet, del system32");
         AchievementSystem.check('sys_admin');
     }
-    else if (c === 'clear') termOutput.innerHTML = '';
+    else if (c === 'clear') {
+        termOutput.innerHTML = '';
+        AchievementSystem.check('clear_term');
+    }
     else if (c === 'reboot') location.reload();
     else if (c === 'snake') openWindow('win-snake');
     else if (c === 'ls') printTerm(FileSystem.ls());
     else if (c === 'cd') {
         const err = FileSystem.cd(arg);
         if (err) printTerm(err);
-        else printTerm(`/${FileSystem.currentPath.slice(1).join('/')}`);
+        else {
+            printTerm(`/${FileSystem.currentPath.slice(1).join('/')}`);
+            AchievementSystem.check('dir_change', arg);
+        }
     }
     else if (c === 'cat') printTerm(FileSystem.cat(arg));
     else if (c === 'mkdir') printTerm(FileSystem.mkdir(arg));
-    else if (c === 'touch') printTerm(FileSystem.touch(arg));
+    else if (c === 'touch') {
+        printTerm(FileSystem.touch(arg));
+        AchievementSystem.check('file_created');
+    }
     else if (c === 'rm') printTerm(FileSystem.rm(arg));
     else if (c === 'delete' && args[1] === 'system32' || c === 'del' && args[1] === 'system32') triggerBSOD();
     else if (c === 'ping') {
@@ -698,6 +715,7 @@ function handleCmd(cmd) {
                 let traceInc = 2;
                 if (BlackMarket.upgrades.vpn_proxy.owned) traceInc = 1;
                 MissionEngine.traceLevel += traceInc;
+                AchievementSystem.check('trace_check', MissionEngine.traceLevel);
                 MissionEngine.renderHUD();
 
                 if (p >= 100) {
@@ -711,6 +729,7 @@ function handleCmd(cmd) {
                         Wallet.credits += m.score;
                         printTerm(`MISSION COMPLETE. ${m.score} CREDITS TRANSFERRED.`);
                         AchievementSystem.check('hack_complete');
+                        AchievementSystem.check('credits_earned');
                         if (Wallet.credits >= 100) AchievementSystem.check('rich');
                         // Unlock Reward
                         const dir = FileSystem.structure.root.children;
@@ -810,12 +829,14 @@ function handleCmd(cmd) {
     else if (c === 'market') {
         if (!arg) {
             printTerm("--- BLACK MARKET ---");
+            AchievementSystem.check('check_market');
             Object.entries(BlackMarket.upgrades).forEach(([key, item]) => {
                 printTerm(`${key.padEnd(15)} | ${item.cost} CR | ${item.owned ? "[OWNED]" : item.desc}`);
             });
             printTerm("Usage: market buy <item_id>");
         } else if (arg === 'buy' && args[2]) {
             printTerm(BlackMarket.buy(args[2]));
+            AchievementSystem.check('item_bought');
         }
     }
     else if (c === 'scan_network') {
@@ -854,6 +875,7 @@ function handleCmd(cmd) {
         AchievementSystem.notify({ title: "Test Achievement", desc: "This is a test.", icon: "trophy" });
     }
     else printTerm(`Unknown command: ${c}`);
+    AchievementSystem.check('invalid_cmd');
 }
 
 function triggerBSOD() {
@@ -906,6 +928,7 @@ const MediaPlayer = {
         this.updateUI();
         this.startVisualizer();
         AchievementSystem.check('music_lover');
+        AchievementSystem.check('track_played', index);
     },
 
     pauseTrack: function () {
@@ -966,18 +989,93 @@ const AchievementSystem = {
         "master_hacker": { id: "master_hacker", title: "Master Hacker", desc: "Complete 10 hacks.", icon: "skull", unlocked: false, progress: 0, target: 10 },
         "rich": { id: "rich", title: "Crypto Miner", desc: "Earn 100 Credits.", icon: "bitcoin", unlocked: false },
         "snake_score_10": { id: "snake_score_10", title: "Baby Snake", desc: "Score 10 in Snake.", icon: "gamepad-2", unlocked: false },
-        "snake_score_10": { id: "snake_score_10", title: "Baby Snake", desc: "Score 10 in Snake.", icon: "gamepad-2", unlocked: false },
+
         "snake_score_50": { id: "snake_score_50", title: "Serpent", desc: "Score 50 in Snake.", icon: "crown", unlocked: false },
         "sys_admin": { id: "sys_admin", title: "System Admin", desc: "Run the 'help' command.", icon: "terminal-square", unlocked: false },
         "explorer": { id: "explorer", title: "Explorer", desc: "Open 5 different applications.", icon: "compass", unlocked: false, progress: 0, target: 5 },
         "music_lover": { id: "music_lover", title: "Music Lover", desc: "Play a track in Media Player.", icon: "headphones", unlocked: false },
         "terminal_junkie": { id: "terminal_junkie", title: "Terminal Junkie", desc: "Run 20 terminal commands.", icon: "keyboard", unlocked: false, progress: 0, target: 20 },
-        "glitch_matrix": { id: "glitch_matrix", title: "Glitch in the Matrix", desc: "Find the hidden trigger.", icon: "zap", unlocked: false }
+        "glitch_matrix": { id: "glitch_matrix", title: "Glitch in the Matrix", desc: "Find the hidden trigger.", icon: "zap", unlocked: false },
+
+        // Hacking Tiers
+        "white_hat": { id: "white_hat", title: "White Hat", desc: "Complete 5 hacks.", icon: "shield", unlocked: false, progress: 0, target: 5 },
+        "gray_hat": { id: "gray_hat", title: "Gray Hat", desc: "Complete 10 hacks.", icon: "user-check", unlocked: false, progress: 0, target: 10 },
+        "black_hat": { id: "black_hat", title: "Black Hat", desc: "Complete 25 hacks.", icon: "skull", unlocked: false, progress: 0, target: 25 },
+        "elite_hacker": { id: "elite_hacker", title: "Elite Hacker", desc: "Complete 50 hacks.", icon: "terminal", unlocked: false, progress: 0, target: 50 },
+        "cyber_deity": { id: "cyber_deity", title: "Cyber Deity", desc: "Complete 100 hacks.", icon: "server", unlocked: false, progress: 0, target: 100 },
+        "payload_deliverer": { id: "payload_deliverer", title: "Payload Deliverer", desc: "Upload 10 files.", icon: "upload", unlocked: false, progress: 0, target: 10 },
+        "trace_buster": { id: "trace_buster", title: "Trace Buster", desc: "Complete hack with >90% trace.", icon: "alert-triangle", unlocked: false },
+
+        // Wealth Tiers
+        "freelancer": { id: "freelancer", title: "Freelancer", desc: "Earn 500 Credits.", icon: "dollar-sign", unlocked: false },
+        "professional": { id: "professional", title: "Professional", desc: "Earn 1000 Credits.", icon: "briefcase", unlocked: false },
+        "tycoon": { id: "tycoon", title: "Tycoon", desc: "Earn 5000 Credits.", icon: "trending-up", unlocked: false },
+        "whale": { id: "whale", title: "Whale", desc: "Earn 10000 Credits.", icon: "anchor", unlocked: false },
+        "big_spender": { id: "big_spender", title: "Big Spender", desc: "Buy 1 item.", icon: "shopping-cart", unlocked: false },
+        "fully_kitted": { id: "fully_kitted", title: "Fully Kitted", desc: "Buy all upgrades.", icon: "package", unlocked: false },
+
+        // Snake Tiers
+        "cobra": { id: "cobra", title: "Cobra", desc: "Score 100 in Snake.", icon: "target", unlocked: false },
+        "viper": { id: "viper", title: "Viper", desc: "Score 200 in Snake.", icon: "zap", unlocked: false },
+        "hydra": { id: "hydra", title: "Hydra", desc: "Score 500 in Snake.", icon: "layers", unlocked: false },
+        "survivor": { id: "survivor", title: "Survivor", desc: "Play Snake for 5 mins.", icon: "clock", unlocked: false, progress: 0, target: 300 },
+        "game_over": { id: "game_over", title: "Game Over", desc: "Die 10 times in Snake.", icon: "x-circle", unlocked: false, progress: 0, target: 10 },
+
+        // Terminal Mastery
+        "novice_term": { id: "novice_term", title: "Novice", desc: "Run 10 commands.", icon: "chevron-right", unlocked: false, progress: 0, target: 10 },
+        "user_term": { id: "user_term", title: "User", desc: "Run 50 commands.", icon: "terminal", unlocked: false, progress: 0, target: 50 },
+        "power_user": { id: "power_user", title: "Power User", desc: "Run 100 commands.", icon: "cpu", unlocked: false, progress: 0, target: 100 },
+        "sys_admin_term": { id: "sys_admin_term", title: "SysAdmin", desc: "Run 500 commands.", icon: "server", unlocked: false, progress: 0, target: 500 },
+        "operator": { id: "operator", title: "Operator", desc: "Run 1000 commands.", icon: "globe", unlocked: false, progress: 0, target: 1000 },
+        "paranoid": { id: "paranoid", title: "Paranoid", desc: "Clear screen 10 times.", icon: "trash-2", unlocked: false, progress: 0, target: 10 },
+        "lost": { id: "lost", title: "Lost", desc: "Enter 5 invalid commands.", icon: "help-circle", unlocked: false, progress: 0, target: 5 },
+        "spammer": { id: "spammer", title: "Spammer", desc: "Run same command 5 times.", icon: "repeat", unlocked: false, progress: 0, target: 5 },
+
+        // System & Exploration
+        "uptime_1m": { id: "uptime_1m", title: "Warming Up", desc: "1 minute uptime.", icon: "sun", unlocked: false },
+        "uptime_5m": { id: "uptime_5m", title: "Stable", desc: "5 minutes uptime.", icon: "battery", unlocked: false },
+        "uptime_10m": { id: "uptime_10m", title: "Reliable", desc: "10 minutes uptime.", icon: "battery-charging", unlocked: false },
+        "uptime_30m": { id: "uptime_30m", title: "Dedicated", desc: "30 minutes uptime.", icon: "battery-full", unlocked: false },
+        "uptime_1h": { id: "uptime_1h", title: "Server Grade", desc: "1 hour uptime.", icon: "database", unlocked: false },
+        "file_hoarder": { id: "file_hoarder", title: "File Hoarder", desc: "Create 10 files.", icon: "file-plus", unlocked: false, progress: 0, target: 10 },
+        "deleter": { id: "deleter", title: "Deleter", desc: "Delete 10 files.", icon: "file-minus", unlocked: false, progress: 0, target: 10 },
+        "navigator": { id: "navigator", title: "Navigator", desc: "Change directory 20 times.", icon: "folder", unlocked: false, progress: 0, target: 20 },
+        "identity_theft": { id: "identity_theft", title: "Identity Theft", desc: "Check Identity 5 times.", icon: "user", unlocked: false, progress: 0, target: 5 },
+        "narcissist": { id: "narcissist", title: "Narcissist", desc: "Check Skills 5 times.", icon: "star", unlocked: false, progress: 0, target: 5 },
+        "developer": { id: "developer", title: "Developer", desc: "Check Projects 5 times.", icon: "code", unlocked: false, progress: 0, target: 5 },
+        "audiophile": { id: "audiophile", title: "Audiophile", desc: "Listen to all tracks.", icon: "music", unlocked: false, progress: 0, target: 3 },
+        "window_shopper": { id: "window_shopper", title: "Window Shopper", desc: "Check market 5 times.", icon: "eye", unlocked: false, progress: 0, target: 5 },
+
+        // Easter Eggs
+        "konami": { id: "konami", title: "Konami Code", desc: "Up, Up, Down, Down...", icon: "gamepad", unlocked: false },
+        "bsod_survivor": { id: "bsod_survivor", title: "BSOD Survivor", desc: "Trigger a system crash.", icon: "alert-octagon", unlocked: false },
+        "recursion": { id: "recursion", title: "Recursion", desc: "cd . 5 times.", icon: "refresh-cw", unlocked: false, progress: 0, target: 5 },
+        "root_access": { id: "root_access", title: "Root Access", desc: "Try sudo or su.", icon: "lock", unlocked: false },
+        "hello_again": { id: "hello_again", title: "Hello Again", desc: "Boot system 5 times.", icon: "power", unlocked: false, progress: 0, target: 5 }
     },
 
     // State Tracking
     openedWindows: new Set(),
     commandCount: 0,
+    hackCount: 0,
+    uploadCount: 0,
+    snakeDeaths: 0,
+    snakeTime: 0,
+    clearCount: 0,
+    invalidCount: 0,
+    lastCmd: "",
+    spamCount: 0,
+    uptime: 0,
+    fileCount: 0,
+    delCount: 0,
+    cdCount: 0,
+    idCheck: 0,
+    skillCheck: 0,
+    projCheck: 0,
+    marketCheck: 0,
+    tracksPlayed: new Set(),
+    bootCount: 0,
+    recursionCount: 0,
 
     init: function () {
         const saved = localStorage.getItem('achievements');
@@ -995,6 +1093,11 @@ const AchievementSystem = {
             setTimeout(() => this.unlock('hello_world'), 2000);
         }
         this.render();
+
+        // Start Uptime Tracker (Every 1 minute)
+        setInterval(() => {
+            this.check('uptime_tick');
+        }, 60000);
     },
 
     save: function () {
@@ -1038,6 +1141,180 @@ const AchievementSystem = {
             this.commandCount++;
             this.achievements['terminal_junkie'].progress = this.commandCount;
             if (this.commandCount >= 20) this.unlock('terminal_junkie');
+
+            // Terminal Tiers
+            ['novice_term', 'user_term', 'power_user', 'sys_admin_term', 'operator'].forEach(id => {
+                const ach = this.achievements[id];
+                if (ach) {
+                    ach.progress = this.commandCount;
+                    if (this.commandCount >= ach.target) this.unlock(id);
+                }
+            });
+            this.save();
+        }
+        else if (event === 'hack_complete') {
+            this.hackCount++;
+            ['master_hacker', 'white_hat', 'gray_hat', 'black_hat', 'elite_hacker', 'cyber_deity'].forEach(id => {
+                const ach = this.achievements[id];
+                if (ach) {
+                    ach.progress = this.hackCount;
+                    if (this.hackCount >= ach.target) this.unlock(id);
+                }
+            });
+            this.save();
+        }
+        else if (event === 'upload_complete') {
+            this.uploadCount++;
+            const ach = this.achievements['payload_deliverer'];
+            ach.progress = this.uploadCount;
+            if (this.uploadCount >= ach.target) this.unlock('payload_deliverer');
+            this.save();
+        }
+        else if (event === 'trace_check') {
+            const trace = arguments[1];
+            if (trace > 90) this.unlock('trace_buster');
+        }
+        else if (event === 'credits_earned') {
+            const credits = Wallet.credits;
+            if (credits >= 100) this.unlock('rich'); // Legacy
+            ['freelancer', 'professional', 'tycoon', 'whale'].forEach(id => {
+                const ach = this.achievements[id];
+                if (credits >= 500 && id === 'freelancer') this.unlock(id);
+                if (credits >= 1000 && id === 'professional') this.unlock(id);
+                if (credits >= 5000 && id === 'tycoon') this.unlock(id);
+                if (credits >= 10000 && id === 'whale') this.unlock(id);
+            });
+        }
+        else if (event === 'item_bought') {
+            this.unlock('big_spender');
+            const allOwned = Object.values(BlackMarket.upgrades).every(u => u.owned);
+            if (allOwned) this.unlock('fully_kitted');
+        }
+        else if (event === 'snake_score') {
+            const score = arguments[1];
+            if (score >= 10) this.unlock('snake_score_10');
+            if (score >= 50) this.unlock('snake_score_50');
+            if (score >= 100) this.unlock('cobra');
+            if (score >= 200) this.unlock('viper');
+            if (score >= 500) this.unlock('hydra');
+        }
+        else if (event === 'snake_death') {
+            this.snakeDeaths++;
+            const ach = this.achievements['game_over'];
+            ach.progress = this.snakeDeaths;
+            if (this.snakeDeaths >= ach.target) this.unlock('game_over');
+            this.save();
+        }
+        else if (event === 'snake_time') {
+            this.snakeTime++; // Called every second
+            const ach = this.achievements['survivor'];
+            ach.progress = this.snakeTime;
+            if (this.snakeTime >= ach.target) this.unlock('survivor');
+            this.save();
+        }
+        else if (event === 'clear_term') {
+            this.clearCount++;
+            const ach = this.achievements['paranoid'];
+            ach.progress = this.clearCount;
+            if (this.clearCount >= ach.target) this.unlock('paranoid');
+            this.save();
+        }
+        else if (event === 'invalid_cmd') {
+            this.invalidCount++;
+            const ach = this.achievements['lost'];
+            ach.progress = this.invalidCount;
+            if (this.invalidCount >= ach.target) this.unlock('lost');
+            this.save();
+        }
+        else if (event === 'spam_check') {
+            const cmd = arguments[1];
+            if (cmd === this.lastCmd) {
+                this.spamCount++;
+                if (this.spamCount >= 5) this.unlock('spammer');
+            } else {
+                this.spamCount = 0;
+            }
+            this.lastCmd = cmd;
+        }
+        else if (event === 'uptime_tick') {
+            this.uptime++; // Minutes
+            if (this.uptime >= 1) this.unlock('uptime_1m');
+            if (this.uptime >= 5) this.unlock('uptime_5m');
+            if (this.uptime >= 10) this.unlock('uptime_10m');
+            if (this.uptime >= 30) this.unlock('uptime_30m');
+            if (this.uptime >= 60) this.unlock('uptime_1h');
+            this.save();
+        }
+        else if (event === 'file_created') {
+            this.fileCount++;
+            const ach = this.achievements['file_hoarder'];
+            ach.progress = this.fileCount;
+            if (this.fileCount >= ach.target) this.unlock('file_hoarder');
+            this.save();
+        }
+        else if (event === 'file_deleted') {
+            this.delCount++;
+            const ach = this.achievements['deleter'];
+            ach.progress = this.delCount;
+            if (this.delCount >= ach.target) this.unlock('deleter');
+            this.save();
+        }
+        else if (event === 'dir_change') {
+            this.cdCount++;
+            const ach = this.achievements['navigator'];
+            ach.progress = this.cdCount;
+            if (this.cdCount >= ach.target) this.unlock('navigator');
+
+            const path = arguments[1];
+            if (path === '.') {
+                this.recursionCount++;
+                const achRec = this.achievements['recursion'];
+                achRec.progress = this.recursionCount;
+                if (this.recursionCount >= achRec.target) this.unlock('recursion');
+            }
+            this.save();
+        }
+        else if (event === 'check_id') {
+            this.idCheck++;
+            const ach = this.achievements['identity_theft'];
+            ach.progress = this.idCheck;
+            if (this.idCheck >= ach.target) this.unlock('identity_theft');
+            this.save();
+        }
+        else if (event === 'check_skills') {
+            this.skillCheck++;
+            const ach = this.achievements['narcissist'];
+            ach.progress = this.skillCheck;
+            if (this.skillCheck >= ach.target) this.unlock('narcissist');
+            this.save();
+        }
+        else if (event === 'check_projects') {
+            this.projCheck++;
+            const ach = this.achievements['developer'];
+            ach.progress = this.projCheck;
+            if (this.projCheck >= ach.target) this.unlock('developer');
+            this.save();
+        }
+        else if (event === 'check_market') {
+            this.marketCheck++;
+            const ach = this.achievements['window_shopper'];
+            ach.progress = this.marketCheck;
+            if (this.marketCheck >= ach.target) this.unlock('window_shopper');
+            this.save();
+        }
+        else if (event === 'track_played') {
+            const trackId = arguments[1];
+            this.tracksPlayed.add(trackId);
+            const ach = this.achievements['audiophile'];
+            ach.progress = this.tracksPlayed.size;
+            if (this.tracksPlayed.size >= ach.target) this.unlock('audiophile');
+            this.save();
+        }
+        else if (event === 'boot') {
+            this.bootCount++;
+            const ach = this.achievements['hello_again'];
+            ach.progress = this.bootCount;
+            if (this.bootCount >= ach.target) this.unlock('hello_again');
             this.save();
         }
     },
@@ -1133,23 +1410,13 @@ function gameLoop() {
     if (head.x === food.x && head.y === food.y) {
         score += 10;
         document.getElementById('snake-score').innerText = score;
+        AchievementSystem.check('snake_score', score);
         if (score >= 10) AchievementSystem.check('snake_score_10');
         if (score >= 50) AchievementSystem.check('snake_score_50');
         spawnFood(); // New food
     } else {
         snake.pop();
     }
-
-    // Collision
-    if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize || snake.slice(1).some(p => p.x === head.x && p.y === head.y)) {
-        gameOver();
-        return;
-    }
-
-    // Draw
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--theme-color');
     snake.forEach(part => ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2));
 
