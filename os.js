@@ -2649,51 +2649,56 @@ function toggleMute() {
 
 // Listen for mission success message from iframe
 // Listen for mission success message from iframe
+// Listen for mission success message from iframe
 window.addEventListener('message', (e) => {
     console.log("Received message:", e.data);
 
     if (typeof e.data === 'string' && e.data.startsWith('mission_success_')) {
         const missionId = e.data.replace('mission_success_', '');
-        const mission = MISSIONS[missionId];
 
-        if (mission) {
-            // Unlock payload
-            const dir = FileSystem.structure.root.children;
-            if (!dir[mission.reward]) {
-                dir[mission.reward] = {
-                    type: "file",
-                    content: `MISSION COMPLETE: ${mission.title}\n\nREWARD DATA: [${mission.reward.toUpperCase()}]\n\nACCESS GRANTED.`
-                };
+        // Check if this is the active mission
+        if (MissionEngine.active && MissionEngine.currentOp === missionId) {
+            const result = MissionEngine.stop(true);
+            printTerm(result);
+        } else {
+            // Fallback for standalone completion or if MissionEngine state is lost
+            const mission = MISSIONS[missionId];
+            if (mission) {
+                EnhancedWallet.addCurrency('credits', mission.score || 50);
+                EnhancedWallet.addCurrency('reputation', 5);
+                AchievementSystem.check('hack_complete');
+                AchievementSystem.check('credits_earned');
+                if (Wallet.credits >= 100) AchievementSystem.check('rich');
 
-                // Special content for Omega (Encrypted)
-                if (mission.id === 'omega') {
-                    dir[mission.reward].content = "ENCRYPTED DATA\n\n[LOCKED]\n\nHint: The Creator's Location (Check Identity)";
+                // Unlock payload
+                const dir = FileSystem.structure.root.children;
+                if (!dir[mission.reward]) {
+                    dir[mission.reward] = {
+                        type: "file",
+                        content: `MISSION COMPLETE: ${mission.title}\n\nREWARD DATA: [${mission.reward.toUpperCase()}]\n\nACCESS GRANTED.`
+                    };
+                    if (mission.id === 'omega') {
+                        dir[mission.reward].content = "ENCRYPTED DATA\n\n[LOCKED]\n\nHint: The Creator's Location (Check Identity)";
+                    }
+                    if (typeof refreshExplorer === 'function') refreshExplorer();
                 }
 
-                refreshExplorer();
+                const term = document.getElementById('term-output');
+                if (term) {
+                    printTerm(`> [SYSTEM] MISSION COMPLETE. ${mission.score || 50} CREDITS TRANSFERRED.`);
+                    printTerm(`> [SYSTEM] ${mission.reward.toUpperCase()} DOWNLOADED.`);
+                }
+
+                // Visuals
+                let themeClass = mission.theme ? `theme-${mission.theme}` : 'theme-green';
+                document.body.className = themeClass;
+                setTimeout(() => document.body.className = 'theme-green', 3000);
+
+                setTimeout(() => {
+                    openWindow('win-explorer');
+                    openFile(mission.reward);
+                }, 1000);
             }
-
-            const term = document.getElementById('term-output');
-            if (term) {
-                term.innerHTML += `<div>> [SYSTEM] ${mission.reward.toUpperCase()} DOWNLOADED.</div>`;
-                term.scrollTop = term.scrollHeight;
-            }
-
-            // Visual Feedback (Always Run)
-            // Dynamic Theme Application
-            let themeClass = 'theme-green';
-            if (mission.theme) {
-                themeClass = `theme-${mission.theme}`;
-            }
-
-            document.body.className = themeClass;
-            setTimeout(() => document.body.className = 'theme-green', 3000);
-
-            // Always open file
-            setTimeout(() => {
-                openWindow('win-explorer');
-                openFile(mission.reward);
-            }, 1000);
         }
     }
 });
