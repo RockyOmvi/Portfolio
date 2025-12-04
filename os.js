@@ -941,6 +941,20 @@ function handleCmd(cmd) {
         termOutput.innerHTML = '';
         AchievementSystem.check('clear_term');
     }
+    else if (c === 'matrix') {
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas.style.display === 'none' || !canvas.style.display) {
+            canvas.style.display = 'block';
+            printTerm("Matrix effect ENABLED.");
+        } else {
+            canvas.style.display = 'none';
+            printTerm("Matrix effect DISABLED.");
+        }
+    }
+    else if (c === 'sudo') {
+        printTerm("root access granted.");
+        AchievementSystem.unlock('root_access');
+    }
     else if (c === 'reboot') location.reload();
     else if (c === 'snake') openWindow('win-snake');
     else if (c === 'ls') printTerm(FileSystem.ls());
