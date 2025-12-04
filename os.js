@@ -228,17 +228,17 @@ function printTerm(text) {
 /* --- FILE SYSTEM --- */
 // MISSION REGISTRY
 const MISSIONS = {
-    "alpha": { id: "alpha", ip: "192.168.0.99", domain: "secure.alpha", score: 0, reward: "payload.txt", theme: "blue", title: "SECURE SERVER (ALPHA)", type: "standard" },
-    "gamma": { id: "gamma", ip: "192.168.0.55", domain: "gamma.net", score: 10, reward: "gamma_intel.txt", theme: "purple", title: "GAMMA NETWORKS", type: "standard" },
-    "delta": { id: "delta", ip: "192.168.0.101", domain: "delta.sys", score: 20, reward: "delta_plans.pdf", theme: "yellow", title: "DELTA SYSTEMS", type: "standard" },
-    "epsilon": { id: "epsilon", ip: "192.168.0.44", domain: "epsilon.io", score: 30, reward: "epsilon_key.key", theme: "orange", title: "EPSILON IO", type: "standard" },
-    "zeta": { id: "zeta", ip: "192.168.0.77", domain: "zeta.org", score: 40, reward: "zeta_coords.csv", theme: "cyan", title: "ZETA ORG", type: "standard" },
-    "omega": { id: "omega", ip: "192.168.0.200", domain: "target.corp", score: 50, reward: "encrypted_payload.dat", theme: "red", title: "SECURE SERVER (OMEGA)", type: "standard" },
-    "eta": { id: "eta", ip: "192.168.0.88", domain: "eta.edu", score: 60, reward: "eta_virus.exe", theme: "pink", title: "ETA RESEARCH", type: "standard" },
-    "theta": { id: "theta", ip: "192.168.0.33", domain: "theta.gov", score: 70, reward: "theta_logs.log", theme: "brown", title: "THETA GOV", type: "standard" },
-    "iota": { id: "iota", ip: "192.168.0.11", domain: "iota.mil", score: 80, reward: "iota_blueprint.cad", theme: "gray", title: "IOTA MILITARY", type: "standard" },
-    "kappa": { id: "kappa", ip: "192.168.0.66", domain: "kappa.xyz", score: 90, reward: "kappa_source.js", theme: "white", title: "KAPPA LABS", type: "standard" },
-    "deep_web": { id: "deep_web", ip: "10.0.0.66", domain: "portal.dark.net", score: 0, reward: "PROJECT_GENESIS.zip", theme: "red", title: "OPERATION DEEP WEB", type: "timed", duration: 300 }
+    "alpha": { id: "alpha", ip: "192.168.0.99", domain: "secure.alpha", score: 0, reward: "payload.txt", theme: "blue", title: "SECURE SERVER (ALPHA)", type: "standard", uploadCode: "ALPHA_KEY" },
+    "gamma": { id: "gamma", ip: "192.168.0.55", domain: "gamma.net", score: 10, reward: "gamma_intel.txt", theme: "purple", title: "GAMMA NETWORKS", type: "standard", uploadCode: "GAMMA_KEY" },
+    "delta": { id: "delta", ip: "192.168.0.101", domain: "delta.sys", score: 20, reward: "delta_plans.pdf", theme: "yellow", title: "DELTA SYSTEMS", type: "standard", uploadCode: "DELTA_KEY" },
+    "epsilon": { id: "epsilon", ip: "192.168.0.44", domain: "epsilon.io", score: 30, reward: "epsilon_key.key", theme: "orange", title: "EPSILON IO", type: "standard", uploadCode: "EPSILON_KEY" },
+    "zeta": { id: "zeta", ip: "192.168.0.77", domain: "zeta.org", score: 40, reward: "zeta_coords.csv", theme: "cyan", title: "ZETA ORG", type: "standard", uploadCode: "ZETA_KEY" },
+    "omega": { id: "omega", ip: "192.168.0.200", domain: "target.corp", score: 50, reward: "encrypted_payload.dat", theme: "red", title: "SECURE SERVER (OMEGA)", type: "standard", uploadCode: "OMEGA_KEY" },
+    "eta": { id: "eta", ip: "192.168.0.88", domain: "eta.edu", score: 60, reward: "eta_virus.exe", theme: "pink", title: "ETA RESEARCH", type: "standard", uploadCode: "ETA_KEY" },
+    "theta": { id: "theta", ip: "192.168.0.33", domain: "theta.gov", score: 70, reward: "theta_logs.log", theme: "brown", title: "THETA GOV", type: "standard", uploadCode: "THETA_KEY" },
+    "iota": { id: "iota", ip: "192.168.0.11", domain: "iota.mil", score: 80, reward: "iota_blueprint.cad", theme: "gray", title: "IOTA MILITARY", type: "standard", uploadCode: "IOTA_KEY" },
+    "kappa": { id: "kappa", ip: "192.168.0.66", domain: "kappa.xyz", score: 90, reward: "kappa_source.js", theme: "white", title: "KAPPA LABS", type: "standard", uploadCode: "KAPPA_KEY" },
+    "deep_web": { id: "deep_web", ip: "10.0.0.66", domain: "portal.dark.net", score: 0, reward: "PROJECT_GENESIS.zip", theme: "red", title: "OPERATION DEEP WEB", type: "timed", duration: 300, uploadCode: "GENESIS" }
 };
 
 // PROCEDURAL MISSION GENERATOR
@@ -294,7 +294,8 @@ const MissionGenerator = {
             title: title,
             type: type,
             reward: `loot_${id}.zip`,
-            theme: ['red', 'blue', 'green', 'purple', 'yellow', 'orange', 'cyan', 'pink', 'white'][Math.floor(Math.random() * 9)]
+            theme: ['red', 'blue', 'green', 'purple', 'yellow', 'orange', 'cyan', 'pink', 'white'][Math.floor(Math.random() * 9)],
+            uploadCode: `UP_${Math.floor(Math.random() * 0xFFFFFF).toString(16).toUpperCase().padStart(6, '0')}`
         };
 
         // Type-Specific Data
@@ -626,8 +627,13 @@ function handleCmd(cmd) {
                 }
             }, 200);
         }
-        else if (arg === 'GENESIS' && MissionEngine.active && MissionEngine.currentOp === 'deep_web') {
-            printTerm("Uploading PROJECT GENESIS...");
+        else if (MissionEngine.active && MISSIONS[MissionEngine.currentOp] && arg === MISSIONS[MissionEngine.currentOp].uploadCode) {
+            if (MissionEngine.currentOp === 'deep_web') {
+                printTerm("Uploading PROJECT GENESIS...");
+            } else {
+                printTerm("Uploading Mission Loot...");
+            }
+
             let p = 0;
             const interval = setInterval(() => {
                 p += 5; // Slower upload
@@ -638,42 +644,30 @@ function handleCmd(cmd) {
                 if (p >= 100) {
                     clearInterval(interval);
                     printTerm(MissionEngine.stop(true));
-                    setTimeout(triggerBSOD, 3000);
+
+                    if (MissionEngine.currentOp === 'deep_web') {
+                        setTimeout(triggerBSOD, 3000);
+                    } else {
+                        printTerm("MISSION COMPLETE. REWARD TRANSFERRED.");
+                        // Unlock Reward
+                        const m = MISSIONS[MissionEngine.currentOp];
+                        const dir = FileSystem.structure.root.children;
+                        if (!dir[m.reward]) {
+                            dir[m.reward] = {
+                                type: "file",
+                                content: `MISSION COMPLETE: ${m.title}\n\nLOOT SECURED.\n\n[DATA ENCRYPTED]`
+                            };
+                            refreshExplorer();
+                        }
+
+                        // Theme Change
+                        if (m.theme) {
+                            document.body.className = `theme-${m.theme}`;
+                            setTimeout(() => document.body.className = 'theme-green', 3000);
+                        }
+                    }
                 }
             }, 500);
-        }
-        else if (arg === 'LOOT' && MissionEngine.active && MISSIONS[MissionEngine.currentOp]) {
-            printTerm("Uploading Mission Loot...");
-            let p = 0;
-            const interval = setInterval(() => {
-                p += 10;
-                printTerm(`Progress: ${p}%`);
-                MissionEngine.traceLevel += 1;
-                MissionEngine.renderHUD();
-
-                if (p >= 100) {
-                    clearInterval(interval);
-                    printTerm(MissionEngine.stop(true));
-                    printTerm("MISSION COMPLETE. REWARD TRANSFERRED.");
-
-                    // Unlock Reward
-                    const m = MISSIONS[MissionEngine.currentOp];
-                    const dir = FileSystem.structure.root.children;
-                    if (!dir[m.reward]) {
-                        dir[m.reward] = {
-                            type: "file",
-                            content: `MISSION COMPLETE: ${m.title}\n\nLOOT SECURED.\n\n[DATA ENCRYPTED]`
-                        };
-                        refreshExplorer();
-                    }
-
-                    // Theme Change
-                    if (m.theme) {
-                        document.body.className = `theme-${m.theme}`;
-                        setTimeout(() => document.body.className = 'theme-green', 3000);
-                    }
-                }
-            }, 200);
         }
         else {
             printTerm("Error: Invalid Upload Code.");
@@ -1201,7 +1195,7 @@ function browserGo() {
                             // SQL Injection Check
                             if (u.includes("' OR '1'='1") || p.includes("' OR '1'='1")) {
                                 const rewardName = '${mission ? mission.reward : "PROJECT_GENESIS.zip"}';
-                                const uploadCmd = '${mission && mission.id !== "deep_web" ? "LOOT" : "GENESIS"}';
+                                const uploadCmd = '${mission ? mission.uploadCode : "GENESIS"}';
                                 
                                 document.body.innerHTML = \`
                                     <body style="background:black; color:#00FF41; font-family:monospace; padding:20px;">
