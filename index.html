@@ -112,6 +112,10 @@
                 <i data-lucide="mail"></i>
                 <span>Contact</span>
             </div>
+            <div class="desktop-icon" onclick="openWindow('win-guide')">
+                <i data-lucide="book-open"></i>
+                <span>Guide</span>
+            </div>
         </div>
 
         <!-- System Monitor Widget -->
@@ -646,6 +650,21 @@
             <div class="resize-handle"></div>
         </div>
 
+        <!-- User Guide Window -->
+        <div id="win-guide" class="window" style="top: 5%; left: 15%; width: 900px; height: 800px;">
+            <div class="window-header">
+                <span>OPERATOR_MANUAL.PDF</span>
+                <div class="window-controls flex items-center">
+                    <button class="win-btn" onclick="minimizeWindow('win-guide')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-guide')"></button>
+                </div>
+            </div>
+            <div class="window-content p-0 overflow-hidden bg-white">
+                <iframe src="./UserGuide.html" class="w-full h-full border-none"></iframe>
+            </div>
+            <div class="resize-handle"></div>
+        </div>
+
         <!-- Achievement Notification -->
         <div id="ach-notification"
             class="fixed bottom-20 right-[-300px] w-64 bg-black border border-theme-color p-4 transition-all duration-500 z-[9999] flex items-center gap-4 shadow-[0_0_20px_rgba(0,255,65,0.3)]">
@@ -716,6 +735,9 @@
         </div>
 
 
+        <div class="start-item" onclick="openWindow('win-guide'); toggleStartMenu()">
+            <i data-lucide="book-open"></i> User Guide
+        </div>
         <div class="start-divider"></div>
         <div class="start-item" onclick="location.reload()">
             <i data-lucide="refresh-cw"></i> Restart System

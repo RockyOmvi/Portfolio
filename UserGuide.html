@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PK_OS v4.0 - CLASSIFIED OPERATOR MANUAL</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #ccc;
+            background-color: #1a1a1a;
+        }
+
+        .container {
+            background: #222;
+            padding: 40px;
+            border: 1px solid #00FF41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #00FF41;
+            border-bottom: 1px solid #00FF41;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #00FF41;
+        }
+
+        h2 {
+            margin-top: 40px;
+        }
+
+        code {
+            background: #000;
+            color: #00FF41;
+            padding: 2px 5px;
+            border: 1px solid #333;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #000;
+            color: #00FF41;
+            padding: 15px;
+            overflow-x: auto;
+            border: 1px solid #333;
+        }
+
+        .mission-box {
+            background: #000;
+            border-left: 4px solid #00FF41;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .mission-title {
+            font-weight: bold;
+            color: #fff;
+            font-size: 1.1em;
+        }
+
+        .mission-type {
+            display: inline-block;
+            background: #00FF41;
+            color: #000;
+            padding: 2px 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .solution {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #ff3333;
+            border: 1px solid #ff3333;
+            padding: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .container {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+            }
+
+            h1,
+            h2,
+            h3 {
+                color: black;
+                border-color: black;
+                text-shadow: none;
+            }
+
+            .mission-box {
+                border-color: black;
+                background: #eee;
+            }
+
+            .mission-type {
+                background: black;
+                color: white;
+            }
+
+            code,
+            pre {
+                background: #eee;
+                color: black;
+                border-color: #ccc;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+    </style>
+    <script>
+        window.onload = function () {
+            window.focus();
+            document.body.addEventListener('click', function () {
+                window.focus();
+            });
+            document.body.addEventListener('touchstart', function () {
+                window.focus();
+            });
+        };
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="no-print" style="text-align: right; margin-bottom: 20px;">
+            <button onclick="window.print()"
+                style="padding: 10px 20px; background: #00FF41; color: black; border: none; cursor: pointer; font-weight: bold;">PRINT
+                MANUAL</button>
+        </div>
+
+        <h1>PK_OS v4.0<br>OPERATOR MANUAL</h1>
+        <p style="text-align: center;"><strong>CLEARANCE LEVEL: TOP SECRET</strong></p>
+
+        <div class="warning">
+            WARNING: UNAUTHORIZED ACCESS TO THIS SYSTEM IS A FEDERAL OFFENSE.<br>
+            PROCEED AT YOUR OWN RISK.
+        </div>
+
+        <h2>1. MISSION CONTROL (THE HACKING LAB)</h2>
+        <p>To access the Hacking Lab, open the <strong>TERMINAL</strong> and type <code>hack</code>. This will display a
+            list of available operations. Click on any operation to initiate it.</p>
+
+        <p><strong>General Workflow:</strong></p>
+        <ol>
+            <li>Type <code>contracts</code> in Terminal.</li>
+            <li>Select a mission from the list.</li>
+            <li>For Random Contracts, Type <code>random</code> in Terminal.</li>
+            <li>Complete the mini-game or challenge.</li>
+            <li>Receive a reward file (e.g., <code>loot.zip</code>) and Credits.</li>
+            <li>(Optional) Use <code>upload [CODE]</code> if instructed.</li>
+        </ol>
+
+        <h2>2. MISSION TYPES & SOLUTIONS</h2>
+
+        <div class="mission-box">
+            <span class="mission-title">STANDARD OPERATIONS</span> <span class="mission-type">SKILL CHECK</span>
+            <p><strong>Objective:</strong> Verify your skills by achieving a high score in the Snake game.</p>
+            <p><strong>Trigger:</strong> Select missions like "Alpha", "Gamma", "Delta".</p>
+            <p><strong>Mechanics:</strong> The system will ask for a "Biometric Verification" which is actually your
+                Snake high score.</p>
+            <p><strong>Strategy:</strong> Open <strong>SNAKE.GAME</strong> from the desktop. Play until you reach the
+                required score (e.g., 50). Return to the mission and click "Authenticate".</p>
+        </div>
+
+        <div class="mission-box">
+            <span class="mission-title">TIMED OPERATIONS (SQL INJECTION)</span> <span class="mission-type">WEB
+                HACKING</span>
+            <p><strong>Objective:</strong> Breach a corporate portal within the time limit.</p>
+            <p><strong>Trigger:</strong> Select "Operation Deep Web" or any timed mission.</p>
+            <p><strong>Mechanics:</strong> A browser window opens to a fake login portal.</p>
+            <p><strong>Solution:</strong>
+            <ul>
+                <li><strong>Username:</strong> <code>' OR '1'='1</code></li>
+                <li><strong>Password:</strong> <code>' OR '1'='1</code></li>
+            </ul>
+            </p>
+            <p><strong>Aftermath:</strong> The screen will turn black and display an "Upload Code" (e.g.,
+                <code>GENESIS</code>). Go back to the Terminal and type <code>upload GENESIS</code> to finish.
+            </p>
+        </div>
+
+        <div class="mission-box">
+            <span class="mission-title">TRIVIA OPERATIONS</span> <span class="mission-type">KNOWLEDGE</span>
+            <p><strong>Objective:</strong> Answer cybersecurity questions correctly.</p>
+            <p><strong>Trigger:</strong> Missions like "SQL Injection Training", "XSS Vulnerability", "Buffer Overflow".
+            </p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li><strong>SQL Injection:</strong> <span class="solution">' OR '1'='1</span></li>
+                <li><strong>XSS Vector:</strong> <span class="solution">&lt;script&gt;alert(1)&lt;/script&gt;</span>
+                </li>
+                <li><strong>Buffer Overflow:</strong> <span class="solution">EIP</span> (Overwrites return address)</li>
+                <li><strong>Phishing Domain:</strong> <span class="solution">g00gle.com</span> (Look for typos)</li>
+                <li><strong>Zero-Day:</strong> <span class="solution">Unpatched vulnerability</span></li>
+                <li><strong>Supply Chain:</strong> <span class="solution">Compromised library</span></li>
+                <li><strong>Reverse Engineering:</strong> <span class="solution">H4rdC0d3</span></li>
+                <li><strong>Digital Forensics:</strong> <span class="solution">10.0.0.99</span></li>
+                <li><strong>JWT Manipulation:</strong> <span class="solution">None</span> (Algorithm)</li>
+                <li><strong>IDOR:</strong> <span class="solution">Change ID in URL</span></li>
+                <li><strong>Command Injection:</strong> <span class="solution">;</span> (Separator)</li>
+            </ul>
+        </div>
+
+        <div class="mission-box">
+            <span class="mission-title">DECIPHER OPERATIONS</span> <span class="mission-type">CRYPTOGRAPHY</span>
+            <p><strong>Objective:</strong> Decrypt the ciphertext to reveal the plaintext.</p>
+            <p><strong>Trigger:</strong> Missions like "Wallet Decryption", "Hidden Image Data".</p>
+            <p><strong>Mechanics:</strong> The text is encrypted using a <strong>ROT13</strong> cipher (letters shifted
+                by 13 places).</p>
+            <p><strong>Strategy:</strong>
+            <ul>
+                <li>A &harr; N</li>
+                <li>B &harr; O</li>
+                <li>C &harr; P</li>
+                <li>...and so on.</li>
+            </ul>
+            </p>
+            <p><strong>Example:</strong> "URYYB" becomes "HELLO".</p>
+        </div>
+
+        <div class="mission-box">
+            <span class="mission-title">FREQUENCY OPERATIONS</span> <span class="mission-type">SIGNAL ANALYSIS</span>
+            <p><strong>Objective:</strong> Match the target signal frequency.</p>
+            <p><strong>Trigger:</strong> Missions like "Packet Sniffer", "Signal Interception".</p>
+            <p><strong>Mechanics:</strong> You will see a sine wave. Use the slider to adjust the frequency until your
+                wave matches the target wave (turns green).</p>
+            <p><strong>Strategy:</strong> Move the slider slowly. Watch for the color change to green, then click
+                "CAPTURE".</p>
+        </div>
+
+        <div class="mission-box">
+            <span class="mission-title">GRID OPERATIONS</span> <span class="mission-type">PATTERN MATCHING</span>
+            <p><strong>Objective:</strong> Replicate a memory pattern.</p>
+            <p><strong>Trigger:</strong> Missions like "Firewall Breach", "Logic Bomb".</p>
+            <p><strong>Mechanics:</strong> A grid of squares will flash in a specific sequence. You must click the
+                squares in the exact same order.</p>
+            <p><strong>Strategy:</strong> Watch carefully. It's a memory game like "Simon Says".</p>
+        </div>
+
+        <div class="mission-box">
+            <span class="mission-title">BRUTE FORCE OPERATIONS</span> <span class="mission-type">CRACKING</span>
+            <p><strong>Objective:</strong> Crack a 4-digit PIN code.</p>
+            <p><strong>Trigger:</strong> Missions like "Root Access", "Cold Storage".</p>
+            <p><strong>Mechanics:</strong> A keypad appears. You must guess the 4-digit code.</p>
+            <p><strong>Strategy:</strong>
+            <ul>
+                <li><strong>Green:</strong> Correct number in correct spot.</li>
+                <li><strong>Yellow:</strong> Correct number, wrong spot.</li>
+                <li><strong>Red:</strong> Wrong number.</li>
+            </ul>
+            Start with <code>1234</code>, then <code>5678</code> to eliminate numbers.
+            </p>
+        </div>
+
+        <h2>3. BLACK MARKET & UPGRADES</h2>
+        <p>Earn <strong>Credits</strong> by completing missions. Spend them in the <strong>CyberDeck Browser</strong>
+            (Black Market bookmark).</p>
+        <ul>
+            <li><strong>VPN Proxy (50 Credits):</strong> Essential for staying anonymous.</li>
+            <li><strong>Brute Force MkII (100 Credits):</strong> Speeds up cracking animations.</li>
+            <li><strong>Stealth Kit (200 Credits):</strong> Reduces trace detection chance.</li>
+        </ul>
+
+        <h2>4. HIDDEN COMMANDS (EASTER EGGS)</h2>
+        <p>Try typing these in the terminal:</p>
+        <ul>
+            <li><code>matrix</code> - Toggles the "Matrix Rain" background effect.</li>
+            <li><code>reboot</code> - Simulates a full system restart.</li>
+            <li><code>sudo</code> - Attempts to gain root access (Achievement).</li>
+            <li><code>cd .</code> - (Repeat 5 times) Unlocks "Recursion" achievement.</li>
+        </ul>
+
+        <h2>5. SYSTEM COMMANDS REFERENCE</h2>
+        <pre>
+help        - Show command list
+clear       - Clear screen
+ls          - List files
+cd [dir]    - Change directory
+cat [file]  - Read file
+whoami      - Show user
+date        - Show time
+hack        - Open Mission List
+upload      - Submit mission code
+        </pre>
+
+        <hr>
+        <p style="text-align: center; font-size: 0.8em;">PK_OS v4.0 | CLASSIFIED</p>
+    </div>
+</body>
+
+</html>
