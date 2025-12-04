@@ -90,7 +90,7 @@ window.onload = () => {
 
     initSysMonitor();
     SoundManager.loadState(); // Load mute state immediately
-    // MediaPlayer.init(); // Lazy load
+    MediaPlayer.init(); // Initialize Media Player
     AchievementSystem.init();
 };
 
@@ -1278,16 +1278,28 @@ function triggerBSOD() {
 
 /* --- MEDIA PLAYER --- */
 const MediaPlayer = {
+    audio: new Audio(),
     tracks: [
         { title: "Cyber Chase", artist: "Neon Grid", src: "assets/audio/track1.mp3" },
         { title: "Night City", artist: "Synthwave", src: "assets/audio/track2.mp3" },
-        { title: "Mainframe", artist: "Hacker", src: "assets/audio/track3.mp3" }
+        { title: "Mainframe", artist: "Hacker", src: "assets/audio/track3.mp3" },
+        { title: "System Override", artist: "Null Pointer", src: "assets/audio/track4.mp3" },
+        { title: "Binary Sunset", artist: "Retro", src: "assets/audio/track5.mp3" }
     ],
     currentTrack: 0,
     isPlaying: false,
     visualizerInterval: null,
 
     init: function () {
+        if (this.initialized) return;
+        this.initialized = true;
+
+        this.audio.volume = 0.5;
+        this.audio.addEventListener('ended', () => this.next());
+        this.audio.addEventListener('error', (e) => {
+            console.error("Audio Error:", e);
+            // Optional: Skip to next or show error
+        });
         this.renderPlaylist();
         this.updateUI();
     },
@@ -1308,25 +1320,52 @@ const MediaPlayer = {
     updateUI: function () {
         const title = document.getElementById('media-title');
         const artist = document.getElementById('media-artist');
+        const playBtn = document.getElementById('media-play-btn');
 
         if (title) title.innerText = this.tracks[this.currentTrack].title;
         if (artist) artist.innerText = this.tracks[this.currentTrack].artist;
+        if (playBtn) {
+            playBtn.innerHTML = this.isPlaying ? '<i data-lucide="pause"></i>' : '<i data-lucide="play"></i>';
+            lucide.createIcons();
+        }
 
         this.renderPlaylist();
     },
 
     playTrack: function (index) {
-        if (index !== undefined) this.currentTrack = index;
-        this.isPlaying = true;
-        this.updateUI();
-        this.startVisualizer();
-        AchievementSystem.check('music_lover');
-        AchievementSystem.check('track_played', index);
+        if (index !== undefined) {
+            this.currentTrack = index;
+            this.audio.src = this.tracks[this.currentTrack].src;
+        } else if (!this.audio.src) {
+            this.audio.src = this.tracks[this.currentTrack].src;
+        }
+
+        printTerm(`[MEDIA] Attempting to play: ${this.tracks[this.currentTrack].title}`);
+
+        this.audio.play()
+            .then(() => {
+                printTerm(`[MEDIA] Playing: ${this.tracks[this.currentTrack].title}`);
+                this.isPlaying = true;
+                this.updateUI();
+                this.startVisualizer();
+                AchievementSystem.check('music_lover');
+                AchievementSystem.check('track_played', index);
+            })
+            .catch(e => {
+                console.error("Audio play failed:", e);
+                printTerm(`[MEDIA] Error: ${e.message}`);
+                printTerm(`[MEDIA] Check if file exists: ${this.tracks[this.currentTrack].src}`);
+                this.isPlaying = false;
+                this.updateUI();
+            });
     },
 
     pauseTrack: function () {
+        this.audio.pause();
         this.isPlaying = false;
+        this.updateUI();
         this.stopVisualizer();
+        printTerm(`[MEDIA] Paused.`);
     },
 
     toggle: function () {
