@@ -1,4 +1,4 @@
-/* --- SYSTEM CORE --- */
+﻿/* --- SYSTEM CORE --- */
 const bootScreen = document.getElementById('boot-screen');
 const loginScreen = document.getElementById('login-screen');
 const desktop = document.getElementById('desktop');
@@ -84,7 +84,8 @@ window.onload = () => {
     });
 
     initSysMonitor();
-    MediaPlayer.init();
+    SoundManager.loadState(); // Load mute state immediately
+    // MediaPlayer.init(); // Lazy load
     AchievementSystem.init();
 };
 
@@ -110,6 +111,30 @@ function initCursor() {
 }
 
 /* --- WINDOW MANAGEMENT --- */
+/* --- DECRYPTION EFFECT --- */
+function scrambleText(element, finalString) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+    let iterations = 0;
+
+    const interval = setInterval(() => {
+        element.innerText = finalString
+            .split('')
+            .map((letter, index) => {
+                if (index < iterations) {
+                    return finalString[index];
+                }
+                return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join('');
+
+        if (iterations >= finalString.length) {
+            clearInterval(interval);
+        }
+
+        iterations += 1 / 2; // Slower decode
+    }, 30);
+}
+
 let zIndex = 100;
 
 function openWindow(id) {
@@ -119,6 +144,16 @@ function openWindow(id) {
     win.classList.remove('minimized');
     win.classList.add('open');
     win.style.zIndex = ++zIndex;
+
+    // Scramble Title Effect
+    const headerTitle = win.querySelector('.window-header span');
+    if (headerTitle && typeof scrambleText === 'function') {
+        const originalText = headerTitle.getAttribute('data-original-text') || headerTitle.innerText;
+        if (!headerTitle.getAttribute('data-original-text')) {
+            headerTitle.setAttribute('data-original-text', originalText);
+        }
+        scrambleText(headerTitle, originalText);
+    }
 
     // Add to taskbar if not exists
     addToTaskbar(id);
@@ -1931,10 +1966,24 @@ const SoundManager = {
     init: function () {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         this.ctx = new AudioContext();
+        this.loadState();
+    },
+
+    loadState: function () {
+        const saved = localStorage.getItem('sound_muted');
+        if (saved === 'true') {
+            this.muted = true;
+            const btn = document.getElementById('mute-btn');
+            if (btn) {
+                btn.innerText = "UNMUTE";
+                btn.style.opacity = "0.5";
+            }
+        }
     },
 
     toggleMute: function () {
         this.muted = !this.muted;
+        localStorage.setItem('sound_muted', this.muted);
         const btn = document.getElementById('mute-btn');
         if (this.muted) {
             btn.innerText = "UNMUTE";
