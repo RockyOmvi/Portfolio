@@ -269,7 +269,46 @@ const MISSIONS = {
     "theta": { id: "theta", ip: "192.168.0.33", domain: "theta.gov", score: 70, reward: "theta_logs.log", theme: "brown", title: "THETA GOV", type: "standard", uploadCode: "THETA_KEY" },
     "iota": { id: "iota", ip: "192.168.0.11", domain: "iota.mil", score: 80, reward: "iota_blueprint.cad", theme: "gray", title: "IOTA MILITARY", type: "standard", uploadCode: "IOTA_KEY" },
     "kappa": { id: "kappa", ip: "192.168.0.66", domain: "kappa.xyz", score: 90, reward: "kappa_source.js", theme: "white", title: "KAPPA LABS", type: "standard", uploadCode: "KAPPA_KEY" },
-    "deep_web": { id: "deep_web", ip: "10.0.0.66", domain: "portal.dark.net", score: 0, reward: "PROJECT_GENESIS.zip", theme: "red", title: "OPERATION DEEP WEB", type: "timed", duration: 300, uploadCode: "GENESIS" }
+    "deep_web": { id: "deep_web", ip: "10.0.0.66", domain: "portal.dark.net", score: 0, reward: "PROJECT_GENESIS.zip", theme: "red", title: "OPERATION DEEP WEB", type: "timed", duration: 300, uploadCode: "GENESIS" },
+
+    // --- NEW HACKING LAB PUZZLES (20) ---
+    "op_sqli": { id: "op_sqli", ip: "192.168.1.10", domain: "sql.test", title: "SQL INJECTION TRAINING", type: "trivia", question: "Which payload bypasses login?", options: ["admin", "' OR '1'='1", "SELECT *", "DROP TABLE"], answer: "' OR '1'='1", reward: "sqli_guide.txt", theme: "green" },
+    "op_xss": { id: "op_xss", ip: "192.168.1.11", domain: "xss.lab", title: "XSS VULNERABILITY", type: "trivia", question: "Select the valid XSS vector.", options: ["<script>alert(1)</script>", "[b]bold[/b]", "print('hello')", "echo $var"], answer: "<script>alert(1)</script>", reward: "xss_payloads.txt", theme: "yellow" },
+    "op_bof": { id: "op_bof", ip: "192.168.1.12", domain: "buffer.over", title: "BUFFER OVERFLOW", type: "trivia", question: "What overwrites the return address?", options: ["Heap Spray", "Stack Smash", "NOP Sled", "EIP"], answer: "EIP", reward: "exploit_c.c", theme: "red" },
+    "op_phish": { id: "op_phish", ip: "192.168.1.13", domain: "mail.fake", title: "SOCIAL ENGINEERING", type: "trivia", question: "Identify the phishing domain.", options: ["google.com", "g00gle.com", "mail.google.com", "accounts.google.com"], answer: "g00gle.com", reward: "email_list.csv", theme: "blue" },
+    "op_zeroday": { id: "op_zeroday", ip: "192.168.1.28", domain: "zero.day", title: "ZERO DAY EXPLOIT", type: "trivia", question: "What is a Zero-Day?", options: ["Old virus", "Unpatched vulnerability", "Free software", "Reboot command"], answer: "Unpatched vulnerability", reward: "0day_report.pdf", theme: "red" },
+    "op_supply": { id: "op_supply", ip: "192.168.1.29", domain: "npm.registry", title: "SUPPLY CHAIN ATTACK", type: "trivia", question: "Which is a supply chain risk?", options: ["Compromised library", "Weak password", "Open port", "Phishing email"], answer: "Compromised library", reward: "malicious_lib.js", theme: "orange" },
+
+    "op_crypto_crack": { id: "op_crypto_crack", ip: "192.168.1.14", domain: "wallet.dat", title: "WALLET DECRYPTION", type: "decipher", plaintext: "BITCOIN WALLET KEY", ciphertext: "OVGPUVA JNYYRG XRL", reward: "wallet_key.txt", theme: "orange" },
+    "op_stego": { id: "op_stego", ip: "192.168.1.15", domain: "image.png", title: "HIDDEN IMAGE DATA", type: "decipher", plaintext: "SECRET IN PIXELS", ciphertext: "FRPERG VA CVKRYF", reward: "hidden_msg.png", theme: "purple" },
+    "op_ransom": { id: "op_ransom", ip: "192.168.1.26", domain: "lock.bit", title: "DECRYPT FILES", type: "decipher", plaintext: "SEND BITCOIN NOW", ciphertext: "FRAQ OVGPUVA ABJ", reward: "decryptor.exe", theme: "red" },
+    "op_hash": { id: "op_hash", ip: "192.168.1.27", domain: "md5.crack", title: "HASH COLLISION", type: "decipher", plaintext: "MD5 VULNERABILITY", ciphertext: "ZQ5 IHYARENOVYVGL", reward: "rainbow_table.dat", theme: "cyan" },
+
+    "op_sniff": { id: "op_sniff", ip: "192.168.1.16", domain: "wireshark.cap", title: "PACKET SNIFFER", type: "frequency", targetFreq: 88, reward: "capture.pcap", theme: "cyan" },
+    "op_mitm": { id: "op_mitm", ip: "192.168.1.24", domain: "proxy.srv", title: "SIGNAL INTERCEPTION", type: "frequency", targetFreq: 42, reward: "intercepted_creds.txt", theme: "yellow" },
+    "op_wifi": { id: "op_wifi", ip: "192.168.1.25", domain: "wpa2.air", title: "WPA2 HANDSHAKE", type: "frequency", targetFreq: 24, reward: "wifi_pass.txt", theme: "blue" },
+
+    "op_firewall": { id: "op_firewall", ip: "192.168.1.17", domain: "iptables.conf", title: "FIREWALL BREACH", type: "grid", pattern: [0, 5, 10, 15], reward: "firewall_bypass.sh", theme: "red" },
+    "op_logic": { id: "op_logic", ip: "192.168.1.22", domain: "bomb.js", title: "LOGIC BOMB SEQUENCE", type: "grid", pattern: [0, 1, 2, 3, 7, 11, 15], reward: "logic_bomb.js", theme: "red" },
+    "op_rootkit": { id: "op_rootkit", ip: "192.168.1.23", domain: "kernel.mod", title: "KERNEL INJECTION", type: "grid", pattern: [5, 6, 9, 10], reward: "rootkit.ko", theme: "green" },
+
+    "op_ddos": { id: "op_ddos", ip: "192.168.1.18", domain: "botnet.c2", title: "BOTNET OVERLOAD", type: "standard", score: 30, reward: "botnet_list.txt", theme: "green" },
+
+    "op_ssh": { id: "op_ssh", ip: "192.168.1.19", domain: "ssh.root", title: "ROOT ACCESS", type: "bruteforce", pin: "2222", reward: "id_rsa", theme: "gray" },
+    "op_ftp": { id: "op_ftp", ip: "192.168.1.20", domain: "ftp.files", title: "FILE SERVER HACK", type: "bruteforce", pin: "2121", reward: "server_config.xml", theme: "blue" },
+    "op_wallet": { id: "op_wallet", ip: "192.168.1.21", domain: "cold.storage", title: "COLD STORAGE", type: "bruteforce", pin: "8888", reward: "private_key.pem", theme: "orange" },
+
+    // --- ADVANCED HACKING LABS (10) ---
+    "op_reverse": { id: "op_reverse", ip: "192.168.2.10", domain: "bin.crack", title: "REVERSE ENGINEERING", type: "trivia", question: "Analyze the binary. What is the hardcoded password?", options: ["P@ssw0rd", "H4rdC0d3", "Admin123", "SecretKey"], answer: "H4rdC0d3", reward: "source_code.c", theme: "green" },
+    "op_forensics": { id: "op_forensics", ip: "192.168.2.11", domain: "log.server", title: "DIGITAL FORENSICS", type: "trivia", question: "Identify the attacker's IP from the logs.", options: ["192.168.1.50", "10.0.0.99", "172.16.0.1", "127.0.0.1"], answer: "10.0.0.99", reward: "incident_report.pdf", theme: "blue" },
+    "op_jwt": { id: "op_jwt", ip: "192.168.2.12", domain: "auth.api", title: "JWT MANIPULATION", type: "trivia", question: "Which algorithm allows signature bypass?", options: ["HS256", "RS256", "None", "ES256"], answer: "None", reward: "admin_token.json", theme: "purple" },
+    "op_idor": { id: "op_idor", ip: "192.168.2.13", domain: "user.profile", title: "IDOR VULNERABILITY", type: "trivia", question: "How to access User 100's profile?", options: ["Change ID in URL", "Brute force password", "SQL Injection", "XSS"], answer: "Change ID in URL", reward: "user_database.csv", theme: "yellow" },
+    "op_cmd_inj": { id: "op_cmd_inj", ip: "192.168.2.14", domain: "ping.tool", title: "COMMAND INJECTION", type: "trivia", question: "Which character separates commands?", options: [".", ",", ";", ":"], answer: ";", reward: "shadow_file.txt", theme: "red" },
+    "op_rsa": { id: "op_rsa", ip: "192.168.2.15", domain: "rsa.key", title: "RSA FACTORING", type: "decipher", plaintext: "PRIME FACTOR", ciphertext: "CEVZR SNPGBE", reward: "private_key.key", theme: "orange" },
+    "op_xor": { id: "op_xor", ip: "192.168.2.16", domain: "xor.crypt", title: "XOR DECRYPTION", type: "decipher", plaintext: "REPEATING KEY", ciphertext: "ERCENGVAT XRL", reward: "payload.bin", theme: "cyan" },
+    "op_subnet": { id: "op_subnet", ip: "192.168.2.17", domain: "hidden.host", title: "SUBNET MAPPING", type: "grid", pattern: [0, 3, 12, 15], reward: "network_map.xml", theme: "gray" },
+    "op_fuzz": { id: "op_fuzz", ip: "192.168.2.18", domain: "crash.me", title: "SERVICE FUZZING", type: "grid", pattern: [0, 1, 4, 5, 8, 9], reward: "crash_dump.dmp", theme: "red" },
+    "op_hydra": { id: "op_hydra", ip: "192.168.2.19", domain: "login.portal", title: "MULTI-PROTOCOL CRACK", type: "bruteforce", pin: "9999", reward: "master_pass.txt", theme: "red" }
 };
 
 // PROCEDURAL MISSION GENERATOR
@@ -746,8 +785,20 @@ const FileSystem = {
                         "network.log": { type: "file", content: "DHCP: 192.168.0.105\nGATEWAY: 192.168.0.1\n\nKNOWN TARGETS:\n192.168.0.99  [ALPHA]\n192.168.0.55  [GAMMA]\n192.168.0.101 [DELTA]\n192.168.0.44  [EPSILON]\n192.168.0.77  [ZETA]\n192.168.0.200 [OMEGA]\n192.168.0.88  [ETA]\n192.168.0.33  [THETA]\n192.168.0.11  [IOTA]\n192.168.0.66  [KAPPA]" }
                     }
                 },
+                "bin": {
+                    type: "dir",
+                    children: {
+                        "hex_editor.exe": { type: "file", content: "BINARY ANALYSIS TOOL v1.0\nUsage: hex_editor <file>\nDisplays file content in Hex/ASCII format." },
+                        "log_parser.py": { type: "file", content: "LOG ANALYSIS SCRIPT\nUsage: log_parser <logfile>\nFilters logs for suspicious IPs and errors." },
+                        "jwt_tool.js": { type: "file", content: "JWT MANIPULATOR\nUsage: jwt_tool <token>\nDecodes and allows editing of JSON Web Tokens." },
+                        "nmap.exe": { type: "file", content: "NETWORK MAPPER v7.92\nUsage: nmap <subnet>\nScans for open ports and OS versions." },
+                        "fuzzer.py": { type: "file", content: "AUTOMATED FUZZER\nUsage: fuzzer <target_ip>\nSends random payloads to crash services." },
+                        "hydra.exe": { type: "file", content: "LOGIN CRACKER\nUsage: hydra <target_ip>\nSupports SSH, FTP, HTTP, Telnet." }
+                    }
+                },
                 "secret.txt": { type: "file", content: "The cake is a lie." },
-                "mission_brief.txt": { type: "file", content: "DECA-HEIST CAMPAIGN CONTRACTS:\n\n[1] ALPHA (Legacy)\nTarget: 192.168.0.99\nScore: >0\n\n[2] GAMMA\nTarget: gamma.net\nScore: >10\n\n[3] DELTA\nTarget: delta.sys\nScore: >20\n\n[4] EPSILON\nTarget: epsilon.io\nScore: >30\n\n[5] ZETA\nTarget: zeta.org\nScore: >40\n\n[6] OMEGA (Heist)\nTarget: target.corp\nScore: >50\n\n[7] ETA\nTarget: eta.edu\nScore: >60\n\n[8] THETA\nTarget: theta.gov\nScore: >70\n\n[9] IOTA\nTarget: iota.mil\nScore: >80\n\n[10] KAPPA\nTarget: kappa.xyz\nScore: >90" }
+                "mission_brief.txt": { type: "file", content: "DECA-HEIST CAMPAIGN CONTRACTS:\n\n[1] ALPHA (Legacy)\nTarget: 192.168.0.99\nScore: >0\n\n[2] GAMMA\nTarget: gamma.net\nScore: >10\n\n[3] DELTA\nTarget: delta.sys\nScore: >20\n\n[4] EPSILON\nTarget: epsilon.io\nScore: >30\n\n[5] ZETA\nTarget: zeta.org\nScore: >40\n\n[6] OMEGA (Heist)\nTarget: target.corp\nScore: >50\n\n[7] ETA\nTarget: eta.edu\nScore: >60\n\n[8] THETA\nTarget: theta.gov\nScore: >70\n\n[9] IOTA\nTarget: iota.mil\nScore: >80\n\n[10] KAPPA\nTarget: kappa.xyz\nScore: >90" },
+                "hacking_lab.txt": { type: "file", content: "HACKING LAB - TRAINING MODULES\n\n[NEW] ADVANCED LABS:\n- Reverse Engineering: connect bin.crack (Tool: hex_editor)\n- Digital Forensics: connect log.server (Tool: log_parser)\n- JWT Manipulation: connect auth.api (Tool: jwt_tool)\n- IDOR Vulnerability: connect user.profile\n- Command Injection: connect ping.tool\n- RSA Factoring: connect rsa.key\n- XOR Decryption: connect xor.crypt\n- Subnet Mapping: connect hidden.host (Tool: nmap)\n- Service Fuzzing: connect crash.me (Tool: fuzzer)\n- Multi-Protocol Crack: connect login.portal (Tool: hydra)\n\nWEB EXPLOITS:\n- SQL Injection: connect sql.test\n- XSS Attack: connect xss.lab\n- Buffer Overflow: connect buffer.over\n- Phishing: connect mail.fake\n- Zero-Day: connect zero.day\n- Supply Chain: connect npm.registry\n\nCRYPTO & STEGO:\n- Wallet Crack: connect wallet.dat\n- Steganography: connect image.png\n- Ransomware: connect lock.bit\n- Hash Collision: connect md5.crack\n\nNETWORK:\n- Packet Sniffer: connect wireshark.cap\n- MITM Attack: connect proxy.srv\n- WiFi Crack: connect wpa2.air\n- Firewall Bypass: connect iptables.conf\n\nSYSTEM:\n- Logic Bomb: connect bomb.js\n- Rootkit: connect kernel.mod\n- DDOS: connect botnet.c2\n\nBRUTE FORCE:\n- SSH Root: connect ssh.root\n- FTP Server: connect ftp.files\n- Cold Storage: connect cold.storage\n\nAVAILABLE TOOLS (in /bin):\n- hex_editor, log_parser, jwt_tool, nmap, fuzzer, hydra" }
             }
         }
     },
@@ -874,7 +925,7 @@ function handleCmd(cmd) {
         }
     }
     else if (c === 'connect') {
-        const mission = Object.values(MISSIONS).find(m => m.ip === arg);
+        const mission = Object.values(MISSIONS).find(m => m.ip === arg || m.domain === arg);
         if (mission) {
             printTerm(`Initiating secure connection to ${mission.domain.toUpperCase()}...`);
             setTimeout(() => {
@@ -921,6 +972,70 @@ function handleCmd(cmd) {
         } else {
             printTerm(`decrypt: ${file}: No such file`);
         }
+    }
+    // --- NEW HACKING TOOLS ---
+    else if (c === 'hex_editor') {
+        if (!arg) return printTerm("Usage: hex_editor <file>");
+        printTerm(`Opening ${arg} in HEX MODE...`);
+        setTimeout(() => {
+            printTerm("00000000  7F 45 4C 46 02 01 01 00  00 00 00 00 00 00 00 00  |.ELF............|");
+            printTerm("00000010  02 00 3E 00 01 00 00 00  C0 2D 40 00 00 00 00 00  |..>......-@.....|");
+            printTerm("00000020  40 00 00 00 00 00 00 00  E8 22 00 00 00 00 00 00  |@........\"......|");
+            if (arg === 'binary') printTerm("00000030  48 34 72 64 43 30 64 33  00 00 00 00 00 00 00 00  |H4rdC0d3........|"); // Flag
+        }, 500);
+    }
+    else if (c === 'log_parser') {
+        if (!arg) return printTerm("Usage: log_parser <logfile>");
+        printTerm(`Parsing ${arg} for anomalies...`);
+        setTimeout(() => {
+            printTerm("[INFO] 192.168.1.50 - User Login");
+            printTerm("[WARN] 10.0.0.99 - Failed Auth (x50)");
+            printTerm("[CRIT] 10.0.0.99 - ROOT ACCESS GRANTED");
+        }, 800);
+    }
+    else if (c === 'jwt_tool') {
+        if (!arg) return printTerm("Usage: jwt_tool <token>");
+        printTerm("Decoding Token...");
+        printTerm(`Header: {"alg": "HS256", "typ": "JWT"}`);
+        printTerm(`Payload: {"user": "guest", "role": "user"}`);
+        printTerm("Signature: [INVALID]");
+        printTerm("Tip: Try changing alg to 'None' to bypass signature.");
+    }
+    else if (c === 'nmap') {
+        if (!arg) return printTerm("Usage: nmap <subnet>");
+        printTerm(`Starting Nmap 7.92 at ${new Date().toLocaleTimeString()}`);
+        printTerm(`Scanning ${arg}...`);
+        setTimeout(() => {
+            printTerm(`Nmap scan report for ${arg}.10`);
+            printTerm("Host is up (0.0023s latency).");
+            printTerm("PORT     STATE SERVICE");
+            printTerm("22/tcp   open  ssh");
+            printTerm("80/tcp   open  http");
+            printTerm("443/tcp  open  https");
+            printTerm("3306/tcp open  mysql");
+        }, 1500);
+    }
+    else if (c === 'fuzzer') {
+        if (!arg) return printTerm("Usage: fuzzer <target_ip>");
+        printTerm(`Fuzzing ${arg} on port 80...`);
+        let i = 0;
+        const iv = setInterval(() => {
+            i++;
+            printTerm(`[${i}] Sending payload: ${Math.random().toString(36).substring(7)}... 200 OK`);
+            if (i > 5) {
+                clearInterval(iv);
+                printTerm(`[${i}] Sending payload: AAAAAAAAAAAAAAAAAAAAA... 500 INTERNAL ERROR`);
+                printTerm("CRASH DETECTED. SERVICE VULNERABLE.");
+            }
+        }, 300);
+    }
+    else if (c === 'hydra') {
+        if (!arg) return printTerm("Usage: hydra <target_ip>");
+        printTerm(`Attacking ${arg} (SSH)...`);
+        setTimeout(() => printTerm("[ATTEMPT] root:123456... FAILED"), 200);
+        setTimeout(() => printTerm("[ATTEMPT] root:password... FAILED"), 400);
+        setTimeout(() => printTerm("[ATTEMPT] root:admin... FAILED"), 600);
+        setTimeout(() => printTerm("[SUCCESS] root:9999... PASSWORD FOUND"), 1000);
     }
     else if (c === 'upload') {
         if (arg === 'OMEGA-9') {
