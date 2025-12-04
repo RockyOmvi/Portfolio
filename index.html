@@ -544,14 +544,13 @@
                             data-lucide="rotate-cw" class="w-4 h-4"></i></button>
                     <input type="text" id="browser-url"
                         class="flex-grow bg-black border border-theme-dim text-theme-color px-2 py-1 text-xs font-mono"
-                        value="https://www.google.com">
+                        value="search.onion">
                     <button class="text-theme-color hover:text-white" onclick="browserGo()"><i
                             data-lucide="arrow-right-circle" class="w-4 h-4"></i></button>
                 </div>
                 <!-- Browser Content (Iframe) -->
                 <div class="flex-grow relative bg-white">
-                    <iframe id="browser-frame" src="https://www.google.com/webhp?igu=1"
-                        class="w-full h-full border-none"></iframe>
+                    <iframe id="browser-frame" src="darkweb/search.html" class="w-full h-full border-none"></iframe>
                     <div id="browser-error"
                         class="absolute inset-0 bg-black text-theme-color flex flex-col items-center justify-center hidden">
                         <i data-lucide="wifi-off" class="w-12 h-12 mb-4"></i>

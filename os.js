@@ -2149,6 +2149,10 @@ function openFile(name) {
 }
 
 /* --- CYBERDECK BROWSER --- */
+let browserHistory = ['search.onion'];
+let browserHistoryIndex = 0;
+let isNavigatingHistory = false;
+
 function browserGo() {
     let url = document.getElementById('browser-url').value;
     const frame = document.getElementById('browser-frame');
@@ -2159,7 +2163,24 @@ function browserGo() {
         url = 'https://' + url;
     }
 
+    // History Management
+    if (!isNavigatingHistory) {
+        // Prevent duplicates: only add if different from current
+        if (browserHistoryIndex === -1 || browserHistory[browserHistoryIndex] !== url) {
+            // If we are not at the end of history, remove future entries
+            if (browserHistoryIndex < browserHistory.length - 1) {
+                browserHistory = browserHistory.slice(0, browserHistoryIndex + 1);
+            }
+            browserHistory.push(url);
+            browserHistoryIndex++;
+        }
+    }
+    isNavigatingHistory = false; // Reset flag
+
     // 2. DARK WEB SITES (Static Files)
+    // SEARCH ENGINE
+    if (url.includes('search.onion') || url.includes('abyss.search')) { frame.src = 'darkweb/search.html'; return; }
+
     // MARKETS (10)
     if (url.includes('darkbazaar.onion')) { frame.src = 'darkweb/darkbazaar.html'; return; }
     if (url.includes('silkroad4.onion')) { frame.src = 'darkweb/markets/silkroad4.html'; return; }
@@ -2537,11 +2558,23 @@ ID | USER | ROLE
 }
 
 function browserBack() {
-    try { document.getElementById('browser-frame').contentWindow.history.back(); } catch (e) { }
+    if (browserHistoryIndex > 0) {
+        browserHistoryIndex--;
+        isNavigatingHistory = true;
+        const url = browserHistory[browserHistoryIndex];
+        document.getElementById('browser-url').value = url;
+        browserGo();
+    }
 }
 
 function browserForward() {
-    try { document.getElementById('browser-frame').contentWindow.history.forward(); } catch (e) { }
+    if (browserHistoryIndex < browserHistory.length - 1) {
+        browserHistoryIndex++;
+        isNavigatingHistory = true;
+        const url = browserHistory[browserHistoryIndex];
+        document.getElementById('browser-url').value = url;
+        browserGo();
+    }
 }
 
 function browserReload() {
@@ -2649,6 +2682,12 @@ window.addEventListener('message', (e) => {
     // Site Visits (Track history)
     if (data.type === 'site_visit') {
         SiteTracker.visit(data.url);
+    }
+
+    // Navigation Request
+    if (data.type === 'navigate') {
+        document.getElementById('browser-url').value = data.url;
+        browserGo();
     }
 
     // Get HEX balance requests

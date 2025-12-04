@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abyss Search</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #ccc;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            color: #00ff41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px 15px;
+            font-family: inherit;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00ff41;
+        }
+
+        button {
+            background-color: #003300;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: #00ff41;
+            color: #000;
+        }
+
+        .results {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .result-item {
+            background-color: #111;
+            padding: 15px;
+            border-left: 3px solid #333;
+            transition: border-color 0.2s;
+        }
+
+        .result-item:hover {
+            border-left-color: #00ff41;
+        }
+
+        .result-title {
+            font-size: 18px;
+            color: #4da6ff;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .result-title:hover {
+            text-decoration: underline;
+        }
+
+        .result-url {
+            color: #009900;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .result-desc {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .categories {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .cat-link {
+            color: #666;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .cat-link:hover,
+        .cat-link.active {
+            color: #00ff41;
+        }
+
+        .stats {
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 10px;
+            width: 100%;
+            max-width: 600px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="logo">ABYSS SEARCH</div>
+
+    <div class="categories">
+        <span class="cat-link active" onclick="filterCat('all')">ALL</span>
+        <span class="cat-link" onclick="filterCat('market')">MARKETS</span>
+        <span class="cat-link" onclick="filterCat('crypto')">CRYPTO</span>
+        <span class="cat-link" onclick="filterCat('forum')">FORUMS</span>
+        <span class="cat-link" onclick="filterCat('intel')">INTEL</span>
+        <span class="cat-link" onclick="filterCat('services')">SERVICES</span>
+        <span class="cat-link" onclick="filterCat('tools')">TOOLS</span>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search the deep web..." onkeypress="handleEnter(event)">
+        <button onclick="performSearch()">SEARCH</button>
+    </div>
+
+    <div class="stats" id="searchStats">Indexed Nodes: 46</div>
+
+    <div class="results" id="resultsContainer">
+        <!-- Results injected here -->
+    </div>
+
+    <script>
+        const database = [
+            // MARKETS
+            { url: "darkbazaar.onion", title: "Dark Bazaar", desc: "The largest anonymous marketplace for digital goods. Escrow supported.", cat: "market" },
+            { url: "silkroad4.onion", title: "Silk Road 4.0", desc: "Legacy marketplace reborn. Drugs, data, and digital services.", cat: "market" },
+            { url: "armory.onion", title: "The Armory", desc: "High-grade military surplus and defensive equipment.", cat: "market" },
+            { url: "docsmarket.onion", title: "Docs Market", desc: "Passports, IDs, and sensitive documentation.", cat: "market" },
+            { url: "creditshop.onion", title: "Credit Shop", desc: "Verified CC dumps and financial data.", cat: "market" },
+            { url: "pharmanet.onion", title: "PharmaNet", desc: "Prescription-free pharmaceuticals worldwide shipping.", cat: "market" },
+            { url: "blackhat.market", title: "BlackHat Market", desc: "Premium exploits and zero-day vulnerabilities.", cat: "market" },
+            { url: "idforge.onion", title: "ID Forge", desc: "Custom identity creation services.", cat: "market" },
+            { url: "contraband.hub", title: "Contraband Hub", desc: "Restricted items and illicit goods.", cat: "market" },
+            { url: "deepauction.onion", title: "Deep Auction", desc: "Live auctions for rare and unique items.", cat: "market" },
+
+            // CRYPTO
+            { url: "cryptominer.pool", title: "CryptoMiner Pool", desc: "Join the largest mining pool. High hashrate rewards.", cat: "crypto" },
+            { url: "hexexchange.com", title: "HexExchange", desc: "Anonymous HEX to Credit exchange. Low fees.", cat: "crypto" },
+            { url: "coinmixer.onion", title: "Coin Mixer", desc: "Clean your crypto. Untraceable transactions.", cat: "crypto" },
+            { url: "walletgen.io", title: "Wallet Gen", desc: "Secure paper wallet generator.", cat: "crypto" },
+            { url: "hashpower.rent", title: "HashPower Rent", desc: "Rent mining rigs for 51% attacks.", cat: "crypto" },
+            { url: "cryptobank.dark", title: "Crypto Bank", desc: "Offshore crypto banking and storage.", cat: "crypto" },
+            { url: "nft.underground", title: "NFT Underground", desc: "Banned and censored NFT marketplace.", cat: "crypto" },
+            { url: "defi.shadow", title: "DeFi Shadow", desc: "Decentralized finance without regulations.", cat: "crypto" },
+
+            // FORUMS
+            { url: "hackforums.net", title: "Hack Forums", desc: "Community of hackers and security researchers.", cat: "forum" },
+            { url: "exploit.zone", title: "Exploit Zone", desc: "Discuss and share the latest exploits.", cat: "forum" },
+            { url: "blackhat.forum", title: "BlackHat Forum", desc: "Elite hacking discussions. Invite only.", cat: "forum" },
+            { url: "carding.world", title: "Carding World", desc: "Everything about carding and financial fraud.", cat: "forum" },
+            { url: "defcon.onion", title: "DEFCON Underground", desc: "Uncensored security conference discussions.", cat: "forum" },
+            { url: "zeroday.market", title: "ZeroDay Market", desc: "Buy and sell 0-day exploits.", cat: "forum" },
+            { url: "pwn.collective", title: "Pwn Collective", desc: "Hacktivist group coordination board.", cat: "forum" },
+            { url: "anon.chat", title: "Anon Chat", desc: "Encrypted anonymous chat rooms.", cat: "forum" },
+
+            // INTEL
+            { url: "wikileaks.onion", title: "WikiLeaks Mirror", desc: "Censorship-resistant document publishing.", cat: "intel" },
+            { url: "corp.leaks", title: "Corp Leaks", desc: "Internal documents from major corporations.", cat: "intel" },
+            { url: "gov.files", title: "Gov Files", desc: "Classified government records.", cat: "intel" },
+            { url: "insider.intel", title: "Insider Intel", desc: "Whistleblower drops and insider trading info.", cat: "intel" },
+            { url: "breach.database", title: "Breach Database", desc: "Searchable database of leaked credentials.", cat: "intel" },
+            { url: "doxbin.onion", title: "DoxBin", desc: "Personal information archive.", cat: "intel" },
+
+            // SERVICES
+            { url: "hitman.onion", title: "Cleaner Services", desc: "Problem solving services. High discretion.", cat: "services" },
+            { url: "ddos.rental", title: "DDoS Rental", desc: "Stress test your network. Booter services.", cat: "services" },
+            { url: "hacker.hire", title: "Hire a Hacker", desc: "Professional penetration testing services.", cat: "services" },
+            { url: "fake.news", title: "Disinformation Service", desc: "Social engineering and media manipulation.", cat: "services" },
+            { url: "bot.army", title: "Bot Army", desc: "Rent botnets for various tasks.", cat: "services" },
+            { url: "vpn.ultra", title: "Ultra VPN", desc: "No-logs VPN service for dark web access.", cat: "services" },
+
+            // TOOLS
+            { url: "toolkit.onion", title: "Hacker's Toolkit", desc: "Essential software for penetration testing.", cat: "tools" },
+            { url: "malware.lab", title: "Malware Lab", desc: "Analyze and create malicious software.", cat: "tools" },
+            { url: "crack.station", title: "Crack Station", desc: "Password hash cracking service.", cat: "tools" },
+            { url: "keygen.master", title: "KeyGen Master", desc: "Software activation keys and cracks.", cat: "tools" },
+            { url: "rootkit.dev", title: "Rootkit Dev", desc: "Kernel level stealth tools.", cat: "tools" },
+            { url: "exploit.builder", title: "Exploit Builder", desc: "Automated exploit generation tool.", cat: "tools" },
+
+            // INFO
+            { url: "darkpedia.onion", title: "DarkPedia", desc: "The hidden encyclopedia.", cat: "info" },
+            { url: "tutorial.underground", title: "Underground Tutorials", desc: "Learn hacking, lockpicking, and more.", cat: "info" },
+            { url: "opsec.guide", title: "OpSec Guide", desc: "Operational security best practices.", cat: "info" },
+            { url: "counterfeit.wiki", title: "Counterfeit Wiki", desc: "Guide to spotting and creating fakes.", cat: "info" },
+            { url: "dark.games", title: "Dark Games", desc: "Unregulated gambling and games.", cat: "info" },
+            { url: "redroom.onion", title: "The Red Room", desc: "Live streaming events. Viewer discretion advised.", cat: "info" },
+            { url: "betting.dark", title: "Dark Betting", desc: "Anonymous sports and event betting.", cat: "info" },
+            { url: "stream.pirate", title: "Pirate Stream", desc: "Copyright-free media streaming.", cat: "info" }
+        ];
+
+        let currentCat = 'all';
+
+        function renderResults(results) {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+
+            if (results.length === 0) {
+                container.innerHTML = '<div style="color: #666; text-align: center; margin-top: 20px;">No results found.</div>';
+                return;
+            }
+
+            results.forEach(site => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `
+                    <div class="result-url">${site.url}</div>
+                    <a href="#" onclick="navigate('${site.url}'); return false;" class="result-title">${site.title}</a>
+                    <div class="result-desc">${site.desc}</div>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('searchStats').innerText = `Found ${results.length} results (${Math.random().toFixed(2)} seconds)`;
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = database.filter(site => {
+                const matchesQuery = site.title.toLowerCase().includes(query) ||
+                    site.desc.toLowerCase().includes(query) ||
+                    site.url.toLowerCase().includes(query);
+                const matchesCat = currentCat === 'all' || site.cat === currentCat || (currentCat === 'info' && !['market', 'crypto', 'forum', 'intel', 'services', 'tools'].includes(site.cat));
+
+                return matchesQuery && matchesCat;
+            });
+
+            renderResults(filtered);
+        }
+
+        function filterCat(cat) {
+            currentCat = cat;
+
+            // Update active class
+            document.querySelectorAll('.cat-link').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+
+            performSearch();
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') performSearch();
+        }
+
+        function navigate(url) {
+            // Use postMessage to tell the OS to navigate
+            try {
+                window.parent.postMessage({ type: 'navigate', url: url }, '*');
+            } catch (e) {
+                console.error("Navigation failed:", e);
+                window.location.href = url;
+            }
+        }
+
+        // Initial render
+        renderResults(database);
+
+    </script>
+</body>
+
+</html>
