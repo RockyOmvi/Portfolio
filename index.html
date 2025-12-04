@@ -51,7 +51,7 @@
             <p class="text-sm mb-4">User: GUEST</p>
             <input type="password" id="password-input" class="login-input" placeholder="Enter Password (hint: 1234)">
             <button onclick="attemptLogin()"
-                class="w-full bg-theme-color text-black font-bold py-2 hover:bg-white transition-colors">LOGIN</button>
+                class="w-full bg-black text-theme-color font-bold py-2 hover:bg-theme-color hover:text-black transition-colors">LOGIN</button>
             <p id="login-msg" class="text-xs text-red-500 mt-2 h-4"></p>
         </div>
     </div>
@@ -59,7 +59,7 @@
     <!-- 3. DESKTOP ENVIRONMENT -->
     <div id="desktop">
         <!-- Desktop Icons -->
-        <div class="absolute top-4 left-4 flex flex-col gap-4">
+        <div class="absolute top-4 left-4 flex flex-col flex-wrap gap-4 content-start h-[calc(100%-60px)]">
             <div class="desktop-icon" onclick="openWindow('win-about')">
                 <i data-lucide="user"></i>
                 <span>Identity</span>
@@ -107,6 +107,10 @@
             <div class="desktop-icon" onclick="openWindow('win-resume')">
                 <i data-lucide="file-text"></i>
                 <span>Resume</span>
+            </div>
+            <div class="desktop-icon" onclick="window.open('https://forms.gle/R5nYBjNqc8u2gABA8', '_blank')">
+                <i data-lucide="mail"></i>
+                <span>Contact</span>
             </div>
         </div>
 
@@ -706,6 +710,12 @@
         <div class="start-item" onclick="openWindow('win-resume'); toggleStartMenu()">
             <i data-lucide="file-text"></i> Resume
         </div>
+        <div class="start-item"
+            onclick="window.open('https://forms.gle/R5nYBjNqc8u2gABA8', '_blank'); toggleStartMenu()">
+            <i data-lucide="mail"></i> Contact
+        </div>
+
+
         <div class="start-divider"></div>
         <div class="start-item" onclick="location.reload()">
             <i data-lucide="refresh-cw"></i> Restart System
