@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>🌀 COIN MIXER</h1>
+    <p>Anonymous Cryptocurrency Tumbling Service</p>
+    <div style="background:#001a00; padding:20px; border:2px solid #0f0; margin:20px 0;">
+        <h3>Mix Your Coins</h3>
+        <p style="color:#888;">Fee: 2% + 0.0001 BTC | Delay: 6 hours</p>
+        <input type="number" placeholder="Amount (BTC)" id="amount"
+            style="width:100%; padding:10px; background:#000; border:1px solid #0f0; color:#0f0; margin:10px 0;">
+        <button onclick="mix()"
+            style="width:100%; padding:12px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">START
+            MIXING</button>
+        <p id="status" style="color:#ff0; margin-top:10px;"></p>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'coinmixer.onion' }, '*');
+        function mix() {
+            const amt = document.getElementById('amount').value;
+            document.getElementById('status').innerText = 'Mixing ' + amt + ' BTC through 15 wallets... ETA: 6 hours';
+            window.parent.postMessage({ type: 'terminal_command', message: '[COINMIXER] Tumbling coins for anonymity...' }, '*');
+            setTimeout(() => {
+                document.getElementById('status').innerText = '✅ Complete! Coins sent to destination wallet.';
+                window.parent.postMessage({ type: 'unlock_achievement', achievement: 'crypto_trader' }, '*');
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

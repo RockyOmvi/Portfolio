@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>🛠️ HACKER TOOLKIT</h1>
+    <p>Essential Hacking Tools Download</p>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Metasploit Framework</h3>
+        <p style="color:#888;">Penetration testing platform</p>
+        <button onclick="dl('Metasploit.zip')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Nmap Network Scanner</h3>
+        <p style="color:#888;">Port scanning & discovery</p>
+        <button onclick="dl('Nmap.exe')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Burp Suite Pro</h3>
+        <p style="color:#888;">Web app security testing</p>
+        <button onclick="dl('BurpSuite_Pro.zip')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Wireshark</h3>
+        <p style="color:#888;">Network protocol analyzer</p>
+        <button onclick="dl('Wireshark.exe')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'toolkit.onion' }, '*');
+        function dl(file) { window.parent.postMessage({ type: 'download_file', site: 'TOOLKIT', filename: file, content: 'Hacking tool', achievement: 'hacker_elite' }, '*'); }
+    </script>
+</body>
+
+</html>

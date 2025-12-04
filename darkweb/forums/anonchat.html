@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#888; font-family:monospace; padding:20px;">
+    <h1>💬 ANON CHAT</h1>
+    <p>Encrypted Anonymous Messaging</p>
+    <div style="background:#1a1a1a; padding:20px; border:1px solid #888; margin:20px 0;">
+        <h3>Active Rooms</h3>
+        <div style="background:#0a0a0a; padding:10px; margin:5px 0; cursor:pointer;" onclick="join('General')">
+            <p style="margin:0;">🌐 General Discussion (234 users)</p>
+        </div>
+        <div style="background:#0a0a0a; padding:10px; margin:5px 0; cursor:pointer;" onclick="join('Trading')">
+            <p style="margin:0;">💰 Trading & Deals (89 users)</p>
+        </div>
+        <div style="background:#0a0a0a; padding:10px; margin:5px 0; cursor:pointer;" onclick="join('Tech')">
+            <p style="margin:0;">💻 Tech Support (156 users)</p>
+        </div>
+    </div>
+    <div id="chatbox" style="background:#0a0a0a; padding:15px; border:1px solid #888; min-height:200px; display:none;">
+        <p style="color:#0f0;">Connected to encrypted chat...</p>
+        <p style="color:#888;">[Anonymous_User_1234]: Welcome to the chat</p>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'anon.chat' }, '*');
+        function join(room) {
+            document.getElementById('chatbox').style.display = 'block';
+            window.parent.postMessage({ type: 'terminal_command', message: '[ANONCHAT] Joined ' + room + ' room' }, '*');
+        }
+    </script>
+</body>
+
+</html>

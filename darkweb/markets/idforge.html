@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0ff; font-family:monospace; padding:20px;">
+    <h1>🆔 ID FORGE</h1>
+    <p>Custom Identity Creation Service</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>New Identity Package</h3>
+            <p style="color:#888;">Name + SSN + History</p>
+            <p style="font-size:18px;">3000 CR</p>
+            <button onclick="buy('New Identity',3000)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">CREATE</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>Background Check Removal</h3>
+            <p style="color:#888;">Clean criminal record</p>
+            <p style="font-size:18px;">5000 CR</p>
+            <button onclick="buy('Background Clean',5000)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>Witness Protection Identity</h3>
+            <p style="color:#888;">Complete new life</p>
+            <p style="font-size:18px;">10000 CR</p>
+            <button onclick="buy('Witness Protection',10000)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>Age Change Service</h3>
+            <p style="color:#888;">Modify birth records</p>
+            <p style="font-size:18px;">2000 CR</p>
+            <button onclick="buy('Age Change',2000)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'idforge.onion' }, '*');
+        function buy(item, cost) { window.parent.postMessage({ type: 'purchase', site: 'IDFORGE', item: item, cost: cost, currency: 'credits' }, '*'); }
+    </script>
+</body>
+
+</html>

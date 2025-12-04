@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>💵 COUNTERFEIT WIKI</h1>
+    <p>Counterfeiting Guides & Tutorials</p>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Guide: Printing Counterfeit Money</h3><button onclick="get('Counterfeit_Money_Guide.pdf')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Guide: Fake Document Creation</h3><button onclick="get('Fake_Docs_Guide.pdf')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Guide: Credit Card Cloning</h3><button onclick="get('Card_Cloning_Guide.pdf')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'counterfeit.wiki' }, '*');
+        function get(file) { window.parent.postMessage({ type: 'download_file', site: 'COUNTERFEIT', filename: file, content: 'Counterfeiting tutorial' }, '*'); }
+    </script>
+</body>
+
+</html>

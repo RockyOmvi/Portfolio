@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f0f; font-family:monospace; margin:0; padding:20px;">
+    <h1 style="color:#f0f;">🎭 BLACKHAT MARKET</h1>
+    <p style="color:#888;">Hacking Services | DDoS | Doxing | Social Engineering</p>
+    <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:15px; margin-top:20px;">
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <h3 style="color:#f0f;">Website Hack</h3>
+            <p style="color:#888; font-size:12px;">SQL injection | XSS | RCE</p>
+            <p style="color:#fff; font-size:18px;">1500 CR</p>
+            <button onclick="buy('Website Hack', 1500)"
+                style="width:100%; padding:8px; background:#f0f; color:#000; border:none; cursor:pointer;">HIRE</button>
+        </div>
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <h3 style="color:#f0f;">Social Media Hack</h3>
+            <p style="color:#888; font-size:12px;">Instagram | Facebook | Twitter</p>
+            <p style="color:#fff; font-size:18px;">800 CR</p>
+            <button onclick="buy('Social Hack', 800)"
+                style="width:100%; padding:8px; background:#f0f; color:#000; border:none; cursor:pointer;">HIRE</button>
+        </div>
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <h3 style="color:#f0f;">Doxing Service</h3>
+            <p style="color:#888; font-size:12px;">Full personal info reveal</p>
+            <p style="color:#fff; font-size:18px;">600 CR</p>
+            <button onclick="buy('Doxing', 600)"
+                style="width:100%; padding:8px; background:#f0f; color:#000; border:none; cursor:pointer;">HIRE</button>
+        </div>
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <h3 style="color:#f0f;">Custom Malware</h3>
+            <p style="color:#888; font-size:12px;">RAT | Keylogger | Ransomware</p>
+            <p style="color:#fff; font-size:18px;">2000 CR</p>
+            <button onclick="buy('Custom Malware', 2000)"
+                style="width:100%; padding:8px; background:#f0f; color:#000; border:none; cursor:pointer;">HIRE</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'blackhat.market' }, '*');
+        function buy(item, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'BLACKHAT', item: item, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'unlock_achievement', achievement: 'hacker_elite' }, '*');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>📰 WIKILEAKS ONION</h1>
+    <p>Classified Document Leaks</p>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>🔒 CIA Vault 7 - Hacking Tools</h3>
+        <p style="color:#888;">8,761 documents | 2017</p>
+        <button onclick="dl('CIA_Vault7.zip')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>🔒 NSA PRISM Program Files</h3>
+        <p style="color:#888;">Surveillance documents</p>
+        <button onclick="dl('NSA_PRISM.zip')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>🔒 Pentagon Papers 2.0</h3>
+        <p style="color:#888;">Military secrets</p>
+        <button onclick="dl('Pentagon_Papers.pdf')"
+            style="padding:8px 15px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'wikileaks.onion' }, '*');
+        function dl(file) {
+            window.parent.postMessage({ type: 'download_file', site: 'WIKILEAKS', filename: file, content: 'CLASSIFIED: Top Secret Documents', achievement: 'intel_gatherer' }, '*');
+        }
+    </script>
+</body>
+
+</html>

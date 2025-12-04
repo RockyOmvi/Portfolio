@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f00; font-family:monospace; padding:20px;">
+    <h1>🎓 HACKING TUTORIALS</h1>
+    <p>Learn to Hack - Underground Courses</p>
+    <div style="background:#1a0000; padding:15px; border:1px solid #f00; margin:10px 0;">
+        <h3>Course: Web Application Hacking</h3>
+        <p style="color:#888;">SQL injection, XSS, CSRF</p>
+        <button onclick="enroll('WebApp_Hacking',500)"
+            style="padding:8px 15px; background:#f00; color:#fff; border:none; cursor:pointer;">ENROLL (500 CR)</button>
+    </div>
+    <div style="background:#1a0000; padding:15px; border:1px solid #f00; margin:10px 0;">
+        <h3>Course: Network Penetration Testing</h3>
+        <p style="color:#888;">Nmap, Metasploit, privilege escalation</p>
+        <button onclick="enroll('Network_Pentest',800)"
+            style="padding:8px 15px; background:#f00; color:#fff; border:none; cursor:pointer;">ENROLL (800 CR)</button>
+    </div>
+    <div style="background:#1a0000; padding:15px; border:1px solid #f00; margin:10px 0;">
+        <h3>Course: Malware Development</h3>
+        <p style="color:#888;">Create RATs, keyloggers, ransomware</p>
+        <button onclick="enroll('Malware_Dev',1200)"
+            style="padding:8px 15px; background:#f00; color:#fff; border:none; cursor:pointer;">ENROLL (1200
+            CR)</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'tutorial.underground' }, '*');
+        function enroll(course, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'TUTORIALS', item: course, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'download_file', site: 'TUTORIALS', filename: course + '_Course.zip', content: 'Complete hacking course materials' }, '*');
+        }
+    </script>
+</body>
+
+</html>

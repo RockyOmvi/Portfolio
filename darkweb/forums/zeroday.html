@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1a0000; color:#f00; font-family:monospace; padding:20px;">
+    <h1>💀 ZERODAY MARKET</h1>
+    <p>Premium 0-Day Exploits Marketplace</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#2a0000; padding:15px; border:1px solid #f00;">
+            <h3>iOS 17 Jailbreak</h3>
+            <p style="color:#888;">Untethered | All devices</p>
+            <p style="font-size:18px;">15000 CR</p>
+            <button onclick="buy('iOS_Jailbreak',15000)"
+                style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#2a0000; padding:15px; border:1px solid #f00;">
+            <h3>Android Root Exploit</h3>
+            <p style="color:#888;">Universal | All versions</p>
+            <p style="font-size:18px;">8000 CR</p>
+            <button onclick="buy('Android_Root',8000)"
+                style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'zeroday.market' }, '*');
+        function buy(item, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'ZERODAY', item: item, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'download_file', site: 'ZERODAY', filename: item + '.zip', content: '0-day exploit package' }, '*');
+        }
+    </script>
+</body>
+
+</html>

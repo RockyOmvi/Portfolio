@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#00f; font-family:monospace; padding:20px;">
+    <h1>🏢 CORP LEAKS</h1>
+    <p>Corporate Secrets & Internal Documents</p>
+    <div style="background:#000033; padding:15px; border:1px solid #00f; margin:10px 0;">
+        <h3>📊 Facebook Internal Memos</h3>
+        <p style="color:#888;">Privacy violations | User data</p>
+        <button onclick="get('Facebook_Leaks.zip')"
+            style="padding:8px 15px; background:#00f; color:#fff; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#000033; padding:15px; border:1px solid #00f; margin:10px 0;">
+        <h3>📊 Google Search Algorithm</h3>
+        <p style="color:#888;">Ranking factors revealed</p>
+        <button onclick="get('Google_Algorithm.pdf')"
+            style="padding:8px 15px; background:#00f; color:#fff; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#000033; padding:15px; border:1px solid #00f; margin:10px 0;">
+        <h3>📊 Amazon Warehouse Conditions</h3>
+        <p style="color:#888;">Internal reports</p>
+        <button onclick="get('Amazon_Reports.zip')"
+            style="padding:8px 15px; background:#00f; color:#fff; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'corp.leaks' }, '*');
+        function get(file) { window.parent.postMessage({ type: 'download_file', site: 'CORPLEAKS', filename: file, content: 'Corporate leaked documents' }, '*'); }
+    </script>
+</body>
+
+</html>

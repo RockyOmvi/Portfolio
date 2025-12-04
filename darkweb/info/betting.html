@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#ff0; font-family:monospace; padding:20px;">
+    <h1>🎰 BETTING DARK</h1>
+    <p>Illegal Sports Betting & Gambling</p>
+    <div style="background:#1a1a00; padding:20px; border:2px solid #ff0; margin:20px 0;">
+        <h3>Live Betting</h3>
+        <p style="color:#888;">Football: Team A vs Team B</p>
+        <p style="color:#fff;">Odds: 2.5x | 1.8x</p>
+        <button onclick="bet('Team A',100)"
+            style="padding:8px 15px; background:#ff0; color:#000; border:none; cursor:pointer; margin:5px;">BET TEAM A
+            (100 CR)</button>
+        <button onclick="bet('Team B',100)"
+            style="padding:8px 15px; background:#ff0; color:#000; border:none; cursor:pointer; margin:5px;">BET TEAM B
+            (100 CR)</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'betting.dark' }, '*');
+        function bet(team, amount) {
+            window.parent.postMessage({ type: 'purchase', site: 'BETTING', item: 'Bet on ' + team, cost: amount, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'terminal_command', message: '[BETTING] Bet placed on ' + team }, '*');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f0f; font-family:monospace; padding:20px;">
+    <h1>💾 BREACH DATABASE</h1>
+    <p>Data Breach Archive | Leaked Databases</p>
+    <div style="background:#1a001a; padding:15px; border:1px solid #f0f; margin:10px 0;">
+        <h3>🗄️ LinkedIn 2021 Breach (700M users)</h3>
+        <p style="color:#888;">Emails, phone numbers, locations</p>
+        <button onclick="dl('LinkedIn_700M.sql',500)"
+            style="padding:8px 15px; background:#f0f; color:#000; border:none; cursor:pointer;">DOWNLOAD (500
+            CR)</button>
+    </div>
+    <div style="background:#1a001a; padding:15px; border:1px solid #f0f; margin:10px 0;">
+        <h3>🗄️ Facebook 2019 Breach (533M users)</h3>
+        <p style="color:#888;">Full user profiles</p>
+        <button onclick="dl('Facebook_533M.sql',800)"
+            style="padding:8px 15px; background:#f0f; color:#000; border:none; cursor:pointer;">DOWNLOAD (800
+            CR)</button>
+    </div>
+    <div style="background:#1a001a; padding:15px; border:1px solid #f0f; margin:10px 0;">
+        <h3>🗄️ Twitter 2022 Breach (400M users)</h3>
+        <p style="color:#888;">Usernames, emails, phone</p>
+        <button onclick="dl('Twitter_400M.sql',600)"
+            style="padding:8px 15px; background:#f0f; color:#000; border:none; cursor:pointer;">DOWNLOAD (600
+            CR)</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'breach.database' }, '*');
+        function dl(file, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'BREACHDB', item: file, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'download_file', site: 'BREACHDB', filename: file, content: 'Leaked database dump' }, '*');
+        }
+    </script>
+</body>
+
+</html>

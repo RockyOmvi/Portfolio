@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#0a0a0a; color:#0f0; font-family:monospace; margin:0; padding:20px;">
+    <div style="background:#1a1a1a; padding:20px; border:2px solid #0f0; margin-bottom:20px;">
+        <h1 style="margin:0; color:#0f0;">🌿 SILK ROAD 4.0</h1>
+        <p style="margin:5px 0 0 0; color:#888;">The Marketplace Reborn | 47,234 Active Listings</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px;">
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+            <h3 style="color:#0f0; margin:0 0 10px 0;">Premium Cannabis</h3>
+            <p style="color:#888; font-size:12px;">⭐⭐⭐⭐⭐ (892 reviews)</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">0.05 BTC</p>
+            <button onclick="buy('Premium Cannabis', 0.05, 'btc')"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">BUY
+                NOW</button>
+        </div>
+
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+            <h3 style="color:#0f0; margin:0 0 10px 0;">LSD Blotter (10x)</h3>
+            <p style="color:#888; font-size:12px;">⭐⭐⭐⭐⭐ (1,234 reviews)</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">0.08 BTC</p>
+            <button onclick="buy('LSD Blotter', 0.08, 'btc')"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">BUY
+                NOW</button>
+        </div>
+
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+            <h3 style="color:#0f0; margin:0 0 10px 0;">MDMA Crystal (5g)</h3>
+            <p style="color:#888; font-size:12px;">⭐⭐⭐⭐⭐ (2,103 reviews)</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">0.12 BTC</p>
+            <button onclick="buy('MDMA Crystal', 0.12, 'btc')"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">BUY
+                NOW</button>
+        </div>
+
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+            <h3 style="color:#0f0; margin:0 0 10px 0;">Cocaine HQ (10g)</h3>
+            <p style="color:#888; font-size:12px;">⭐⭐⭐⭐ (567 reviews)</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">0.25 BTC</p>
+            <button onclick="buy('Cocaine HQ', 0.25, 'btc')"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">BUY
+                NOW</button>
+        </div>
+
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+            <h3 style="color:#0f0; margin:0 0 10px 0;">Prescription Pills</h3>
+            <p style="color:#888; font-size:12px;">⭐⭐⭐⭐ (445 reviews)</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">0.03 BTC</p>
+            <button onclick="buy('Prescription Pills', 0.03, 'btc')"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">BUY
+                NOW</button>
+        </div>
+
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+            <h3 style="color:#0f0; margin:0 0 10px 0;">Vendor Account</h3>
+            <p style="color:#888; font-size:12px;">Start selling today</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">0.5 BTC</p>
+            <button onclick="buy('Vendor Account', 0.5, 'btc')"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">REGISTER</button>
+        </div>
+    </div>
+
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'silkroad4.onion' }, '*');
+        function buy(item, cost, currency) {
+            window.parent.postMessage({
+                type: 'purchase',
+                site: 'SILKROAD4',
+                item: item,
+                cost: cost,
+                currency: currency
+            }, '*');
+        }
+    </script>
+</body>
+
+</html>

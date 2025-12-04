@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1a0000; color:#f00; font-family:monospace; padding:20px;">
+    <h1>💀 HITMAN SERVICES</h1>
+    <p>Professional Assassination Contracts</p>
+    <div style="background:#2a0000; padding:20px; border:2px solid #f00; margin:20px 0;">
+        <h3>⚠️ DISCLAIMER</h3>
+        <p style="color:#888;">This is a SIMULATION ONLY. No real services offered.</p>
+    </div>
+    <div style="background:#2a0000; padding:15px; border:1px solid #f00; margin:10px 0;">
+        <h3>Standard Contract</h3>
+        <p style="color:#888;">Clean elimination | No trace</p>
+        <p style="font-size:18px;">50000 CR</p>
+        <button onclick="hire('Standard',50000)"
+            style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">PLACE
+            CONTRACT</button>
+    </div>
+    <div style="background:#2a0000; padding:15px; border:1px solid #f00; margin:10px 0;">
+        <h3>Premium Contract</h3>
+        <p style="color:#888;">Staged accident | Untraceable</p>
+        <p style="font-size:18px;">100000 CR</p>
+        <button onclick="hire('Premium',100000)"
+            style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">PLACE
+            CONTRACT</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'hitman.onion' }, '*');
+        function hire(type, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'HITMAN', item: type + ' Contract', cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'terminal_command', message: '[HITMAN] Contract accepted. ETA: 7 days' }, '*');
+        }
+    </script>
+</body>
+
+</html>

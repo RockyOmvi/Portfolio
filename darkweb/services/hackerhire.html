@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>👨‍💻 HACKER FOR HIRE</h1>
+    <p>Professional Hacking Services</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#001a00; padding:15px; border:1px solid #0f0;">
+            <h3>Email Hack</h3>
+            <p style="color:#888;">Gmail, Yahoo, Outlook</p>
+            <p style="font-size:18px;">1000 CR</p>
+            <button onclick="hire('Email Hack',1000)"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer;">HIRE</button>
+        </div>
+        <div style="background:#001a00; padding:15px; border:1px solid #0f0;">
+            <h3>Social Media Hack</h3>
+            <p style="color:#888;">Any platform</p>
+            <p style="font-size:18px;">1500 CR</p>
+            <button onclick="hire('Social Hack',1500)"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer;">HIRE</button>
+        </div>
+        <div style="background:#001a00; padding:15px; border:1px solid #0f0;">
+            <h3>Website Penetration Test</h3>
+            <p style="color:#888;">Full security audit</p>
+            <p style="font-size:18px;">3000 CR</p>
+            <button onclick="hire('Pentest',3000)"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer;">HIRE</button>
+        </div>
+        <div style="background:#001a00; padding:15px; border:1px solid #0f0;">
+            <h3>Database Breach</h3>
+            <p style="color:#888;">Extract all data</p>
+            <p style="font-size:18px;">5000 CR</p>
+            <button onclick="hire('DB Breach',5000)"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer;">HIRE</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'hacker.hire' }, '*');
+        function hire(service, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'HACKERHIRE', item: service, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'terminal_command', message: '[HACKER] Job accepted. Will contact you with results.' }, '*');
+        }
+    </script>
+</body>
+
+</html>

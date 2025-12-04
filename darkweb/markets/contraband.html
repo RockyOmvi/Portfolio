@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1a0000; color:#f00; font-family:monospace; padding:20px;">
+    <h1>📦 CONTRABAND HUB</h1>
+    <p>General Black Market | Everything Illegal</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#2a0000; padding:15px; border:1px solid #f00;">
+            <h3>Counterfeit Money</h3>
+            <p style="color:#888;">$10,000 USD bills</p>
+            <p style="font-size:18px;">500 CR</p>
+            <button onclick="buy('Counterfeit $10k',500)"
+                style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#2a0000; padding:15px; border:1px solid #f00;">
+            <h3>Stolen Laptops</h3>
+            <p style="color:#888;">MacBook Pro | Dell XPS</p>
+            <p style="font-size:18px;">300 CR</p>
+            <button onclick="buy('Stolen Laptop',300)"
+                style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#2a0000; padding:15px; border:1px solid #f00;">
+            <h3>Smuggled Goods</h3>
+            <p style="color:#888;">Electronics | Jewelry</p>
+            <p style="font-size:18px;">200 CR</p>
+            <button onclick="buy('Smuggled Goods',200)"
+                style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#2a0000; padding:15px; border:1px solid #f00;">
+            <h3>Stolen Art</h3>
+            <p style="color:#888;">Museum quality</p>
+            <p style="font-size:18px;">5000 CR</p>
+            <button onclick="buy('Stolen Art',5000)"
+                style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#2a0000; padding:15px; border:1px solid #f00;">
+            <h3>Rare Collectibles</h3>
+            <p style="color:#888;">Coins, stamps, antiques</p>
+            <p style="font-size:18px;">1000 CR</p>
+            <button onclick="buy('Collectibles',1000)"
+                style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#2a0000; padding:15px; border:1px solid #f00;">
+            <h3>Black Market Organs</h3>
+            <p style="color:#888;">⚠️ Simulation only</p>
+            <p style="font-size:18px;">50000 CR</p>
+            <button onclick="buy('Medical Supply',50000)"
+                style="width:100%; padding:8px; background:#f00; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'contraband.hub' }, '*');
+        function buy(item, cost) { window.parent.postMessage({ type: 'purchase', site: 'CONTRABAND', item: item, cost: cost, currency: 'credits' }, '*'); }
+    </script>
+</body>
+
+</html>

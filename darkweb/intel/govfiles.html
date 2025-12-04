@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1a0000; color:#f00; font-family:monospace; padding:20px;">
+    <h1>🏛️ GOV FILES</h1>
+    <p>Government Classified Documents</p>
+    <div style="background:#2a0000; padding:15px; border:1px solid #f00; margin:10px 0;">
+        <h3>🔐 Area 51 Documents</h3>
+        <p style="color:#888;">Declassified files</p>
+        <button onclick="access('Area51_Files.zip')"
+            style="padding:8px 15px; background:#f00; color:#fff; border:none; cursor:pointer;">ACCESS</button>
+    </div>
+    <div style="background:#2a0000; padding:15px; border:1px solid #f00; margin:10px 0;">
+        <h3>🔐 FBI Surveillance Programs</h3>
+        <p style="color:#888;">COINTELPRO 2.0</p>
+        <button onclick="access('FBI_Surveillance.pdf')"
+            style="padding:8px 15px; background:#f00; color:#fff; border:none; cursor:pointer;">ACCESS</button>
+    </div>
+    <div style="background:#2a0000; padding:15px; border:1px solid #f00; margin:10px 0;">
+        <h3>🔐 Presidential Briefings</h3>
+        <p style="color:#888;">Top secret intel</p>
+        <button onclick="access('Presidential_Briefings.zip')"
+            style="padding:8px 15px; background:#f00; color:#fff; border:none; cursor:pointer;">ACCESS</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'gov.files' }, '*');
+        function access(file) { window.parent.postMessage({ type: 'download_file', site: 'GOVFILES', filename: file, content: 'CLASSIFIED GOVERNMENT DOCUMENTS' }, '*'); }
+    </script>
+</body>
+
+</html>

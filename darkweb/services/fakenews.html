@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#ff0; font-family:monospace; padding:20px;">
+    <h1>📰 FAKE NEWS FACTORY</h1>
+    <p>Propaganda & Disinformation Services</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#1a1a00; padding:15px; border:1px solid #ff0;">
+            <h3>Fake News Article</h3>
+            <p style="color:#888;">Professional writing</p>
+            <p style="font-size:18px;">300 CR</p>
+            <button onclick="order('Article',300)"
+                style="width:100%; padding:8px; background:#ff0; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+        <div style="background:#1a1a00; padding:15px; border:1px solid #ff0;">
+            <h3>Deepfake Video</h3>
+            <p style="color:#888;">AI-generated content</p>
+            <p style="font-size:18px;">2000 CR</p>
+            <button onclick="order('Deepfake',2000)"
+                style="width:100%; padding:8px; background:#ff0; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+        <div style="background:#1a1a00; padding:15px; border:1px solid #ff0;">
+            <h3>Social Media Campaign</h3>
+            <p style="color:#888;">Viral propaganda</p>
+            <p style="font-size:18px;">5000 CR</p>
+            <button onclick="order('Campaign',5000)"
+                style="width:100%; padding:8px; background:#ff0; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+        <div style="background:#1a1a00; padding:15px; border:1px solid #ff0;">
+            <h3>Reputation Destruction</h3>
+            <p style="color:#888;">Smear campaign</p>
+            <p style="font-size:18px;">10000 CR</p>
+            <button onclick="order('Smear',10000)"
+                style="width:100%; padding:8px; background:#ff0; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'fake.news' }, '*');
+        function order(item, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'FAKENEWS', item: item, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'terminal_command', message: '[FAKENEWS] Order placed. Delivery in 48 hours.' }, '*');
+        }
+    </script>
+</body>
+
+</html>

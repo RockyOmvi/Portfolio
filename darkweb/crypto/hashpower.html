@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0ff; font-family:monospace; padding:20px;">
+    <h1>⚡ HASHPOWER RENTAL</h1>
+    <p>Rent Mining Rigs | Boost Your Mining</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>100 TH/s (24h)</h3>
+            <p style="color:#888;">Bitcoin Mining</p>
+            <p style="font-size:18px;">0.1 BTC</p>
+            <button onclick="rent('100TH',0.1)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">RENT</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>1000 MH/s (24h)</h3>
+            <p style="color:#888;">Ethereum Mining</p>
+            <p style="font-size:18px;">0.05 BTC</p>
+            <button onclick="rent('1000MH',0.05)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">RENT</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>500 TH/s (7 days)</h3>
+            <p style="color:#888;">Bitcoin Mining</p>
+            <p style="font-size:18px;">0.6 BTC</p>
+            <button onclick="rent('500TH',0.6)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">RENT</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>Custom Package</h3>
+            <p style="color:#888;">Contact for quote</p>
+            <p style="font-size:18px;">Varies</p>
+            <button onclick="rent('Custom',0)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">CONTACT</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'hashpower.rent' }, '*');
+        function rent(power, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'HASHPOWER', item: power + ' Mining', cost: cost, currency: 'btc' }, '*');
+            window.parent.postMessage({ type: 'terminal_command', message: '[HASHPOWER] Mining rig activated for rental period' }, '*');
+        }
+    </script>
+</body>
+
+</html>

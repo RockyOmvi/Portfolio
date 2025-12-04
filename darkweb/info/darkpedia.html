@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>📚 DARKPEDIA</h1>
+    <p>Dark Web Encyclopedia</p>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Article: How to Access the Dark Web</h3><button onclick="read('DarkWeb_Access.pdf')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">READ</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Article: Cryptocurrency Basics</h3><button onclick="read('Crypto_Basics.pdf')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">READ</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>Article: OPSEC Best Practices</h3><button onclick="read('OPSEC_Guide.pdf')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">READ</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'darkpedia.onion' }, '*');
+        function read(file) { window.parent.postMessage({ type: 'download_file', site: 'DARKPEDIA', filename: file, content: 'Educational article' }, '*'); }
+    </script>
+</body>
+
+</html>

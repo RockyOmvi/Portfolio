@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f0f; font-family:monospace; padding:20px;">
+    <h1>🎩 BLACKHAT FORUM</h1>
+    <p>Advanced Hacking Techniques | Elite Only</p>
+    <div style="background:#1a001a; padding:15px; border:1px solid #f0f; margin:10px 0;">
+        <h3>📌 [ADVANCED] APT Techniques & Tactics</h3>
+        <p style="color:#888;">by: ShadowOps | 1,234 views</p>
+        <button onclick="view('APT_Techniques.pdf')"
+            style="padding:5px 10px; background:#f0f; color:#000; border:none; cursor:pointer;">READ</button>
+    </div>
+    <div style="background:#1a001a; padding:15px; border:1px solid #f0f; margin:10px 0;">
+        <h3>📌 [RELEASE] Custom C2 Framework</h3>
+        <p style="color:#888;">by: C2Master | 2,567 views</p>
+        <button onclick="view('C2_Framework.zip')"
+            style="padding:5px 10px; background:#f0f; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'blackhat.forum' }, '*');
+        function view(file) { window.parent.postMessage({ type: 'download_file', site: 'BLACKHAT', filename: file, content: 'Advanced hacking content' }, '*'); }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f0f; font-family:monospace; padding:20px;">
+    <h1>🎮 DARK GAMES</h1>
+    <p>Underground Gaming | Illegal Gambling</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#1a001a; padding:20px; border:1px solid #f0f;">
+            <h3>Poker Room</h3>
+            <p style="color:#888;">High stakes | Anonymous</p>
+            <button onclick="play('Poker')"
+                style="width:100%; padding:10px; background:#f0f; color:#000; border:none; cursor:pointer;">JOIN
+                GAME</button>
+        </div>
+        <div style="background:#1a001a; padding:20px; border:1px solid #f0f;">
+            <h3>Blackjack</h3>
+            <p style="color:#888;">Crypto betting</p>
+            <button onclick="play('Blackjack')"
+                style="width:100%; padding:10px; background:#f0f; color:#000; border:none; cursor:pointer;">JOIN
+                GAME</button>
+        </div>
+        <div style="background:#1a001a; padding:20px; border:1px solid #f0f;">
+            <h3>Roulette</h3>
+            <p style="color:#888;">Live dealer</p>
+            <button onclick="play('Roulette')"
+                style="width:100%; padding:10px; background:#f0f; color:#000; border:none; cursor:pointer;">JOIN
+                GAME</button>
+        </div>
+        <div style="background:#1a001a; padding:20px; border:1px solid #f0f;">
+            <h3>Slots</h3>
+            <p style="color:#888;">Jackpot: 100 BTC</p>
+            <button onclick="play('Slots')"
+                style="width:100%; padding:10px; background:#f0f; color:#000; border:none; cursor:pointer;">PLAY</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'dark.games' }, '*');
+        function play(game) { window.parent.postMessage({ type: 'terminal_command', message: '[DARKGAMES] Joined ' + game + ' table' }, '*'); }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#0a0a1a; color:#0ff; font-family:Arial; padding:20px;">
+    <h1>⚡ DEFI SHADOW</h1>
+    <p>Decentralized Finance | No KYC</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#0f0f2a; padding:20px; border-radius:10px;">
+            <h3>Liquidity Pool</h3>
+            <p style="color:#888;">Provide liquidity, earn 20% APY</p>
+            <p style="color:#888;">No impermanent loss protection</p>
+            <button onclick="stake()"
+                style="width:100%; padding:10px; background:#0ff; color:#000; border:none; cursor:pointer; border-radius:5px;">STAKE</button>
+        </div>
+        <div style="background:#0f0f2a; padding:20px; border-radius:10px;">
+            <h3>Flash Loan</h3>
+            <p style="color:#888;">Borrow millions instantly</p>
+            <p style="color:#888;">No collateral required</p>
+            <button onclick="loan()"
+                style="width:100%; padding:10px; background:#0ff; color:#000; border:none; cursor:pointer; border-radius:5px;">BORROW</button>
+        </div>
+        <div style="background:#0f0f2a; padding:20px; border-radius:10px;">
+            <h3>Yield Farming</h3>
+            <p style="color:#888;">Auto-compound rewards</p>
+            <p style="color:#888;">Up to 500% APY</p>
+            <button onclick="farm()"
+                style="width:100%; padding:10px; background:#0ff; color:#000; border:none; cursor:pointer; border-radius:5px;">START
+                FARMING</button>
+        </div>
+        <div style="background:#0f0f2a; padding:20px; border-radius:10px;">
+            <h3>Leverage Trading</h3>
+            <p style="color:#888;">Up to 100x leverage</p>
+            <p style="color:#888;">High risk, high reward</p>
+            <button onclick="trade()"
+                style="width:100%; padding:10px; background:#0ff; color:#000; border:none; cursor:pointer; border-radius:5px;">TRADE</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'defi.shadow' }, '*');
+        function stake() { window.parent.postMessage({ type: 'terminal_command', message: '[DEFI] Staked in liquidity pool' }, '*'); }
+        function loan() { window.parent.postMessage({ type: 'terminal_command', message: '[DEFI] Flash loan executed' }, '*'); }
+        function farm() { window.parent.postMessage({ type: 'terminal_command', message: '[DEFI] Yield farming started' }, '*'); }
+        function trade() { window.parent.postMessage({ type: 'terminal_command', message: '[DEFI] Leverage position opened' }, '*'); }
+    </script>
+</body>
+
+</html>

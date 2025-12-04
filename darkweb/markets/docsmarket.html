@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#00f; font-family:monospace; margin:0; padding:20px;">
+    <div style="background:#000033; padding:20px; border:2px solid #00f; margin-bottom:20px;">
+        <h1 style="margin:0; color:#00f;">📄 DOCS MARKET</h1>
+        <p style="margin:5px 0 0 0; color:#888;">Fake IDs, Passports & Documents | Premium Quality</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px;">
+        <div style="background:#000033; padding:15px; border:1px solid #000066;">
+            <h3 style="color:#00f; margin:0 0 10px 0;">US Passport</h3>
+            <p style="color:#888; font-size:12px;">Biometric | Scannable | Holograms</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">2000 CR</p>
+            <button onclick="buy('US Passport', 2000)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+
+        <div style="background:#000033; padding:15px; border:1px solid #000066;">
+            <h3 style="color:#00f; margin:0 0 10px 0;">Driver's License</h3>
+            <p style="color:#888; font-size:12px;">Any US state | UV features</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">500 CR</p>
+            <button onclick="buy('Driver License', 500)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+
+        <div style="background:#000033; padding:15px; border:1px solid #000066;">
+            <h3 style="color:#00f; margin:0 0 10px 0;">Birth Certificate</h3>
+            <p style="color:#888; font-size:12px;">Official template | Watermarks</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">300 CR</p>
+            <button onclick="buy('Birth Certificate', 300)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+
+        <div style="background:#000033; padding:15px; border:1px solid #000066;">
+            <h3 style="color:#00f; margin:0 0 10px 0;">Social Security Card</h3>
+            <p style="color:#888; font-size:12px;">Valid SSN | Metal plate</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">400 CR</p>
+            <button onclick="buy('SSN Card', 400)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+
+        <div style="background:#000033; padding:15px; border:1px solid #000066;">
+            <h3 style="color:#00f; margin:0 0 10px 0;">Diploma/Degree</h3>
+            <p style="color:#888; font-size:12px;">Any university | Embossed seal</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">800 CR</p>
+            <button onclick="buy('Diploma', 800)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+
+        <div style="background:#000033; padding:15px; border:1px solid #000066;">
+            <h3 style="color:#00f; margin:0 0 10px 0;">Complete Identity Kit</h3>
+            <p style="color:#888; font-size:12px;">Passport + DL + SSN + more</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">5000 CR</p>
+            <button onclick="buy('Identity Kit', 5000)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+    </div>
+
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'docsmarket.onion' }, '*');
+        function buy(item, cost) {
+            window.parent.postMessage({
+                type: 'purchase',
+                site: 'DOCSMARKET',
+                item: item,
+                cost: cost,
+                currency: 'credits'
+            }, '*');
+            window.parent.postMessage({
+                type: 'download_file',
+                site: 'DOCSMARKET',
+                filename: item.replace(/ /g, '_') + '.pdf',
+                content: 'FAKE DOCUMENT: ' + item
+            }, '*');
+        }
+    </script>
+</body>
+
+</html>

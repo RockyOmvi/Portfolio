@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1a1a2e; color:#eee; font-family:Arial; padding:20px;">
+    <h1>💼 WALLET GENERATOR</h1>
+    <p>Create Anonymous Crypto Wallets</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#16213e; padding:15px; border-radius:10px;">
+            <h3 style="color:#f7931a;">Bitcoin Wallet</h3>
+            <button onclick="gen('BTC')"
+                style="width:100%; padding:10px; background:#f7931a; color:#000; border:none; cursor:pointer; border-radius:5px;">GENERATE</button>
+        </div>
+        <div style="background:#16213e; padding:15px; border-radius:10px;">
+            <h3 style="color:#627eea;">Ethereum Wallet</h3>
+            <button onclick="gen('ETH')"
+                style="width:100%; padding:10px; background:#627eea; color:#fff; border:none; cursor:pointer; border-radius:5px;">GENERATE</button>
+        </div>
+        <div style="background:#16213e; padding:15px; border-radius:10px;">
+            <h3 style="color:#ff6600;">Monero Wallet</h3>
+            <button onclick="gen('XMR')"
+                style="width:100%; padding:10px; background:#ff6600; color:#fff; border:none; cursor:pointer; border-radius:5px;">GENERATE</button>
+        </div>
+    </div>
+    <div id="output"
+        style="background:#000; padding:15px; margin-top:20px; color:#0f0; font-family:monospace; display:none; border-radius:5px;">
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'walletgen.io' }, '*');
+        function gen(coin) {
+            const addr = coin + '_' + Math.random().toString(36).substr(2, 32);
+            const key = Math.random().toString(36).substr(2, 64);
+            document.getElementById('output').style.display = 'block';
+            document.getElementById('output').innerHTML = '<h3>' + coin + ' Wallet Generated</h3><p>Address: ' + addr + '</p><p>Private Key: ' + key + '</p><p style="color:#ff0;">⚠️ Save these securely!</p>';
+            window.parent.postMessage({ type: 'download_file', site: 'WALLETGEN', filename: coin + '_wallet.txt', content: 'Address: ' + addr + '\\nKey: ' + key }, '*');
+        }
+    </script>
+</body>
+
+</html>

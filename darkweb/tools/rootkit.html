@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#ff0; font-family:monospace; padding:20px;">
+    <h1>🕷️ ROOTKIT DEV</h1>
+    <p>Rootkit Development Tools</p>
+    <div style="background:#1a1a00; padding:15px; border:1px solid #ff0; margin:10px 0;">
+        <h3>Kernel Rootkit Template</h3>
+        <p style="color:#888;">Windows/Linux compatible</p>
+        <button onclick="dl('Rootkit_Template.zip')"
+            style="padding:8px 15px; background:#ff0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#1a1a00; padding:15px; border:1px solid #ff0; margin:10px 0;">
+        <h3>Bootkit Framework</h3>
+        <p style="color:#888;">UEFI/BIOS persistence</p>
+        <button onclick="dl('Bootkit.zip')"
+            style="padding:8px 15px; background:#ff0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'rootkit.dev' }, '*');
+        function dl(file) { window.parent.postMessage({ type: 'download_file', site: 'ROOTKIT', filename: file, content: 'Rootkit source code' }, '*'); }
+    </script>
+</body>
+
+</html>

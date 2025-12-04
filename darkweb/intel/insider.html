@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:gold; font-family:monospace; padding:20px;">
+    <h1>📈 INSIDER INTEL</h1>
+    <p>Stock Market Insider Trading Information</p>
+    <div style="background:#1a1a00; padding:15px; border:1px solid gold; margin:10px 0;">
+        <h3>💰 Upcoming Merger: TechCorp + DataInc</h3>
+        <p style="color:#888;">Insider tip | Buy before announcement</p>
+        <button onclick="buy('Merger_Intel',1000)"
+            style="padding:8px 15px; background:gold; color:#000; border:none; cursor:pointer;">BUY INTEL (1000
+            CR)</button>
+    </div>
+    <div style="background:#1a1a00; padding:15px; border:1px solid gold; margin:10px 0;">
+        <h3>💰 FDA Approval Leak: BioPharma Drug</h3>
+        <p style="color:#888;">Stock will surge 300%</p>
+        <button onclick="buy('FDA_Leak',1500)"
+            style="padding:8px 15px; background:gold; color:#000; border:none; cursor:pointer;">BUY INTEL (1500
+            CR)</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'insider.intel' }, '*');
+        function buy(item, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'INSIDER', item: item, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'download_file', site: 'INSIDER', filename: item + '.pdf', content: 'Insider trading information' }, '*');
+        }
+    </script>
+</body>
+
+</html>

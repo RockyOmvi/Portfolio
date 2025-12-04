@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1a0000; color:#ff0000; font-family:monospace; margin:0; padding:20px;">
+    <div style="background:#2a0000; padding:20px; border:2px solid #ff0000; margin-bottom:20px;">
+        <h1 style="margin:0; color:#ff0000;">🔫 THE ARMORY</h1>
+        <p style="margin:5px 0 0 0; color:#888;">Weapons & Tactical Gear | Worldwide Shipping</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:15px;">
+        <div style="background:#2a0000; padding:15px; border:1px solid #660000;">
+            <h3 style="color:#ff0000; margin:0 0 10px 0;">Glock 19 Gen5</h3>
+            <p style="color:#888; font-size:12px;">9mm | 15+1 capacity | Untraceable</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">1.2 BTC</p>
+            <button onclick="buy('Glock 19', 1.2)"
+                style="width:100%; padding:8px; background:#ff0000; color:#000; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+
+        <div style="background:#2a0000; padding:15px; border:1px solid #660000;">
+            <h3 style="color:#ff0000; margin:0 0 10px 0;">AR-15 Rifle</h3>
+            <p style="color:#888; font-size:12px;">5.56mm | 30rd mag | Ghost gun</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">2.5 BTC</p>
+            <button onclick="buy('AR-15', 2.5)"
+                style="width:100%; padding:8px; background:#ff0000; color:#000; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+
+        <div style="background:#2a0000; padding:15px; border:1px solid #660000;">
+            <h3 style="color:#ff0000; margin:0 0 10px 0;">Body Armor (Level IV)</h3>
+            <p style="color:#888; font-size:12px;">Ceramic plates | Stops rifle rounds</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">0.8 BTC</p>
+            <button onclick="buy('Body Armor', 0.8)"
+                style="width:100%; padding:8px; background:#ff0000; color:#000; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+
+        <div style="background:#2a0000; padding:15px; border:1px solid #660000;">
+            <h3 style="color:#ff0000; margin:0 0 10px 0;">Ammunition (1000rds)</h3>
+            <p style="color:#888; font-size:12px;">Various calibers available</p>
+            <p style="color:#fff; font-size:18px; font-weight:bold; margin:10px 0;">0.3 BTC</p>
+            <button onclick="buy('Ammunition', 0.3)"
+                style="width:100%; padding:8px; background:#ff0000; color:#000; border:none; cursor:pointer; font-weight:bold;">ORDER</button>
+        </div>
+    </div>
+
+    <div style="background:#2a0000; padding:15px; border:1px solid #660000; margin-top:20px;">
+        <h3 style="color:#ff0000;">⚠️ DISCLAIMER</h3>
+        <p style="color:#888; font-size:12px;">All sales final. No refunds. Delivery 7-14 days. Use PGP encryption for
+            orders.</p>
+    </div>
+
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'armory.onion' }, '*');
+        function buy(item, cost) {
+            window.parent.postMessage({
+                type: 'purchase',
+                site: 'ARMORY',
+                item: item,
+                cost: cost,
+                currency: 'btc'
+            }, '*');
+        }
+    </script>
+</body>
+
+</html>

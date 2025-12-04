@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:gold; font-family:Arial; padding:20px;">
+    <h1>🏦 CRYPTO BANK</h1>
+    <p>Anonymous Banking | Loans | Savings</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#1a1a00; padding:20px; border:2px solid gold; border-radius:10px;">
+            <h3>Savings Account</h3>
+            <p style="color:#888;">5% APY on crypto deposits</p>
+            <p style="color:#888;">No minimum balance</p>
+            <button onclick="open('Savings')"
+                style="width:100%; padding:10px; background:gold; color:#000; border:none; cursor:pointer; border-radius:5px; font-weight:bold;">OPEN
+                ACCOUNT</button>
+        </div>
+        <div style="background:#1a1a00; padding:20px; border:2px solid gold; border-radius:10px;">
+            <h3>Crypto Loan</h3>
+            <p style="color:#888;">Borrow up to 50% collateral value</p>
+            <p style="color:#888;">No credit check</p>
+            <button onclick="open('Loan')"
+                style="width:100%; padding:10px; background:gold; color:#000; border:none; cursor:pointer; border-radius:5px; font-weight:bold;">APPLY</button>
+        </div>
+        <div style="background:#1a1a00; padding:20px; border:2px solid gold; border-radius:10px;">
+            <h3>Debit Card</h3>
+            <p style="color:#888;">Spend crypto anywhere</p>
+            <p style="color:#888;">Anonymous card</p>
+            <button onclick="open('Card')"
+                style="width:100%; padding:10px; background:gold; color:#000; border:none; cursor:pointer; border-radius:5px; font-weight:bold;">ORDER
+                CARD</button>
+        </div>
+        <div style="background:#1a1a00; padding:20px; border:2px solid gold; border-radius:10px;">
+            <h3>Wire Transfer</h3>
+            <p style="color:#888;">International transfers</p>
+            <p style="color:#888;">No limits</p>
+            <button onclick="open('Wire')"
+                style="width:100%; padding:10px; background:gold; color:#000; border:none; cursor:pointer; border-radius:5px; font-weight:bold;">SEND
+                WIRE</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'cryptobank.dark' }, '*');
+        function open(type) {
+            window.parent.postMessage({ type: 'terminal_command', message: '[CRYPTOBANK] ' + type + ' account created successfully' }, '*');
+            window.parent.postMessage({ type: 'reputation_change', change: 10 }, '*');
+        }
+    </script>
+</body>
+
+</html>

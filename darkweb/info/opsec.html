@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#00f; font-family:monospace; padding:20px;">
+    <h1>🛡️ OPSEC GUIDE</h1>
+    <p>Operational Security Best Practices</p>
+    <div style="background:#000033; padding:20px; border:2px solid #00f; margin:20px 0;">
+        <h3>Essential OPSEC Rules</h3>
+        <p style="color:#888;">1. Use VPN + Tor for all dark web access</p>
+        <p style="color:#888;">2. Never reuse usernames/passwords</p>
+        <p style="color:#888;">3. Encrypt all communications with PGP</p>
+        <p style="color:#888;">4. Use cryptocurrency for payments</p>
+        <p style="color:#888;">5. Never share personal information</p>
+        <button onclick="dl()"
+            style="padding:10px 20px; background:#00f; color:#fff; border:none; cursor:pointer; margin-top:15px;">DOWNLOAD
+            FULL GUIDE</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'opsec.guide' }, '*');
+        function dl() { window.parent.postMessage({ type: 'download_file', site: 'OPSEC', filename: 'OPSEC_Complete_Guide.pdf', content: 'Comprehensive OPSEC manual' }, '*'); }
+    </script>
+</body>
+
+</html>

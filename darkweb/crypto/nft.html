@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f0f; font-family:monospace; padding:20px;">
+    <h1>🎨 NFT UNDERGROUND</h1>
+    <p>Stolen & Counterfeit NFTs</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <div style="width:100%; height:100px; background:linear-gradient(45deg,#f0f,#0ff); border-radius:5px;">
+            </div>
+            <h3 style="margin-top:10px;">Bored Ape #1234</h3>
+            <p style="color:#888;">Stolen from original owner</p>
+            <p style="font-size:18px;">0.5 ETH</p>
+            <button onclick="buy('Bored Ape',0.5)"
+                style="width:100%; padding:8px; background:#f0f; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <div style="width:100%; height:100px; background:linear-gradient(45deg,#ff0,#f00); border-radius:5px;">
+            </div>
+            <h3 style="margin-top:10px;">CryptoPunk #5678</h3>
+            <p style="color:#888;">Counterfeit copy</p>
+            <p style="font-size:18px;">1.2 ETH</p>
+            <button onclick="buy('CryptoPunk',1.2)"
+                style="width:100%; padding:8px; background:#f0f; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <div style="width:100%; height:100px; background:linear-gradient(45deg,#0f0,#00f); border-radius:5px;">
+            </div>
+            <h3 style="margin-top:10px;">Azuki #9012</h3>
+            <p style="color:#888;">Hacked wallet</p>
+            <p style="font-size:18px;">0.8 ETH</p>
+            <button onclick="buy('Azuki',0.8)"
+                style="width:100%; padding:8px; background:#f0f; color:#fff; border:none; cursor:pointer;">BUY</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'nft.underground' }, '*');
+        function buy(item, cost) { window.parent.postMessage({ type: 'purchase', site: 'NFT.UNDERGROUND', item: item, cost: cost, currency: 'eth' }, '*'); }
+    </script>
+</body>
+
+</html>

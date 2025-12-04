@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f90; font-family:monospace; margin:0; padding:20px;">
+    <h1 style="color:#f90;">💳 CREDIT SHOP</h1>
+    <p style="color:#888;">Stolen Credit Cards | CVV | Fullz</p>
+    <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:15px; margin-top:20px;">
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #f90;">
+            <h3 style="color:#f90;">Visa Classic</h3>
+            <p style="color:#888; font-size:12px;">$500-2000 balance | US issued</p>
+            <p style="color:#fff; font-size:18px;">50 CR</p>
+            <button onclick="buy('Visa Card', 50)"
+                style="width:100%; padding:8px; background:#f90; color:#000; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #f90;">
+            <h3 style="color:#f90;">Mastercard Gold</h3>
+            <p style="color:#888; font-size:12px;">$2000-5000 balance</p>
+            <p style="color:#fff; font-size:18px;">100 CR</p>
+            <button onclick="buy('Mastercard', 100)"
+                style="width:100%; padding:8px; background:#f90; color:#000; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #f90;">
+            <h3 style="color:#f90;">Amex Platinum</h3>
+            <p style="color:#888; font-size:12px;">$10000+ balance | Premium</p>
+            <p style="color:#fff; font-size:18px;">300 CR</p>
+            <button onclick="buy('Amex Platinum', 300)"
+                style="width:100%; padding:8px; background:#f90; color:#000; border:none; cursor:pointer;">BUY</button>
+        </div>
+        <div style="background:#1a1a1a; padding:15px; border:1px solid #f90;">
+            <h3 style="color:#f90;">Fullz Package</h3>
+            <p style="color:#888; font-size:12px;">SSN + DOB + Address + Card</p>
+            <p style="color:#fff; font-size:18px;">500 CR</p>
+            <button onclick="buy('Fullz Package', 500)"
+                style="width:100%; padding:8px; background:#f90; color:#000; border:none; cursor:pointer;">BUY</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'creditshop.onion' }, '*');
+        function buy(item, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'CREDITSHOP', item: item, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'download_file', site: 'CREDITSHOP', filename: item.replace(/ /g, '_') + '.txt', content: 'STOLEN CARD DATA' }, '*');
+        }
+    </script>
+</body>
+
+</html>

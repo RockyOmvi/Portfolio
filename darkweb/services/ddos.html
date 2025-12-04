@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f0f; font-family:monospace; padding:20px;">
+    <h1>⚡ DDOS RENTAL</h1>
+    <p>Distributed Denial of Service Attacks</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <h3>Basic DDoS (1 hour)</h3>
+            <p style="color:#888;">10 Gbps | Layer 4</p>
+            <p style="font-size:18px;">500 CR</p>
+            <button onclick="attack('Basic',500)"
+                style="width:100%; padding:8px; background:#f0f; color:#000; border:none; cursor:pointer;">LAUNCH</button>
+        </div>
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <h3>Pro DDoS (1 hour)</h3>
+            <p style="color:#888;">100 Gbps | Layer 7</p>
+            <p style="font-size:18px;">2000 CR</p>
+            <button onclick="attack('Pro',2000)"
+                style="width:100%; padding:8px; background:#f0f; color:#000; border:none; cursor:pointer;">LAUNCH</button>
+        </div>
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <h3>Enterprise DDoS (24h)</h3>
+            <p style="color:#888;">1 Tbps | Multi-vector</p>
+            <p style="font-size:18px;">10000 CR</p>
+            <button onclick="attack('Enterprise',10000)"
+                style="width:100%; padding:8px; background:#f0f; color:#000; border:none; cursor:pointer;">LAUNCH</button>
+        </div>
+        <div style="background:#1a001a; padding:15px; border:1px solid #f0f;">
+            <h3>Botnet Rental</h3>
+            <p style="color:#888;">100k+ bots | Custom</p>
+            <p style="font-size:18px;">5000 CR/day</p>
+            <button onclick="attack('Botnet',5000)"
+                style="width:100%; padding:8px; background:#f0f; color:#000; border:none; cursor:pointer;">RENT</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'ddos.rental' }, '*');
+        function attack(type, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'DDOS', item: type + ' Attack', cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'terminal_command', message: '[DDOS] Attack launched. Target will be offline shortly.' }, '*');
+        }
+    </script>
+</body>
+
+</html>

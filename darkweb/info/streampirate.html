@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0ff; font-family:monospace; padding:20px;">
+    <h1>🏴‍☠️ STREAM PIRATE</h1>
+    <p>Pirated Movies, TV Shows, Sports</p>
+    <div style="background:#001a1a; padding:15px; border:1px solid #0ff; margin:10px 0;">
+        <h3>🎬 Latest Movies (CAM Quality)</h3><button onclick="watch('Latest_Movie.mp4')"
+            style="padding:8px 15px; background:#0ff; color:#000; border:none; cursor:pointer;">WATCH</button>
+    </div>
+    <div style="background:#001a1a; padding:15px; border:1px solid #0ff; margin:10px 0;">
+        <h3>📺 TV Shows (All Seasons)</h3><button onclick="watch('TV_Show_Complete.zip')"
+            style="padding:8px 15px; background:#0ff; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a1a; padding:15px; border:1px solid #0ff; margin:10px 0;">
+        <h3>⚽ Live Sports Streams</h3><button onclick="watch('Live_Sports')"
+            style="padding:8px 15px; background:#0ff; color:#000; border:none; cursor:pointer;">WATCH LIVE</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'stream.pirate' }, '*');
+        function watch(content) { window.parent.postMessage({ type: 'terminal_command', message: '[STREAMPIRATE] Streaming: ' + content }, '*'); }
+    </script>
+</body>
+
+</html>

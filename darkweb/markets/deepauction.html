@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000033; color:#ff0; font-family:monospace; padding:20px;">
+    <h1>🔨 DEEP AUCTION</h1>
+    <p>Live Auctions | Rare & Illegal Items</p>
+    <div style="background:#000055; padding:20px; border:2px solid #ff0; margin:20px 0;">
+        <h2 style="color:#ff0;">CURRENT AUCTION</h2>
+        <h3>Stolen Art Collection (Picasso)</h3>
+        <p style="color:#888;">Stolen from private collection | Untraceable</p>
+        <p>Current Bid: <span style="font-size:24px; color:#0f0;">15,000 CR</span></p>
+        <p>Time Remaining: <span id="timer">2h 34m 12s</span></p>
+        <button onclick="bid()"
+            style="padding:10px 20px; background:#ff0; color:#000; border:none; cursor:pointer; font-weight:bold; margin-top:10px;">PLACE
+            BID (+1000 CR)</button>
+        <p id="status" style="color:#0f0; margin-top:10px;"></p>
+    </div>
+    <div style="background:#000055; padding:15px; border:1px solid #ff0; margin:10px 0;">
+        <h3>Upcoming: Rare Diamond (5 carats)</h3>
+        <p style="color:#888;">Starting bid: 20,000 CR | Starts in 3 hours</p>
+    </div>
+    <div style="background:#000055; padding:15px; border:1px solid #ff0; margin:10px 0;">
+        <h3>Upcoming: Vintage Ferrari (Stolen)</h3>
+        <p style="color:#888;">Starting bid: 50,000 CR | Starts in 6 hours</p>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'deepauction.onion' }, '*');
+        function bid() {
+            window.parent.postMessage({ type: 'purchase', site: 'DEEPAUCTION', item: 'Auction Bid', cost: 1000, currency: 'credits' }, '*');
+            document.getElementById('status').innerText = '✓ Bid placed! You are now the highest bidder.';
+        }
+    </script>
+</body>
+
+</html>

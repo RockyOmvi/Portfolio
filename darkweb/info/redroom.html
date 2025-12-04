@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1a0000; color:#f00; font-family:monospace; padding:20px;">
+    <h1>🔴 RED ROOM</h1>
+    <p style="color:#888;">⚠️ SIMULATION ONLY - NOT REAL</p>
+    <div style="background:#2a0000; padding:20px; border:2px solid #f00; margin:20px 0;">
+        <h3>DISCLAIMER</h3>
+        <p style="color:#888;">This is a FAKE simulation for educational purposes.</p>
+        <p style="color:#888;">Real "red rooms" are an urban legend and do not exist.</p>
+        <p style="color:#888;">This site demonstrates dark web myths.</p>
+        <button onclick="enter()"
+            style="padding:10px 20px; background:#f00; color:#fff; border:none; cursor:pointer; margin-top:15px;">ENTER
+            (FAKE)</button>
+        <div id="fake" style="margin-top:20px; display:none;">
+            <p style="color:#f00;">⚠️ ACCESS DENIED</p>
+            <p style="color:#888;">This content does not exist. Red rooms are a myth.</p>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'redroom.onion' }, '*');
+        function enter() {
+            document.getElementById('fake').style.display = 'block';
+            window.parent.postMessage({ type: 'terminal_command', message: '[SYSTEM] Red rooms are an urban legend. This is educational only.' }, '*');
+        }
+    </script>
+</body>
+
+</html>

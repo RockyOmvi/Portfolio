@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>🛡️ DEFCON ONION</h1>
+    <p>Security Conference Archives | Talks & Tools</p>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>🎤 DEFCON 31: Advanced Malware Analysis</h3>
+        <p style="color:#888;">Video + Slides | 2023</p>
+        <button onclick="dl('DEFCON31_Malware.zip')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>🎤 DEFCON 30: Wi-Fi Hacking Tools</h3>
+        <p style="color:#888;">Video + Tools | 2022</p>
+        <button onclick="dl('DEFCON30_WiFi.zip')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'defcon.onion' }, '*');
+        function dl(file) { window.parent.postMessage({ type: 'download_file', site: 'DEFCON', filename: file, content: 'Conference materials' }, '*'); }
+    </script>
+</body>
+
+</html>

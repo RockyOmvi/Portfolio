@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#f00; font-family:monospace; padding:20px;">
+    <h1>📋 DOXBIN</h1>
+    <p>Personal Information Database</p>
+    <div style="background:#1a0000; padding:20px; border:2px solid #f00; margin:20px 0;">
+        <h3>Search Database</h3>
+        <input type="text" placeholder="Enter name, email, or phone..."
+            style="width:100%; padding:10px; background:#000; border:1px solid #f00; color:#f00; margin:10px 0;">
+        <button onclick="search()"
+            style="width:100%; padding:10px; background:#f00; color:#fff; border:none; cursor:pointer; font-weight:bold;">SEARCH</button>
+        <div id="results" style="margin-top:20px; display:none;">
+            <h4>Results Found:</h4>
+            <p style="color:#888;">Name: John Doe</p>
+            <p style="color:#888;">Address: 123 Main St, City, State</p>
+            <p style="color:#888;">Phone: (555) 123-4567</p>
+            <p style="color:#888;">Email: john@example.com</p>
+            <button onclick="download()"
+                style="padding:8px 15px; background:#f00; color:#fff; border:none; cursor:pointer; margin-top:10px;">DOWNLOAD
+                FULL DOX (200 CR)</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'doxbin.onion' }, '*');
+        function search() { document.getElementById('results').style.display = 'block'; }
+        function download() {
+            window.parent.postMessage({ type: 'purchase', site: 'DOXBIN', item: 'Personal Dox', cost: 200, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'download_file', site: 'DOXBIN', filename: 'dox_report.txt', content: 'Full personal information dossier' }, '*');
+        }
+    </script>
+</body>
+
+</html>

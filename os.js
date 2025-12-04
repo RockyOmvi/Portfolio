@@ -496,6 +496,111 @@ setTimeout(() => {
     }
 }, 1000);
 
+// === ENHANCED WALLET SYSTEM ===
+const EnhancedWallet = {
+    currencies: {
+        credits: 0,
+        btc: 0,
+        eth: 0,
+        reputation: 0
+    },
+    transactions: [],
+
+    init: function () {
+        this.load();
+        // Sync with legacy Wallet
+        this.currencies.credits = Wallet.credits;
+    },
+
+    addCurrency: function (type, amount) {
+        if (this.currencies[type] !== undefined) {
+            this.currencies[type] += amount;
+            this.logTransaction(type, amount, 'credit');
+            this.save();
+            if (type === 'credits') Wallet.credits = this.currencies.credits; // Sync
+            return true;
+        }
+        return false;
+    },
+
+    deductCurrency: function (type, amount) {
+        if (this.currencies[type] !== undefined && this.currencies[type] >= amount) {
+            this.currencies[type] -= amount;
+            this.logTransaction(type, amount, 'debit');
+            this.save();
+            if (type === 'credits') Wallet.credits = this.currencies.credits; // Sync
+            return true;
+        }
+        return false;
+    },
+
+    logTransaction: function (type, amount, direction) {
+        this.transactions.push({
+            timestamp: Date.now(),
+            type: type,
+            amount: amount,
+            direction: direction
+        });
+        if (this.transactions.length > 50) this.transactions.shift();
+    },
+
+    save: function () {
+        localStorage.setItem('enhanced_wallet', JSON.stringify({
+            currencies: this.currencies,
+            transactions: this.transactions
+        }));
+    },
+
+    load: function () {
+        const data = localStorage.getItem('enhanced_wallet');
+        if (data) {
+            const parsed = JSON.parse(data);
+            this.currencies = parsed.currencies;
+            this.transactions = parsed.transactions;
+        }
+    }
+};
+
+// === SITE TRACKER ===
+const SiteTracker = {
+    history: [],
+    purchases: [],
+
+    visit: function (url) {
+        this.history.push({ url: url, timestamp: Date.now() });
+        this.save();
+    },
+
+    recordPurchase: function (site, item, cost) {
+        this.purchases.push({ site: site, item: item, cost: cost, timestamp: Date.now() });
+        this.save();
+        AchievementSystem.unlock('big_spender'); // First purchase
+        if (cost > 1000) AchievementSystem.unlock('high_roller');
+    },
+
+    save: function () {
+        localStorage.setItem('site_tracker', JSON.stringify({
+            history: this.history,
+            purchases: this.purchases
+        }));
+    },
+
+    load: function () {
+        const data = localStorage.getItem('site_tracker');
+        if (data) {
+            const parsed = JSON.parse(data);
+            this.history = parsed.history;
+            this.purchases = parsed.purchases;
+        }
+    }
+};
+
+// Initialize new systems
+setTimeout(() => {
+    EnhancedWallet.init();
+    SiteTracker.load();
+}, 1500);
+
 // ADVANCED MISSION ENGINE
 const MissionEngine = {
     active: false,
@@ -541,7 +646,11 @@ const MissionEngine = {
             // Reward Logic
             if (MISSIONS[this.currentOp]) {
                 const m = MISSIONS[this.currentOp];
-                Wallet.credits += m.score;
+
+                // Use EnhancedWallet
+                EnhancedWallet.addCurrency('credits', m.score);
+                EnhancedWallet.addCurrency('reputation', 5);
+
                 AchievementSystem.check('hack_complete');
                 AchievementSystem.check('credits_earned');
                 if (Wallet.credits >= 100) AchievementSystem.check('rich');
@@ -1159,7 +1268,13 @@ const AchievementSystem = {
         "bsod_survivor": { id: "bsod_survivor", title: "BSOD Survivor", desc: "Trigger a system crash.", icon: "alert-octagon", unlocked: false },
         "recursion": { id: "recursion", title: "Recursion", desc: "cd . 5 times.", icon: "refresh-cw", unlocked: false, progress: 0, target: 5 },
         "root_access": { id: "root_access", title: "Root Access", desc: "Try sudo or su.", icon: "lock", unlocked: false },
-        "hello_again": { id: "hello_again", title: "Hello Again", desc: "Boot system 5 times.", icon: "power", unlocked: false, progress: 0, target: 5 }
+        "hello_again": { id: "hello_again", title: "Hello Again", desc: "Boot system 5 times.", icon: "power", unlocked: false, progress: 0, target: 5 },
+
+        // Dark Web Expansion Achievements
+        "crypto_trader": { id: "crypto_trader", title: "Crypto Trader", desc: "Exchange cryptocurrency.", icon: "bitcoin", unlocked: false },
+        "exploit_collector": { id: "exploit_collector", title: "Exploit Collector", desc: "Download a premium exploit.", icon: "cpu", unlocked: false },
+        "intel_gatherer": { id: "intel_gatherer", title: "Intel Gatherer", desc: "Download leaked documents.", icon: "file-text", unlocked: false },
+        "high_roller": { id: "high_roller", title: "High Roller", desc: "Spend over 1000 credits.", icon: "dollar-sign", unlocked: false }
     },
 
     // State Tracking
@@ -2294,6 +2409,11 @@ window.addEventListener('message', (e) => {
 window.addEventListener('message', (e) => {
     const data = e.data;
 
+    // Site Visits (Track history)
+    if (data.type === 'site_visit') {
+        SiteTracker.visit(data.url);
+    }
+
     // Get HEX balance requests
     if (data.type === 'get_hex_balance') {
         e.source.postMessage({
@@ -2303,24 +2423,50 @@ window.addEventListener('message', (e) => {
     }
 
     // Market purchases
+    if (data.type === 'purchase') {
+        // Handle different currencies
+        const currency = data.currency || 'credits';
+        let success = false;
+
+        if (currency === 'credits') {
+            success = EnhancedWallet.deductCurrency('credits', data.cost);
+        } else if (currency === 'btc') {
+            success = EnhancedWallet.deductCurrency('btc', data.cost);
+        } else if (currency === 'eth') {
+            success = EnhancedWallet.deductCurrency('eth', data.cost);
+        }
+
+        if (success) {
+            printTerm(`[${data.site}] Purchased: ${data.item} (-${data.cost} ${currency.toUpperCase()})`);
+            SiteTracker.recordPurchase(data.site, data.item, data.cost);
+
+            // Special handling for specific items
+            if (data.item.includes('Mining')) {
+                printTerm(`[SYSTEM] Mining power increased!`);
+            }
+        } else {
+            printTerm(`[${data.site}] Insufficient ${currency.toUpperCase()}. Need: ${data.cost}`);
+        }
+    }
+
+    // Legacy support for old market_purchase
     if (data.type === 'market_purchase') {
-        if (Wallet.credits >= data.cost) {
-            Wallet.credits -= data.cost;
+        if (EnhancedWallet.deductCurrency('credits', data.cost)) {
             printTerm('[DARKBAZAAR] Purchased: ' + data.item + ' (-' + data.cost + ' CR)');
-            printTerm('[DARKBAZAAR] Balance: ' + Wallet.credits + ' CR');
+            SiteTracker.recordPurchase('DARKBAZAAR', data.item, data.cost);
         } else {
             printTerm('[DARKBAZAAR] Insufficient credits. Need: ' + data.cost + ' CR');
         }
     }
 
-    // Mining (FIX: Now properly saves to HexCoin)
+    // Mining
     if (data.type === 'mining_start') {
         printTerm('[CRYPTOMINER.POOL] Connecting to mining pool...');
         printTerm('[CRYPTOMINER.POOL] Mining in progress...');
         setTimeout(() => {
             const earned = Math.random() * 0.5 + 0.1;
             HexCoin.balance += earned;
-            HexCoin.save();  // FIX: Save to localStorage
+            HexCoin.save();
             printTerm('[CRYPTOMINER.POOL] Block mined! Earned: ' + earned.toFixed(2) + ' HEX');
             printTerm('[CRYPTOMINER.POOL] Total balance: ' + HexCoin.balance.toFixed(2) + ' HEX');
         }, 5000);
@@ -2331,8 +2477,9 @@ window.addEventListener('message', (e) => {
         const result = HexCoin.exchange(data.amount);
         if (result.success) {
             printTerm('[HEXEXCHANGE] Sold ' + data.amount + ' HEX for ' + result.credits + ' CR');
-            printTerm('[HEXEXCHANGE] HEX Balance: ' + HexCoin.balance.toFixed(2) + ' HEX');
-            printTerm('[HEXEXCHANGE] Credit Balance: ' + Wallet.credits + ' CR');
+            EnhancedWallet.currencies.credits = Wallet.credits; // Sync
+            EnhancedWallet.save();
+            AchievementSystem.unlock('crypto_trader');
         } else {
             printTerm('[HEXEXCHANGE] ' + result.error);
         }
@@ -2342,15 +2489,42 @@ window.addEventListener('message', (e) => {
     if (data.type === 'hex_buy') {
         const result = HexCoin.buy(data.amount);
         if (result.success) {
-            printTerm('[HEXEXCHANGE] Bought ' + data.amount + ' HEX for ' + (data.amount * 10) + ' CR');
-            printTerm('[HEXEXCHANGE] HEX Balance: ' + HexCoin.balance.toFixed(2) + ' HEX');
-            printTerm('[HEXEXCHANGE] Credit Balance: ' + Wallet.credits + ' CR');
+            printTerm('[HEXEXCHANGE] Bought ' + data.amount + ' HEX');
+            EnhancedWallet.currencies.credits = Wallet.credits; // Sync
+            EnhancedWallet.save();
+            AchievementSystem.unlock('crypto_trader');
         } else {
             printTerm('[HEXEXCHANGE] ' + result.error);
         }
     }
 
     // File downloads
+    if (data.type === 'download_file') {
+        const dir = FileSystem.structure.root.children;
+        // Create downloads folder if not exists
+        if (!dir['downloads']) {
+            dir['downloads'] = { type: 'directory', children: {} };
+        }
+
+        dir['downloads'].children[data.filename] = {
+            type: 'file',
+            content: data.content || 'Downloaded content'
+        };
+
+        printTerm(`[DOWNLOAD] ${data.filename} saved to /downloads/`);
+
+        if (data.achievement) {
+            // Map old IDs to new ones if necessary
+            let achId = data.achievement;
+            if (achId === 'hacker_elite') achId = 'exploit_collector';
+
+            AchievementSystem.unlock(achId);
+        }
+
+        refreshExplorer();
+    }
+
+    // Legacy file_download support
     if (data.type === 'file_download') {
         const dir = FileSystem.structure.root.children;
         dir[data.file] = {
@@ -2358,10 +2532,26 @@ window.addEventListener('message', (e) => {
             content: 'Downloaded from dark web: ' + data.file
         };
         if (data.reward) {
-            Wallet.credits += data.reward;
+            EnhancedWallet.addCurrency('credits', data.reward);
             printTerm('[DOWNLOAD] ' + data.file + ' saved (+' + data.reward + ' CR)');
         }
         refreshExplorer();
+    }
+
+    // Achievements
+    if (data.type === 'unlock_achievement') {
+        AchievementSystem.unlock(data.achievement);
+    }
+
+    // Terminal Commands
+    if (data.type === 'terminal_command') {
+        printTerm(data.message);
+    }
+
+    // Reputation
+    if (data.type === 'reputation_change') {
+        EnhancedWallet.addCurrency('reputation', data.change);
+        printTerm(`[REP] Reputation ${data.change > 0 ? 'increased' : 'decreased'} by ${Math.abs(data.change)}`);
     }
 });
 
@@ -2426,25 +2616,78 @@ function shutdownSystem() {
 }
 
 // Browser Navigation Function
+// Browser Navigation Function - All 52 Dark Web Sites
 function browserGo() {
     let url = document.getElementById('browser-url').value;
     const frame = document.getElementById('browser-frame');
 
     if (!url) return;
 
-    // Dark web sites - load from darkweb folder
-    if (url.includes('darkbazaar.onion')) {
-        frame.src = 'darkweb/darkbazaar.html';
-        return;
-    }
-    if (url.includes('cryptominer.pool')) {
-        frame.src = 'darkweb/cryptominer.html';
-        return;
-    }
-    if (url.includes('hexexchange.com')) {
-        frame.src = 'darkweb/hexexchange.html';
-        return;
-    }
+    // MARKETS (10)
+    if (url.includes('darkbazaar.onion')) { frame.src = 'darkweb/darkbazaar.html'; return; }
+    if (url.includes('silkroad4.onion')) { frame.src = 'darkweb/markets/silkroad4.html'; return; }
+    if (url.includes('armory.onion')) { frame.src = 'darkweb/markets/armory.html'; return; }
+    if (url.includes('docsmarket.onion')) { frame.src = 'darkweb/markets/docsmarket.html'; return; }
+    if (url.includes('creditshop.onion')) { frame.src = 'darkweb/markets/creditshop.html'; return; }
+    if (url.includes('pharmanet.onion')) { frame.src = 'darkweb/markets/pharmanet.html'; return; }
+    if (url.includes('blackhat.market')) { frame.src = 'darkweb/markets/blackhat.html'; return; }
+    if (url.includes('idforge.onion')) { frame.src = 'darkweb/markets/idforge.html'; return; }
+    if (url.includes('contraband.hub')) { frame.src = 'darkweb/markets/contraband.html'; return; }
+    if (url.includes('deepauction.onion')) { frame.src = 'darkweb/markets/deepauction.html'; return; }
+
+    // CRYPTO (8)
+    if (url.includes('cryptominer.pool')) { frame.src = 'darkweb/cryptominer.html'; return; }
+    if (url.includes('hexexchange.com')) { frame.src = 'darkweb/hexexchange.html'; return; }
+    if (url.includes('coinmixer.onion')) { frame.src = 'darkweb/crypto/coinmixer.html'; return; }
+    if (url.includes('walletgen.io')) { frame.src = 'darkweb/crypto/walletgen.html'; return; }
+    if (url.includes('hashpower.rent')) { frame.src = 'darkweb/crypto/hashpower.html'; return; }
+    if (url.includes('cryptobank.dark')) { frame.src = 'darkweb/crypto/cryptobank.html'; return; }
+    if (url.includes('nft.underground')) { frame.src = 'darkweb/crypto/nft.html'; return; }
+    if (url.includes('defi.shadow')) { frame.src = 'darkweb/crypto/defi.html'; return; }
+
+    // FORUMS (8)
+    if (url.includes('hackforums.net')) { frame.src = 'darkweb/forums/hackforums.html'; return; }
+    if (url.includes('exploit.zone')) { frame.src = 'darkweb/forums/exploitzone.html'; return; }
+    if (url.includes('blackhat.forum')) { frame.src = 'darkweb/forums/blackhat.html'; return; }
+    if (url.includes('carding.world')) { frame.src = 'darkweb/forums/carding.html'; return; }
+    if (url.includes('defcon.onion')) { frame.src = 'darkweb/forums/defcon.html'; return; }
+    if (url.includes('zeroday.market')) { frame.src = 'darkweb/forums/zeroday.html'; return; }
+    if (url.includes('pwn.collective')) { frame.src = 'darkweb/forums/pwn.html'; return; }
+    if (url.includes('anon.chat')) { frame.src = 'darkweb/forums/anonchat.html'; return; }
+
+    // INTELLIGENCE (6)
+    if (url.includes('wikileaks.onion')) { frame.src = 'darkweb/intel/wikileaks.html'; return; }
+    if (url.includes('corp.leaks')) { frame.src = 'darkweb/intel/corpleaks.html'; return; }
+    if (url.includes('gov.files')) { frame.src = 'darkweb/intel/govfiles.html'; return; }
+    if (url.includes('insider.intel')) { frame.src = 'darkweb/intel/insider.html'; return; }
+    if (url.includes('breach.database')) { frame.src = 'darkweb/intel/breachdb.html'; return; }
+    if (url.includes('doxbin.onion')) { frame.src = 'darkweb/intel/doxbin.html'; return; }
+
+    // SERVICES (6)
+    if (url.includes('hitman.onion')) { frame.src = 'darkweb/services/hitman.html'; return; }
+    if (url.includes('ddos.rental')) { frame.src = 'darkweb/services/ddos.html'; return; }
+    if (url.includes('hacker.hire')) { frame.src = 'darkweb/services/hackerhire.html'; return; }
+    if (url.includes('fake.news')) { frame.src = 'darkweb/services/fakenews.html'; return; }
+    if (url.includes('bot.army')) { frame.src = 'darkweb/services/botarmy.html'; return; }
+    if (url.includes('vpn.ultra')) { frame.src = 'darkweb/services/vpnultra.html'; return; }
+
+    // TOOLS (6)
+    if (url.includes('toolkit.onion')) { frame.src = 'darkweb/tools/toolkit.html'; return; }
+    if (url.includes('malware.lab')) { frame.src = 'darkweb/tools/malwarelab.html'; return; }
+    if (url.includes('crack.station')) { frame.src = 'darkweb/tools/crackstation.html'; return; }
+    if (url.includes('keygen.master')) { frame.src = 'darkweb/tools/keygen.html'; return; }
+    if (url.includes('rootkit.dev')) { frame.src = 'darkweb/tools/rootkit.html'; return; }
+    if (url.includes('exploit.builder')) { frame.src = 'darkweb/tools/exploitbuilder.html'; return; }
+
+    // INFO (8)
+    if (url.includes('darkpedia.onion')) { frame.src = 'darkweb/info/darkpedia.html'; return; }
+    if (url.includes('tutorial.underground')) { frame.src = 'darkweb/info/tutorials.html'; return; }
+    if (url.includes('opsec.guide')) { frame.src = 'darkweb/info/opsec.html'; return; }
+    if (url.includes('counterfeit.wiki')) { frame.src = 'darkweb/info/counterfeit.html'; return; }
+    if (url.includes('dark.games')) { frame.src = 'darkweb/info/darkgames.html'; return; }
+    if (url.includes('redroom.onion')) { frame.src = 'darkweb/info/redroom.html'; return; }
+    if (url.includes('betting.dark')) { frame.src = 'darkweb/info/betting.html'; return; }
+    if (url.includes('stream.pirate')) { frame.src = 'darkweb/info/streampirate.html'; return; }
 
     // Regular URLs
     if (!url.startsWith('http://') && !url.startsWith('https://')) {

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0ff; font-family:monospace; padding:20px;">
+    <h1>🤖 BOT ARMY</h1>
+    <p>Social Media Bots & Automation</p>
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>Twitter Bot Army (1000)</h3>
+            <p style="color:#888;">Likes, retweets, follows</p>
+            <p style="font-size:18px;">500 CR</p>
+            <button onclick="buy('Twitter Bots',500)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">DEPLOY</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>Instagram Bot Army (5000)</h3>
+            <p style="color:#888;">Likes, comments, follows</p>
+            <p style="font-size:18px;">800 CR</p>
+            <button onclick="buy('Instagram Bots',800)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">DEPLOY</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>Reddit Upvote Bots (10k)</h3>
+            <p style="color:#888;">Upvotes, awards</p>
+            <p style="font-size:18px;">1000 CR</p>
+            <button onclick="buy('Reddit Bots',1000)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">DEPLOY</button>
+        </div>
+        <div style="background:#001a1a; padding:15px; border:1px solid #0ff;">
+            <h3>Custom Bot Network</h3>
+            <p style="color:#888;">Any platform | Custom actions</p>
+            <p style="font-size:18px;">3000 CR</p>
+            <button onclick="buy('Custom Bots',3000)"
+                style="width:100%; padding:8px; background:#0ff; color:#000; border:none; cursor:pointer;">DEPLOY</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'bot.army' }, '*');
+        function buy(item, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'BOTARMY', item: item, cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'terminal_command', message: '[BOTARMY] Bots deployed. Activity will begin shortly.' }, '*');
+        }
+    </script>
+</body>
+
+</html>

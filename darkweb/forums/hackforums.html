@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>💻 HACK FORUMS</h1>
+    <p>The Original Hacking Community</p>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>📌 [TUTORIAL] SQL Injection for Beginners</h3>
+        <p style="color:#888;">Posted by: SQLMaster | 234 replies</p>
+        <button onclick="download('SQL_Injection_Tutorial.pdf')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>📌 [RELEASE] Keylogger Source Code</h3>
+        <p style="color:#888;">Posted by: CodeWarrior | 567 replies</p>
+        <button onclick="download('Keylogger.zip')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>📌 [GUIDE] Anonymous Browsing Complete Guide</h3>
+        <p style="color:#888;">Posted by: GhostUser | 892 replies</p>
+        <button onclick="download('Anonymity_Guide.pdf')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <div style="background:#001a00; padding:15px; border:1px solid #0f0; margin:10px 0;">
+        <h3>📌 [TOOLS] Complete Hacking Toolkit</h3>
+        <p style="color:#888;">Posted by: ToolMaster | 1,456 replies</p>
+        <button onclick="download('Hacking_Toolkit.zip')"
+            style="padding:5px 10px; background:#0f0; color:#000; border:none; cursor:pointer;">DOWNLOAD</button>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'hackforums.net' }, '*');
+        function download(file) {
+            window.parent.postMessage({ type: 'download_file', site: 'HACKFORUMS', filename: file, content: 'Hacking tutorial content', achievement: 'intel_gatherer' }, '*');
+        }
+    </script>
+</body>
+
+</html>

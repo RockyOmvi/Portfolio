@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#001a00; color:#0f0; font-family:monospace; margin:0; padding:20px;">
+    <h1 style="color:#0f0;">💊 PHARMANET</h1>
+    <p style="color:#888;">Prescription Drugs | No RX Required</p>
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px; margin-top:20px;">
+        <div style="background:#002200; padding:15px; border:1px solid #0f0;">
+            <h3 style="color:#0f0;">Xanax (100 pills)</h3>
+            <p style="color:#fff; font-size:18px;">200 CR</p>
+            <button onclick="buy('Xanax', 200)"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+        <div style="background:#002200; padding:15px; border:1px solid #0f0;">
+            <h3 style="color:#0f0;">Adderall (100 pills)</h3>
+            <p style="color:#fff; font-size:18px;">250 CR</p>
+            <button onclick="buy('Adderall', 250)"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+        <div style="background:#002200; padding:15px; border:1px solid #0f0;">
+            <h3 style="color:#0f0;">Oxycodone (50 pills)</h3>
+            <p style="color:#fff; font-size:18px;">400 CR</p>
+            <button onclick="buy('Oxycodone', 400)"
+                style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer;">ORDER</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'pharmanet.onion' }, '*');
+        function buy(item, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'PHARMANET', item: item, cost: cost, currency: 'credits' }, '*');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#000033; color:#00f; font-family:monospace; padding:20px;">
+    <h1>🔒 VPN ULTRA</h1>
+    <p>Military-Grade Anonymous VPN</p>
+    <div style="background:#000055; padding:20px; border:2px solid #00f; margin:20px 0;">
+        <h3>Features</h3>
+        <p style="color:#888;">✓ No logs policy</p>
+        <p style="color:#888;">✓ Multi-hop encryption</p>
+        <p style="color:#888;">✓ Tor integration</p>
+        <p style="color:#888;">✓ Kill switch</p>
+        <p style="color:#888;">✓ 50+ countries</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
+        <div style="background:#000055; padding:15px; border:1px solid #00f;">
+            <h3>1 Month</h3>
+            <p style="font-size:18px;">100 CR</p>
+            <button onclick="sub(1,100)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer;">SUBSCRIBE</button>
+        </div>
+        <div style="background:#000055; padding:15px; border:1px solid #00f;">
+            <h3>6 Months</h3>
+            <p style="font-size:18px;">500 CR</p>
+            <button onclick="sub(6,500)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer;">SUBSCRIBE</button>
+        </div>
+        <div style="background:#000055; padding:15px; border:1px solid #00f;">
+            <h3>Lifetime</h3>
+            <p style="font-size:18px;">2000 CR</p>
+            <button onclick="sub(999,2000)"
+                style="width:100%; padding:8px; background:#00f; color:#fff; border:none; cursor:pointer;">SUBSCRIBE</button>
+        </div>
+    </div>
+    <script>
+        window.parent.postMessage({ type: 'site_visit', url: 'vpn.ultra' }, '*');
+        function sub(months, cost) {
+            window.parent.postMessage({ type: 'purchase', site: 'VPNULTRA', item: months + ' Month VPN', cost: cost, currency: 'credits' }, '*');
+            window.parent.postMessage({ type: 'download_file', site: 'VPNULTRA', filename: 'VPN_Ultra_Setup.exe', content: 'VPN client installer' }, '*');
+        }
+    </script>
+</body>
+
+</html>
