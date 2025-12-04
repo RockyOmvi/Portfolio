@@ -136,8 +136,9 @@ function closeWindow(id) {
     removeFromTaskbar(id);
 
     // Stop Snake if closed
-    if (id === 'win-snake' && snakeGame) {
-        clearInterval(snakeGame);
+    if (id === 'win-snake') {
+        if (snakeGame) clearInterval(snakeGame);
+        document.removeEventListener('keydown', handleSnakeInput);
     }
 }
 
@@ -435,6 +436,31 @@ const MissionEngine = {
         if (hud) hud.remove();
 
         if (success) {
+            // Reward Logic
+            if (MISSIONS[this.currentOp]) {
+                const m = MISSIONS[this.currentOp];
+                Wallet.credits += m.score;
+                AchievementSystem.check('hack_complete');
+                AchievementSystem.check('credits_earned');
+                if (Wallet.credits >= 100) AchievementSystem.check('rich');
+
+                // Unlock Reward File
+                const dir = FileSystem.structure.root.children;
+                if (!dir[m.reward]) {
+                    dir[m.reward] = {
+                        type: "file",
+                        content: `MISSION COMPLETE: ${m.title}\n\nLOOT SECURED.\n\n[DATA ENCRYPTED]`
+                    };
+                    if (typeof refreshExplorer === 'function') refreshExplorer();
+                }
+
+                // Theme Change
+                if (m.theme) {
+                    document.body.className = `theme-${m.theme}`;
+                    setTimeout(() => document.body.className = 'theme-green', 3000);
+                }
+                return `MISSION COMPLETE. ${m.score} CREDITS TRANSFERRED.`;
+            }
             return "OPERATION COMPLETE. SYSTEM WIPE INITIATED...";
         } else {
             return "OPERATION FAILED. CONNECTION TERMINATED.";
@@ -725,27 +751,7 @@ function handleCmd(cmd) {
                     if (MissionEngine.currentOp === 'deep_web') {
                         setTimeout(triggerBSOD, 3000);
                     } else {
-                        const m = MISSIONS[MissionEngine.currentOp];
-                        Wallet.credits += m.score;
-                        printTerm(`MISSION COMPLETE. ${m.score} CREDITS TRANSFERRED.`);
-                        AchievementSystem.check('hack_complete');
-                        AchievementSystem.check('credits_earned');
-                        if (Wallet.credits >= 100) AchievementSystem.check('rich');
-                        // Unlock Reward
-                        const dir = FileSystem.structure.root.children;
-                        if (!dir[m.reward]) {
-                            dir[m.reward] = {
-                                type: "file",
-                                content: `MISSION COMPLETE: ${m.title}\n\nLOOT SECURED.\n\n[DATA ENCRYPTED]`
-                            };
-                            refreshExplorer();
-                        }
-
-                        // Theme Change
-                        if (m.theme) {
-                            document.body.className = `theme-${m.theme}`;
-                            setTimeout(() => document.body.className = 'theme-green', 3000);
-                        }
+                        // MissionEngine.stop(true) now handles rewards
                     }
                 }
             }, 500);
@@ -1388,6 +1394,11 @@ function startSnake() {
     dx = 1; dy = 0; // Move right
     document.getElementById('snake-score').innerText = score;
     spawnFood(); // Randomize food start
+
+    // Add Event Listener
+    document.removeEventListener('keydown', handleSnakeInput); // Safety clear
+    document.addEventListener('keydown', handleSnakeInput);
+
     gameLoop();
 }
 
@@ -1403,7 +1414,20 @@ function spawnFood() {
 }
 
 function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+    // Collision Detection (Walls)
+    if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize) {
+        gameOver();
+        return;
+    }
+
+    // Collision Detection (Self)
+    if (snake.some(part => part.x === head.x && part.y === head.y)) {
+        gameOver();
+        return;
+    }
+
     snake.unshift(head);
 
     // Eat food
@@ -1430,6 +1454,7 @@ function gameLoop() {
 
 function gameOver() {
     clearTimeout(snakeGame);
+    document.removeEventListener('keydown', handleSnakeInput);
     document.getElementById('snake-overlay').style.display = 'flex';
     document.getElementById('final-score').innerText = score;
 
@@ -1441,12 +1466,12 @@ function gameOver() {
     }
 }
 
-document.addEventListener('keydown', (e) => {
+function handleSnakeInput(e) {
     if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; e.preventDefault(); }
     if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; e.preventDefault(); }
     if (e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; e.preventDefault(); }
     if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; e.preventDefault(); }
-});
+}
 
 // SCREENSAVER
 let idleTime = 0;
