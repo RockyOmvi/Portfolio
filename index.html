@@ -405,6 +405,19 @@
                         AGAIN</button>
                 </div>
             </div>
+            <!-- Mobile Controls -->
+            <div id="snake-controls" class="hidden flex-col gap-2 mt-4 items-center w-full">
+                <button onclick="handleSnakeInput({key: 'ArrowUp'})" class="snake-btn"><i
+                        data-lucide="arrow-up"></i></button>
+                <div class="flex gap-4">
+                    <button onclick="handleSnakeInput({key: 'ArrowLeft'})" class="snake-btn"><i
+                            data-lucide="arrow-left"></i></button>
+                    <button onclick="handleSnakeInput({key: 'ArrowDown'})" class="snake-btn"><i
+                            data-lucide="arrow-down"></i></button>
+                    <button onclick="handleSnakeInput({key: 'ArrowRight'})" class="snake-btn"><i
+                            data-lucide="arrow-right"></i></button>
+                </div>
+            </div>
             <div class="resize-handle"></div>
         </div>
 

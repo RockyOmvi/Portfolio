@@ -168,6 +168,13 @@ function openWindow(id) {
     if (id === 'win-explorer' && typeof refreshExplorer === 'function') {
         refreshExplorer();
     }
+
+    // Mobile Auto-Maximize (handled via CSS mostly, but ensure state is correct)
+    if (window.innerWidth <= 768) {
+        // Optional: Add specific mobile logic here if needed
+        // For now, CSS handles the layout, but we might want to scroll to top
+        win.querySelector('.window-content').scrollTop = 0;
+    }
 }
 
 function closeWindow(id) {
@@ -1819,8 +1826,8 @@ function gameLoop() {
     ctx.fillStyle = 'red';
     ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
 
-    // Dynamic Speed: Start at 200ms, decrease by 1ms per point (10ms per food). Min speed 50ms.
-    const speed = Math.max(50, 200 - score);
+    // Dynamic Speed: Start at 300ms, decrease by 1ms per point (10ms per food). Min speed 50ms.
+    const speed = Math.max(50, 300 - score);
     snakeGame = setTimeout(gameLoop, speed);
 }
 
@@ -1839,11 +1846,13 @@ function gameOver() {
 }
 
 function handleSnakeInput(e) {
-    if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; e.preventDefault(); }
-    if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; e.preventDefault(); }
-    if (e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; e.preventDefault(); }
-    if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; e.preventDefault(); }
+    if (e.preventDefault) e.preventDefault();
+    if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
+    if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; }
+    if (e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
+    if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
 }
+
 
 // SCREENSAVER
 let idleTime = 0;
