@@ -104,6 +104,10 @@
                 <i data-lucide="hard-drive"></i>
                 <span>Files</span>
             </div>
+            <div class="desktop-icon" onclick="openWindow('win-resume')">
+                <i data-lucide="file-text"></i>
+                <span>Resume</span>
+            </div>
         </div>
 
         <!-- System Monitor Widget -->
@@ -609,6 +613,23 @@
             <div class="resize-handle"></div>
         </div>
 
+        <!-- Resume Window -->
+        <div id="win-resume" class="window" style="top: 5%; left: 10%; width: 900px; height: 800px;">
+            <div class="window-header">
+                <span>RESUME_VIEWER.EXE</span>
+                <div class="window-controls flex items-center">
+                    <a href="./Resume.pdf" download="Purushottam_Kumar_Resume.pdf"
+                        class="mr-4 text-xs bg-theme-color text-black px-2 py-0.5 font-bold hover:bg-white transition-colors no-underline">DOWNLOAD</a>
+                    <button class="win-btn" onclick="minimizeWindow('win-resume')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-resume')"></button>
+                </div>
+            </div>
+            <div class="window-content p-0 overflow-hidden bg-gray-800">
+                <iframe src="./Resume.pdf" class="w-full h-full border-none"></iframe>
+            </div>
+            <div class="resize-handle"></div>
+        </div>
+
         <!-- Achievement Notification -->
         <div id="ach-notification"
             class="fixed bottom-20 right-[-300px] w-64 bg-black border border-theme-color p-4 transition-all duration-500 z-[9999] flex items-center gap-4 shadow-[0_0_20px_rgba(0,255,65,0.3)]">
@@ -669,6 +690,9 @@
         </div>
         <div class="start-item" onclick="openWindow('win-explorer'); toggleStartMenu()">
             <i data-lucide="hard-drive"></i> Files
+        </div>
+        <div class="start-item" onclick="openWindow('win-resume'); toggleStartMenu()">
+            <i data-lucide="file-text"></i> Resume
         </div>
         <div class="start-divider"></div>
         <div class="start-item" onclick="location.reload()">
