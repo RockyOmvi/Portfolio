@@ -1539,3 +1539,63 @@ window.addEventListener('message', (e) => {
         }
     }
 });
+
+/* --- SHUTDOWN SYSTEM --- */
+function shutdownSystem() {
+    // Play shutdown sound if available
+    if (SoundManager.ctx) {
+        const osc = SoundManager.ctx.createOscillator();
+        const gain = SoundManager.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(440, SoundManager.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(55, SoundManager.ctx.currentTime + 1);
+        gain.gain.setValueAtTime(0.2, SoundManager.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, SoundManager.ctx.currentTime + 1);
+        osc.connect(gain);
+        gain.connect(SoundManager.ctx.destination);
+        osc.start();
+        osc.stop(SoundManager.ctx.currentTime + 1);
+    }
+
+    // Create Shutdown Screen
+    const div = document.createElement('div');
+    div.id = 'shutdown-screen';
+    div.style.position = 'fixed';
+    div.style.inset = '0';
+    div.style.backgroundColor = 'black';
+    div.style.zIndex = '99999';
+    div.style.display = 'flex';
+    div.style.flexDirection = 'column';
+    div.style.alignItems = 'center';
+    div.style.justifyContent = 'center';
+    div.style.color = '#00FF41'; // Matrix Green default
+    div.style.opacity = '0';
+    div.style.transition = 'opacity 1s ease-in-out';
+
+    div.innerHTML = `
+        <div style="font-family: monospace; font-size: 24px; margin-bottom: 20px;">SYSTEM HALTED</div>
+        <div style="font-family: monospace; font-size: 14px; margin-bottom: 40px; color: #555;">It is now safe to turn off your computer.</div>
+        <button onclick="location.reload()" style="
+            background: transparent;
+            border: 2px solid #333;
+            color: #333;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        " onmouseover="this.style.borderColor='#00FF41'; this.style.color='#00FF41'; this.style.boxShadow='0 0 15px #00FF41'" onmouseout="this.style.borderColor='#333'; this.style.color='#333'; this.style.boxShadow='none'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+        </button>
+    `;
+
+    document.body.appendChild(div);
+
+    // Fade out
+    setTimeout(() => {
+        div.style.opacity = '1';
+    }, 100);
+}
