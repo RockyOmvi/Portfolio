@@ -394,6 +394,108 @@ const Wallet = {
     credits: 0
 };
 
+// === HEXCOIN CRYPTOCURRENCY SYSTEM ===
+const HexCoin = {
+    balance: 0,
+    publicKey: '',
+    privateKey: '',
+    blockchain: [],
+    difficulty: 4,
+    exchangeRate: 10,
+
+    init: function () {
+        const saved = localStorage.getItem('hexcoin_wallet');
+        if (saved) {
+            const data = JSON.parse(saved);
+            this.balance = data.balance || 0;
+            this.publicKey = data.publicKey || '';
+            this.privateKey = data.privateKey || '';
+            this.blockchain = data.blockchain || [];
+        } else {
+            this.generateWallet();
+        }
+        console.log('[HEXCOIN] Wallet initialized:', this.publicKey);
+    },
+
+    generateWallet: function () {
+        this.publicKey = this.generateHash(Date.now() + 'public');
+        this.privateKey = this.generateHash(Date.now() + 'private');
+        this.balance = 0;
+        this.save();
+    },
+
+    generateHash: function (input) {
+        let hash = 0;
+        for (let i = 0; i < input.toString().length; i++) {
+            hash = ((hash << 5) - hash) + input.toString().charCodeAt(i);
+            hash = hash & hash;
+        }
+        return Math.abs(hash).toString(16).padStart(16, '0');
+    },
+
+    mine: function () {
+        let nonce = 0;
+        const target = '0'.repeat(this.difficulty);
+        const data = Date.now() + this.publicKey;
+
+        for (let i = 0; i < 100000; i++) {
+            const hash = this.generateHash(data + nonce);
+            if (hash.startsWith(target)) {
+                const reward = 1;
+                this.balance += reward;
+                this.blockchain.push({
+                    timestamp: Date.now(),
+                    hash: hash,
+                    nonce: nonce,
+                    reward: reward
+                });
+                this.save();
+                return { success: true, reward: reward, hash: hash };
+            }
+            nonce++;
+        }
+        return { success: false };
+    },
+
+    exchange: function (hexAmount) {
+        if (this.balance >= hexAmount) {
+            this.balance -= hexAmount;
+            const credits = hexAmount * this.exchangeRate;
+            Wallet.credits += credits;
+            this.save();
+            return { success: true, credits: credits };
+        }
+        return { success: false, error: 'Insufficient HEX' };
+    },
+
+    buy: function (hexAmount) {
+        const cost = hexAmount * this.exchangeRate;
+        if (Wallet.credits >= cost) {
+            Wallet.credits -= cost;
+            this.balance += hexAmount;
+            this.save();
+            return { success: true };
+        }
+        return { success: false, error: 'Insufficient credits' };
+    },
+
+    save: function () {
+        localStorage.setItem('hexcoin_wallet', JSON.stringify({
+            balance: this.balance,
+            publicKey: this.publicKey,
+            privateKey: this.privateKey,
+            blockchain: this.blockchain
+        }));
+    }
+};
+
+// Initialize HexCoin on load
+setTimeout(() => {
+    if (typeof HexCoin !== 'undefined') {
+        HexCoin.init();
+    }
+}, 1000);
+
 // ADVANCED MISSION ENGINE
 const MissionEngine = {
     active: false,
@@ -2188,6 +2290,81 @@ window.addEventListener('message', (e) => {
     }
 });
 
+// === ENHANCED MESSAGE HANDLERS FOR DARK WEB SITES ===
+window.addEventListener('message', (e) => {
+    const data = e.data;
+
+    // Get HEX balance requests
+    if (data.type === 'get_hex_balance') {
+        e.source.postMessage({
+            type: 'hex_balance_response',
+            balance: HexCoin.balance
+        }, '*');
+    }
+
+    // Market purchases
+    if (data.type === 'market_purchase') {
+        if (Wallet.credits >= data.cost) {
+            Wallet.credits -= data.cost;
+            printTerm('[DARKBAZAAR] Purchased: ' + data.item + ' (-' + data.cost + ' CR)');
+            printTerm('[DARKBAZAAR] Balance: ' + Wallet.credits + ' CR');
+        } else {
+            printTerm('[DARKBAZAAR] Insufficient credits. Need: ' + data.cost + ' CR');
+        }
+    }
+
+    // Mining (FIX: Now properly saves to HexCoin)
+    if (data.type === 'mining_start') {
+        printTerm('[CRYPTOMINER.POOL] Connecting to mining pool...');
+        printTerm('[CRYPTOMINER.POOL] Mining in progress...');
+        setTimeout(() => {
+            const earned = Math.random() * 0.5 + 0.1;
+            HexCoin.balance += earned;
+            HexCoin.save();  // FIX: Save to localStorage
+            printTerm('[CRYPTOMINER.POOL] Block mined! Earned: ' + earned.toFixed(2) + ' HEX');
+            printTerm('[CRYPTOMINER.POOL] Total balance: ' + HexCoin.balance.toFixed(2) + ' HEX');
+        }, 5000);
+    }
+
+    // HEX sell
+    if (data.type === 'hex_sell') {
+        const result = HexCoin.exchange(data.amount);
+        if (result.success) {
+            printTerm('[HEXEXCHANGE] Sold ' + data.amount + ' HEX for ' + result.credits + ' CR');
+            printTerm('[HEXEXCHANGE] HEX Balance: ' + HexCoin.balance.toFixed(2) + ' HEX');
+            printTerm('[HEXEXCHANGE] Credit Balance: ' + Wallet.credits + ' CR');
+        } else {
+            printTerm('[HEXEXCHANGE] ' + result.error);
+        }
+    }
+
+    // HEX buy
+    if (data.type === 'hex_buy') {
+        const result = HexCoin.buy(data.amount);
+        if (result.success) {
+            printTerm('[HEXEXCHANGE] Bought ' + data.amount + ' HEX for ' + (data.amount * 10) + ' CR');
+            printTerm('[HEXEXCHANGE] HEX Balance: ' + HexCoin.balance.toFixed(2) + ' HEX');
+            printTerm('[HEXEXCHANGE] Credit Balance: ' + Wallet.credits + ' CR');
+        } else {
+            printTerm('[HEXEXCHANGE] ' + result.error);
+        }
+    }
+
+    // File downloads
+    if (data.type === 'file_download') {
+        const dir = FileSystem.structure.root.children;
+        dir[data.file] = {
+            type: 'file',
+            content: 'Downloaded from dark web: ' + data.file
+        };
+        if (data.reward) {
+            Wallet.credits += data.reward;
+            printTerm('[DOWNLOAD] ' + data.file + ' saved (+' + data.reward + ' CR)');
+        }
+        refreshExplorer();
+    }
+});
+
 /* --- SHUTDOWN SYSTEM --- */
 function shutdownSystem() {
     // Play shutdown sound if available
@@ -2246,4 +2423,33 @@ function shutdownSystem() {
     setTimeout(() => {
         div.style.opacity = '1';
     }, 100);
+}
+
+// Browser Navigation Function
+function browserGo() {
+    let url = document.getElementById('browser-url').value;
+    const frame = document.getElementById('browser-frame');
+
+    if (!url) return;
+
+    // Dark web sites - load from darkweb folder
+    if (url.includes('darkbazaar.onion')) {
+        frame.src = 'darkweb/darkbazaar.html';
+        return;
+    }
+    if (url.includes('cryptominer.pool')) {
+        frame.src = 'darkweb/cryptominer.html';
+        return;
+    }
+    if (url.includes('hexexchange.com')) {
+        frame.src = 'darkweb/hexexchange.html';
+        return;
+    }
+
+    // Regular URLs
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+    }
+
+    frame.src = url;
 }

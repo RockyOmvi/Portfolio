@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1e1e1e; color:#fff; font-family:Arial; margin:0;">
+    <nav style="background:#000; padding:15px 30px; display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0; color:#f7931a;">💱 HEXEXCHANGE</h2>
+        <div style="color:#0f0; font-size:14px;">Market Cap: $2.4B</div>
+    </nav>
+    <div style="max-width:900px; margin:30px auto; padding:0 20px;">
+        <!-- Chart Section -->
+        <div style="background:#2a2a2a; padding:20px; border-radius:10px; margin-bottom:20px;">
+            <h2 style="margin:0 0 15px 0;">HEX/USD Price Chart</h2>
+            <canvas id="chart" width="850" height="250"
+                style="background:#1e1e1e; border:1px solid #444; width:100%;"></canvas>
+            <div style="display:flex; justify-content:space-between; margin-top:20px;">
+                <div>
+                    <p style="color:#888; margin:0; font-size:12px;">Current Price</p>
+                    <p style="font-size:28px; font-weight:bold; margin:5px 0; color:#0f0;">$127.45</p>
+                </div>
+                <div style="text-align:right;">
+                    <p style="color:#888; margin:0; font-size:12px;">24h Change</p>
+                    <p style="font-size:28px; font-weight:bold; margin:5px 0; color:#0f0;">+5.2%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trading Section -->
+        <div style="background:#2a2a2a; padding:20px; border-radius:10px;">
+            <h3 style="margin:0 0 15px 0;">Trade HEX</h3>
+            <p style="color:#888;">Your Balance: <strong style="color:#0f0; font-size:18px;"><span id="bal">0.00</span>
+                    HEX</strong></p>
+
+            <div style="margin:20px 0; padding:15px; background:#1e1e1e; border-radius:5px;">
+                <h4 style="margin:0 0 10px 0; color:#f7931a;">Sell HEX for Credits</h4>
+                <input type="number" id="sell" placeholder="Amount of HEX to sell"
+                    style="width:100%; padding:12px; background:#0a0a0a; border:1px solid #444; color:#fff; border-radius:5px; margin:5px 0;">
+                <p style="font-size:12px; color:#888; margin:5px 0;">Exchange Rate: 1 HEX = 10 Credits</p>
+                <button onclick="sell()"
+                    style="width:100%; padding:12px; background:#f7931a; color:#000; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">SELL
+                    HEX</button>
+            </div>
+
+            <div style="margin:20px 0; padding:15px; background:#1e1e1e; border-radius:5px;">
+                <h4 style="margin:0 0 10px 0; color:#0f0;">Buy HEX with Credits</h4>
+                <input type="number" id="buy" placeholder="Amount of HEX to buy"
+                    style="width:100%; padding:12px; background:#0a0a0a; border:1px solid #444; color:#fff; border-radius:5px; margin:5px 0;">
+                <p style="font-size:12px; color:#888; margin:5px 0;">Exchange Rate: 1 HEX = 10 Credits</p>
+                <button onclick="buy()"
+                    style="width:100%; padding:12px; background:#0f0; color:#000; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">BUY
+                    HEX</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Draw realistic price chart
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        const prices = [];
+
+        // Generate price data with realistic fluctuation
+        for (let i = 0; i < 50; i++) {
+            prices.push(120 + Math.random() * 15 + Math.sin(i * 0.2) * 3);
+        }
+
+        // Draw grid
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 5; i++) {
+            const y = (i / 4) * canvas.height;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+
+        // Draw price line
+        ctx.strokeStyle = '#0f0';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        prices.forEach((price, i) => {
+            const x = (i / (prices.length - 1)) * canvas.width;
+            const y = canvas.height - ((price - 115) / 20) * canvas.height;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Get balance
+        window.parent.postMessage({ type: 'get_hex_balance' }, '*');
+        window.addEventListener('message', (e) => {
+            if (e.data.type === 'hex_balance_response') {
+                document.getElementById('bal').innerText = e.data.balance.toFixed(2);
+            }
+        });
+
+        function sell() {
+            const amount = parseFloat(document.getElementById('sell').value);
+            if (amount > 0) {
+                window.parent.postMessage({ type: 'hex_sell', amount: amount }, '*');
+                document.getElementById('sell').value = '';
+                setTimeout(() => window.parent.postMessage({ type: 'get_hex_balance' }, '*'), 500);
+            } else {
+                alert('Please enter a valid amount');
+            }
+        }
+
+        function buy() {
+            const amount = parseFloat(document.getElementById('buy').value);
+            if (amount > 0) {
+                window.parent.postMessage({ type: 'hex_buy', amount: amount }, '*');
+                document.getElementById('buy').value = '';
+                setTimeout(() => window.parent.postMessage({ type: 'get_hex_balance' }, '*'), 500);
+            } else {
+                alert('Please enter a valid amount');
+            }
+        }
+    </script>
+</body>
+
+</html>

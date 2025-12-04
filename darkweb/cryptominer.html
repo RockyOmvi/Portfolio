@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#1a1a2e; color:#eee; font-family:Arial; margin:0;">
+    <header style="background:#16213e; padding:20px;">
+        <h1 style="margin:0; color:#0f3460;">⛏️ CRYPTOMINER POOL</h1>
+        <p style="margin:5px 0 0 0; color:#888;">Join the largest HexCoin mining pool</p>
+    </header>
+    <div style="max-width:600px; margin:30px auto; padding:0 20px;">
+        <div style="background:#16213e; padding:20px; border-radius:10px; margin-bottom:20px;">
+            <h2 style="color:#e94560; margin:0 0 10px 0;">Your HEX Balance</h2>
+            <p style="font-size:32px; font-weight:bold; color:#0f3460; margin:0;"><span id="bal">0.00</span> HEX</p>
+        </div>
+        <div style="background:#16213e; padding:20px; border-radius:10px;">
+            <h3 style="color:#e94560; margin:0 0 15px 0;">Start Mining</h3>
+            <p style="color:#ccc;">Mine HexCoin using our pool. 1% fee, instant payouts.</p>
+            <input type="text" placeholder="Your Wallet Address (0x...)"
+                style="width:100%; padding:12px; background:#1a1a2e; border:1px solid #0f3460; color:#fff; border-radius:5px; margin:15px 0;">
+            <button onclick="mine()"
+                style="width:100%; padding:15px; background:#e94560; color:#fff; border:none; border-radius:5px; cursor:pointer; font-size:16px; font-weight:bold;">START
+                MINING</button>
+            <p id="status" style="color:#0f0; margin-top:15px; font-weight:bold;"></p>
+        </div>
+    </div>
+    <script>
+        // Request balance on load
+        window.parent.postMessage({ type: 'get_hex_balance' }, '*');
+
+        // Listen for balance updates
+        window.addEventListener('message', (e) => {
+            if (e.data.type === 'hex_balance_response') {
+                document.getElementById('bal').innerText = e.data.balance.toFixed(2);
+            }
+        });
+
+        function mine() {
+            document.getElementById('status').innerText = '⚡ Mining in progress...';
+            window.parent.postMessage({ type: 'mining_start' }, '*');
+
+            setTimeout(() => {
+                document.getElementById('status').innerText = '✅ Mining complete! Check terminal for details';
+                // Refresh balance after mining
+                setTimeout(() => {
+                    window.parent.postMessage({ type: 'get_hex_balance' }, '*');
+                }, 1000);
+            }, 5500);
+        }
+    </script>
+</body>
+
+</html>

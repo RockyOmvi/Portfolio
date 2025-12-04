@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background:#0a0a0a; color:#0f0; font-family:monospace; padding:0; margin:0;">
+    <div style="background:#1a1a1a; padding:15px; border-bottom:2px solid #0f0;">
+        <h1 style="margin:0; color:#0f0;">🛒 DARKBAZAAR</h1>
+        <p style="margin:5px 0 0 0; font-size:12px; color:#888;">Trusted Since 2024 | 15,234 Vendors</p>
+    </div>
+    <div style="padding:20px;">
+        <h2 style="color:#0f0; margin:0 0 15px 0;">Featured Listings</h2>
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:15px;">
+            <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+                <h3 style="color:#0f0; margin:0 0 10px 0; font-size:14px;">Zero-Day Exploit Pack</h3>
+                <p style="color:#888; margin:5px 0; font-size:12px;">⭐⭐⭐⭐⭐ (127 reviews)</p>
+                <p style="color:#fff; margin:10px 0; font-size:16px; font-weight:bold;">5000 CR</p>
+                <button onclick="buy('Zero-Day Pack', 5000)"
+                    style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">BUY
+                    NOW</button>
+            </div>
+            <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+                <h3 style="color:#0f0; margin:0 0 10px 0; font-size:14px;">Corporate Database Dump</h3>
+                <p style="color:#888; margin:5px 0; font-size:12px;">⭐⭐⭐⭐ (89 reviews)</p>
+                <p style="color:#fff; margin:10px 0; font-size:16px; font-weight:bold;">3500 CR</p>
+                <button onclick="buy('Database Dump', 3500)"
+                    style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">BUY
+                    NOW</button>
+            </div>
+            <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+                <h3 style="color:#0f0; margin:0 0 10px 0; font-size:14px;">Botnet Rental (10k nodes)</h3>
+                <p style="color:#888; margin:5px 0; font-size:12px;">⭐⭐⭐⭐⭐ (203 reviews)</p>
+                <p style="color:#fff; margin:10px 0; font-size:16px; font-weight:bold;">1000 CR/day</p>
+                <button onclick="buy('Botnet Rental', 1000)"
+                    style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">RENT
+                    NOW</button>
+            </div>
+            <div style="background:#1a1a1a; padding:15px; border:1px solid #333;">
+                <h3 style="color:#0f0; margin:0 0 10px 0; font-size:14px;">Metasploit Pro License</h3>
+                <p style="color:#888; margin:5px 0; font-size:12px;">⭐⭐⭐⭐⭐ (342 reviews)</p>
+                <p style="color:#fff; margin:10px 0; font-size:16px; font-weight:bold;">1500 CR</p>
+                <button onclick="buy('Metasploit License', 1500)"
+                    style="width:100%; padding:8px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;">BUY
+                    NOW</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function buy(item, cost) {
+            window.parent.postMessage({ type: 'market_purchase', item: item, cost: cost }, '*');
+        }
+    </script>
+</body>
+
+</html>
