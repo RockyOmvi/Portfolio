@@ -96,6 +96,10 @@
                 <i data-lucide="globe"></i>
                 <span>CyberDeck</span>
             </div>
+            <div class="desktop-icon" onclick="openWindow('win-media')">
+                <i data-lucide="music"></i>
+                <span>Media</span>
+            </div>
             <div class="desktop-icon" onclick="openWindow('win-explorer')">
                 <i data-lucide="hard-drive"></i>
                 <span>Files</span>
@@ -338,6 +342,52 @@
             <div class="resize-handle"></div>
         </div>
 
+        <!-- Media Player Window -->
+        <div id="win-media" class="window" style="top: 25%; left: 60%; width: 350px; height: 450px;">
+            <div class="window-header">
+                <span>MEDIA_PLAYER.EXE</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-media')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-media')"></button>
+                </div>
+            </div>
+            <div class="window-content flex flex-col bg-black p-4">
+                <div
+                    class="w-full h-32 bg-theme-dim/20 border border-theme-dim mb-4 flex items-center justify-center relative overflow-hidden">
+                    <div id="media-visualizer" class="flex items-end justify-center gap-1 h-full w-full p-2">
+                        <!-- Bars injected by JS -->
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i data-lucide="music" class="w-12 h-12 text-theme-color opacity-50"></i>
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <h3 id="media-title" class="text-lg font-bold text-theme-color truncate">NO MEDIA</h3>
+                    <p id="media-artist" class="text-xs text-theme-dim truncate">Select a track</p>
+                </div>
+
+                <div class="flex justify-center items-center gap-4 mb-6">
+                    <button onclick="mediaPrev()" class="text-theme-color hover:text-white"><i data-lucide="skip-back"
+                            class="w-6 h-6"></i></button>
+                    <button onclick="mediaPlayPause()"
+                        class="text-theme-color hover:text-white border border-theme-color rounded-full p-2">
+                        <i id="media-play-icon" data-lucide="play" class="w-6 h-6"></i>
+                    </button>
+                    <button onclick="mediaNext()" class="text-theme-color hover:text-white"><i
+                            data-lucide="skip-forward" class="w-6 h-6"></i></button>
+                </div>
+
+                <div class="flex-grow border-t border-theme-dim pt-2 overflow-y-auto">
+                    <div class="text-xs font-bold mb-2 text-theme-dim">PLAYLIST</div>
+                    <div id="media-playlist" class="flex flex-col gap-1">
+                        <!-- Playlist items injected by JS -->
+                    </div>
+                </div>
+            </div>
+            <div class="resize-handle"></div>
+        </div>
+
         <!-- Notepad Window -->
         <div id="win-notepad" class="window" style="top: 15%; left: 55%; width: 400px; height: 300px;">
             <div class="window-header">
@@ -420,6 +470,46 @@
             <div class="resize-handle"></div>
         </div>
 
+        <!-- Achievements Window -->
+        <div id="win-achievements" class="window" style="top: 15%; left: 15%; width: 600px; height: 500px;">
+            <div class="window-header">
+                <span>ACHIEVEMENTS.LOG</span>
+                <div class="window-controls">
+                    <button class="win-btn" onclick="minimizeWindow('win-achievements')"></button>
+                    <button class="win-btn bg-red-500" onclick="closeWindow('win-achievements')"></button>
+                </div>
+            </div>
+            <div class="window-content flex flex-col p-0">
+                <div class="p-4 border-b border-theme-dim bg-theme-dark/20 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-theme-color">SYSTEM MILESTONES</h2>
+                        <p class="text-xs text-theme-dim">Track your progress in the simulation.</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-theme-dim">UNLOCKED</p>
+                        <p class="text-xl font-bold text-theme-color"><span id="ach-count">0</span> / <span
+                                id="ach-total">0</span></p>
+                    </div>
+                </div>
+                <div id="ach-grid" class="flex-grow p-4 grid grid-cols-1 gap-2 overflow-y-auto">
+                    <!-- Achievements injected by JS -->
+                </div>
+            </div>
+            <div class="resize-handle"></div>
+        </div>
+
+        <!-- Achievement Notification -->
+        <div id="ach-notification"
+            class="fixed bottom-20 right-[-300px] w-64 bg-black border border-theme-color p-4 transition-all duration-500 z-[9999] flex items-center gap-4 shadow-[0_0_20px_rgba(0,255,65,0.3)]">
+            <div class="text-theme-color">
+                <i data-lucide="trophy" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold text-theme-dim mb-1">ACHIEVEMENT UNLOCKED</h4>
+                <p id="ach-notify-title" class="text-sm font-bold text-white">Title Here</p>
+            </div>
+        </div>
+
         <!-- Audio Control Widget (Desktop) -->
         <div id="music-widget" class="absolute bottom-16 right-4 w-48 bg-black border border-theme-color p-2 z-0">
             <div class="flex justify-between items-center mb-2">
@@ -451,11 +541,17 @@
         <div class="start-item" onclick="openWindow('win-about'); toggleStartMenu()">
             <i data-lucide="user"></i> Identity
         </div>
+        <div class="start-item" onclick="openWindow('win-achievements'); toggleStartMenu()">
+            <i data-lucide="trophy"></i> Achievements
+        </div>
         <div class="start-item" onclick="openWindow('win-projects'); toggleStartMenu()">
             <i data-lucide="folder-git-2"></i> Archives
         </div>
         <div class="start-item" onclick="openWindow('win-terminal'); toggleStartMenu()">
             <i data-lucide="terminal"></i> Terminal
+        </div>
+        <div class="start-item" onclick="openWindow('win-media'); toggleStartMenu()">
+            <i data-lucide="music"></i> Media Player
         </div>
         <div class="start-item" onclick="openWindow('win-browser'); toggleStartMenu()">
             <i data-lucide="globe"></i> CyberDeck

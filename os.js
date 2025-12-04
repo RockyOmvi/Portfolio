@@ -83,6 +83,8 @@ window.onload = () => {
     });
 
     initSysMonitor();
+    MediaPlayer.init();
+    AchievementSystem.init();
 };
 
 function initCursor() {
@@ -115,6 +117,7 @@ function openWindow(id) {
 
     // Add to taskbar if not exists
     addToTaskbar(id);
+    AchievementSystem.check('window_opened', id);
 
     // Refresh File Explorer if opened
     if (id === 'win-explorer' && typeof refreshExplorer === 'function') {
@@ -209,12 +212,34 @@ document.addEventListener('click', (e) => {
 const termInput = document.getElementById('term-input');
 const termOutput = document.getElementById('term-output');
 
+let commandHistory = [];
+let historyIndex = -1;
+
 termInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         const cmd = termInput.value;
+        if (cmd.trim()) {
+            commandHistory.push(cmd);
+            historyIndex = commandHistory.length;
+        }
         printTerm(`> ${cmd}`);
         handleCmd(cmd);
         termInput.value = '';
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyIndex > 0) {
+            historyIndex--;
+            termInput.value = commandHistory[historyIndex];
+        }
+    } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            termInput.value = commandHistory[historyIndex];
+        } else {
+            historyIndex = commandHistory.length;
+            termInput.value = '';
+        }
     }
 });
 
@@ -336,6 +361,33 @@ const MissionGenerator = {
 // Initialize Generator
 setTimeout(() => MissionGenerator.init(), 100);
 
+// BLACK MARKET
+const BlackMarket = {
+    upgrades: {
+        "vpn_proxy": { name: "VPN Proxy", cost: 50, desc: "Reduces trace speed by 20%", owned: false },
+        "brute_force_mk2": { name: "Brute Force MkII", cost: 100, desc: "Increases crack speed", owned: false },
+        "stealth_kit": { name: "Stealth Kit", cost: 200, desc: "Trace starts at -20%", owned: false }
+    },
+
+    buy: function (id) {
+        const item = this.upgrades[id];
+        if (!item) return "Item not found.";
+        if (item.owned) return "Already owned.";
+
+        if (Wallet.credits >= item.cost) {
+            Wallet.credits -= item.cost;
+            item.owned = true;
+            return `Purchased ${item.name}.`;
+        } else {
+            return `Insufficient credits. Cost: ${item.cost}`;
+        }
+    }
+};
+
+const Wallet = {
+    credits: 0
+};
+
 // ADVANCED MISSION ENGINE
 const MissionEngine = {
     active: false,
@@ -345,6 +397,7 @@ const MissionEngine = {
     interval: null,
     traceLevel: 0,
     objective: "",
+    traceRate: 2, // Default
 
     start: function (opId) {
         if (this.active) return "Operation already in progress.";
@@ -535,7 +588,12 @@ function handleCmd(cmd) {
     const c = args[0].toLowerCase();
     const arg = args[1];
 
-    if (c === 'help') printTerm("cmds: ls, cd, cat, mkdir, touch, rm, clear, reboot, snake, matrix, del system32");
+    AchievementSystem.check('command_run');
+
+    if (c === 'help') {
+        printTerm("cmds: ls, cd, cat, mkdir, touch, rm, clear, reboot, snake, matrix, market, wallet, del system32");
+        AchievementSystem.check('sys_admin');
+    }
     else if (c === 'clear') termOutput.innerHTML = '';
     else if (c === 'reboot') location.reload();
     else if (c === 'snake') openWindow('win-snake');
@@ -548,8 +606,6 @@ function handleCmd(cmd) {
     else if (c === 'cat') printTerm(FileSystem.cat(arg));
     else if (c === 'mkdir') printTerm(FileSystem.mkdir(arg));
     else if (c === 'touch') printTerm(FileSystem.touch(arg));
-    else if (c === 'rm') printTerm(FileSystem.rm(arg));
-    else if (c === 'delete' && args[1] === 'system32' || c === 'del' && args[1] === 'system32') triggerBSOD();
     else if (c === 'rm') printTerm(FileSystem.rm(arg));
     else if (c === 'delete' && args[1] === 'system32' || c === 'del' && args[1] === 'system32') triggerBSOD();
     else if (c === 'ping') {
@@ -638,7 +694,10 @@ function handleCmd(cmd) {
             const interval = setInterval(() => {
                 p += 5; // Slower upload
                 printTerm(`Progress: ${p}%`);
-                MissionEngine.traceLevel += 2; // Trace increases during upload
+                // Trace increases during upload (modified by upgrades)
+                let traceInc = 2;
+                if (BlackMarket.upgrades.vpn_proxy.owned) traceInc = 1;
+                MissionEngine.traceLevel += traceInc;
                 MissionEngine.renderHUD();
 
                 if (p >= 100) {
@@ -648,9 +707,12 @@ function handleCmd(cmd) {
                     if (MissionEngine.currentOp === 'deep_web') {
                         setTimeout(triggerBSOD, 3000);
                     } else {
-                        printTerm("MISSION COMPLETE. REWARD TRANSFERRED.");
-                        // Unlock Reward
                         const m = MISSIONS[MissionEngine.currentOp];
+                        Wallet.credits += m.score;
+                        printTerm(`MISSION COMPLETE. ${m.score} CREDITS TRANSFERRED.`);
+                        AchievementSystem.check('hack_complete');
+                        if (Wallet.credits >= 100) AchievementSystem.check('rich');
+                        // Unlock Reward
                         const dir = FileSystem.structure.root.children;
                         if (!dir[m.reward]) {
                             dir[m.reward] = {
@@ -742,6 +804,20 @@ function handleCmd(cmd) {
         printTerm("-".repeat(70));
         printTerm(`Type 'contracts ${page + 1}' for next page.`);
     }
+    else if (c === 'wallet') {
+        printTerm(`CREDITS: ${Wallet.credits}`);
+    }
+    else if (c === 'market') {
+        if (!arg) {
+            printTerm("--- BLACK MARKET ---");
+            Object.entries(BlackMarket.upgrades).forEach(([key, item]) => {
+                printTerm(`${key.padEnd(15)} | ${item.cost} CR | ${item.owned ? "[OWNED]" : item.desc}`);
+            });
+            printTerm("Usage: market buy <item_id>");
+        } else if (arg === 'buy' && args[2]) {
+            printTerm(BlackMarket.buy(args[2]));
+        }
+    }
     else if (c === 'scan_network') {
         printTerm("Scanning local subnet...");
         setTimeout(() => {
@@ -770,6 +846,13 @@ function handleCmd(cmd) {
             }
         }, 2000);
     }
+    else if (c === 'reset_achievements') {
+        localStorage.removeItem('achievements');
+        location.reload();
+    }
+    else if (c === 'test_notification') {
+        AchievementSystem.notify({ title: "Test Achievement", desc: "This is a test.", icon: "trophy" });
+    }
     else printTerm(`Unknown command: ${c}`);
 }
 
@@ -777,6 +860,238 @@ function triggerBSOD() {
     bsod.style.display = 'block';
     setTimeout(() => location.reload(), 5000);
 }
+
+/* --- MEDIA PLAYER --- */
+const MediaPlayer = {
+    tracks: [
+        { title: "Cyber Chase", artist: "Neon Grid", src: "assets/audio/track1.mp3" },
+        { title: "Night City", artist: "Synthwave", src: "assets/audio/track2.mp3" },
+        { title: "Mainframe", artist: "Hacker", src: "assets/audio/track3.mp3" }
+    ],
+    currentTrack: 0,
+    isPlaying: false,
+    visualizerInterval: null,
+
+    init: function () {
+        this.renderPlaylist();
+        this.updateUI();
+    },
+
+    renderPlaylist: function () {
+        const list = document.getElementById('media-playlist');
+        if (!list) return;
+        list.innerHTML = '';
+        this.tracks.forEach((track, index) => {
+            const div = document.createElement('div');
+            div.className = `p-2 text-xs border border-theme-dim hover:bg-theme-dim/20 cursor-pointer ${index === this.currentTrack ? 'text-theme-color bg-theme-dim/10' : 'text-gray-500'}`;
+            div.innerText = `${index + 1}. ${track.title} - ${track.artist}`;
+            div.onclick = () => this.playTrack(index);
+            list.appendChild(div);
+        });
+    },
+
+    updateUI: function () {
+        const title = document.getElementById('media-title');
+        const artist = document.getElementById('media-artist');
+
+        if (title) title.innerText = this.tracks[this.currentTrack].title;
+        if (artist) artist.innerText = this.tracks[this.currentTrack].artist;
+
+        this.renderPlaylist();
+    },
+
+    playTrack: function (index) {
+        if (index !== undefined) this.currentTrack = index;
+        this.isPlaying = true;
+        this.updateUI();
+        this.startVisualizer();
+        AchievementSystem.check('music_lover');
+    },
+
+    pauseTrack: function () {
+        this.isPlaying = false;
+        this.stopVisualizer();
+    },
+
+    toggle: function () {
+        if (this.isPlaying) this.pauseTrack();
+        else this.playTrack();
+    },
+
+    next: function () {
+        this.currentTrack = (this.currentTrack + 1) % this.tracks.length;
+        this.playTrack();
+    },
+
+    prev: function () {
+        this.currentTrack = (this.currentTrack - 1 + this.tracks.length) % this.tracks.length;
+        this.playTrack();
+    },
+
+    startVisualizer: function () {
+        if (this.visualizerInterval) clearInterval(this.visualizerInterval);
+        const container = document.getElementById('media-visualizer');
+        if (!container) return;
+
+        this.visualizerInterval = setInterval(() => {
+            container.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const h = Math.random() * 100;
+                const bar = document.createElement('div');
+                bar.style.width = '10%';
+                bar.style.height = `${h}%`;
+                bar.style.background = 'var(--theme-color)';
+                container.appendChild(bar);
+            }
+        }, 100);
+    },
+
+    stopVisualizer: function () {
+        if (this.visualizerInterval) clearInterval(this.visualizerInterval);
+        const container = document.getElementById('media-visualizer');
+        if (container) container.innerHTML = '';
+    }
+};
+
+// Global functions for HTML onclick
+function mediaPrev() { MediaPlayer.prev(); }
+function mediaNext() { MediaPlayer.next(); }
+function mediaPlayPause() { MediaPlayer.toggle(); }
+
+/* --- ACHIEVEMENT SYSTEM --- */
+const AchievementSystem = {
+    achievements: {
+        "hello_world": { id: "hello_world", title: "Hello World", desc: "Boot up the system for the first time.", icon: "power", unlocked: false },
+        "script_kiddie": { id: "script_kiddie", title: "Script Kiddie", desc: "Complete your first hack.", icon: "terminal", unlocked: false },
+        "master_hacker": { id: "master_hacker", title: "Master Hacker", desc: "Complete 10 hacks.", icon: "skull", unlocked: false, progress: 0, target: 10 },
+        "rich": { id: "rich", title: "Crypto Miner", desc: "Earn 100 Credits.", icon: "bitcoin", unlocked: false },
+        "snake_score_10": { id: "snake_score_10", title: "Baby Snake", desc: "Score 10 in Snake.", icon: "gamepad-2", unlocked: false },
+        "snake_score_10": { id: "snake_score_10", title: "Baby Snake", desc: "Score 10 in Snake.", icon: "gamepad-2", unlocked: false },
+        "snake_score_50": { id: "snake_score_50", title: "Serpent", desc: "Score 50 in Snake.", icon: "crown", unlocked: false },
+        "sys_admin": { id: "sys_admin", title: "System Admin", desc: "Run the 'help' command.", icon: "terminal-square", unlocked: false },
+        "explorer": { id: "explorer", title: "Explorer", desc: "Open 5 different applications.", icon: "compass", unlocked: false, progress: 0, target: 5 },
+        "music_lover": { id: "music_lover", title: "Music Lover", desc: "Play a track in Media Player.", icon: "headphones", unlocked: false },
+        "terminal_junkie": { id: "terminal_junkie", title: "Terminal Junkie", desc: "Run 20 terminal commands.", icon: "keyboard", unlocked: false, progress: 0, target: 20 },
+        "glitch_matrix": { id: "glitch_matrix", title: "Glitch in the Matrix", desc: "Find the hidden trigger.", icon: "zap", unlocked: false }
+    },
+
+    // State Tracking
+    openedWindows: new Set(),
+    commandCount: 0,
+
+    init: function () {
+        const saved = localStorage.getItem('achievements');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // Merge saved data with current structure (to handle updates)
+            for (const key in parsed) {
+                if (this.achievements[key]) {
+                    this.achievements[key].unlocked = parsed[key].unlocked;
+                    if (parsed[key].progress) this.achievements[key].progress = parsed[key].progress;
+                }
+            }
+        } else {
+            // First boot achievement
+            setTimeout(() => this.unlock('hello_world'), 2000);
+        }
+        this.render();
+    },
+
+    save: function () {
+        localStorage.setItem('achievements', JSON.stringify(this.achievements));
+    },
+
+    unlock: function (id) {
+        const ach = this.achievements[id];
+        if (ach && !ach.unlocked) {
+            ach.unlocked = true;
+            ach.unlockDate = new Date().toLocaleDateString();
+            this.save();
+            this.notify(ach);
+            this.render();
+        }
+    },
+
+    check: function (event) {
+        if (event === 'hack_complete') {
+            this.unlock('script_kiddie');
+            this.achievements['master_hacker'].progress++;
+            if (this.achievements['master_hacker'].progress >= 10) this.unlock('master_hacker');
+            this.save();
+        }
+        else if (event === 'rich') this.unlock('rich');
+        else if (event === 'snake_score_10') this.unlock('snake_score_10');
+        else if (event === 'snake_score_50') this.unlock('snake_score_50');
+        else if (event === 'sys_admin') this.unlock('sys_admin');
+        else if (event === 'music_lover') this.unlock('music_lover');
+        else if (event === 'glitch_matrix') this.unlock('glitch_matrix');
+        else if (event === 'window_opened') {
+            const winId = arguments[1];
+            if (winId && !this.openedWindows.has(winId)) {
+                this.openedWindows.add(winId);
+                this.achievements['explorer'].progress = this.openedWindows.size;
+                if (this.openedWindows.size >= 5) this.unlock('explorer');
+                this.save(); // Save progress
+            }
+        }
+        else if (event === 'command_run') {
+            this.commandCount++;
+            this.achievements['terminal_junkie'].progress = this.commandCount;
+            if (this.commandCount >= 20) this.unlock('terminal_junkie');
+            this.save();
+        }
+    },
+
+    notify: function (ach) {
+        const notif = document.getElementById('ach-notification');
+        const title = document.getElementById('ach-notify-title');
+        if (notif && title) {
+            SoundManager.playAchievement();
+            title.innerText = ach.title;
+            notif.style.right = '20px'; // Slide in
+            setTimeout(() => {
+                notif.style.right = '-300px'; // Slide out
+            }, 4000);
+        }
+    },
+
+    render: function () {
+        const grid = document.getElementById('ach-grid');
+        const countEl = document.getElementById('ach-count');
+        const totalEl = document.getElementById('ach-total');
+
+        if (!grid) return;
+
+        grid.innerHTML = '';
+        let unlockedCount = 0;
+        const totalCount = Object.keys(this.achievements).length;
+
+        Object.values(this.achievements).forEach(ach => {
+            if (ach.unlocked) unlockedCount++;
+
+            const div = document.createElement('div');
+            div.className = `flex items-center gap-4 p-3 border ${ach.unlocked ? 'border-theme-color bg-theme-dim/10' : 'border-theme-dim/30 opacity-50'}`;
+
+            div.innerHTML = `
+                <div class="${ach.unlocked ? 'text-theme-color' : 'text-gray-600'}">
+                    <i data-lucide="${ach.icon}" class="w-8 h-8"></i>
+                </div>
+                <div class="flex-grow">
+                    <h4 class="font-bold ${ach.unlocked ? 'text-white' : 'text-gray-500'}">${ach.title}</h4>
+                    <p class="text-xs text-gray-400">${ach.desc}</p>
+                    ${ach.unlocked ? `<p class="text-[10px] text-theme-dim mt-1">Unlocked: ${ach.unlockDate}</p>` : ''}
+                    ${ach.progress !== undefined && !ach.unlocked ? `<p class="text-[10px] text-theme-dim mt-1">Progress: ${ach.progress}/${ach.target}</p>` : ''}
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+
+        if (countEl) countEl.innerText = unlockedCount;
+        if (totalEl) totalEl.innerText = totalCount;
+
+        lucide.createIcons();
+    }
+};
 
 // SNAKE GAME
 let snakeGame;
@@ -818,6 +1133,8 @@ function gameLoop() {
     if (head.x === food.x && head.y === food.y) {
         score += 10;
         document.getElementById('snake-score').innerText = score;
+        if (score >= 10) AchievementSystem.check('snake_score_10');
+        if (score >= 50) AchievementSystem.check('snake_score_50');
         spawnFood(); // New food
     } else {
         snake.pop();
@@ -943,6 +1260,10 @@ function initMatrix() {
             drops[i]++;
         });
     }, 33);
+
+    canvas.addEventListener('click', () => {
+        AchievementSystem.check('glitch_matrix');
+    });
 }
 
 function initVisualizer() {
@@ -959,6 +1280,23 @@ function initVisualizer() {
             bar.style.height = Math.random() * 20 + 5 + 'px';
         });
     }, 100);
+}
+
+function initSysMonitor() {
+    setInterval(() => {
+        const cpu = Math.floor(Math.random() * 30) + 10;
+        const ram = (Math.random() * 2 + 2).toFixed(1);
+
+        const cpuVal = document.getElementById('cpu-val');
+        const cpuBar = document.getElementById('cpu-bar');
+        const ramVal = document.getElementById('ram-val');
+        const ramBar = document.getElementById('ram-bar');
+
+        if (cpuVal) cpuVal.innerText = `${cpu}%`;
+        if (cpuBar) cpuBar.style.width = `${cpu}%`;
+        if (ramVal) ramVal.innerText = `${ram}GB`;
+        if (ramBar) ramBar.style.width = `${(ram / 16) * 100}%`;
+    }, 2000);
 }
 
 /* --- SOUND SYSTEM --- */
@@ -1036,6 +1374,24 @@ const SoundManager = {
         noise.connect(gain);
         gain.connect(this.ctx.destination);
         noise.start();
+    },
+
+    playAchievement: function () {
+        if (this.muted || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        // Major Triad Arpeggio (C5, E5, G5, C6)
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, now + i * 0.1);
+            gain.gain.setValueAtTime(0.1, now + i * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.4);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.4);
+        });
     }
 };
 
