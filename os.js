@@ -58,6 +58,11 @@ window.onload = () => {
     lucide.createIcons();
     bootSystem();
     AchievementSystem.check('boot');
+
+    // Load Theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) setTheme(savedTheme);
+
     startClock();
     initMatrix();
     initVisualizer();
@@ -1865,6 +1870,7 @@ function initScreensaver() {
 // SETTINGS (THEME)
 function setTheme(theme) {
     document.body.className = `theme-${theme}`;
+    localStorage.setItem('theme', theme);
 }
 
 // CHAT
