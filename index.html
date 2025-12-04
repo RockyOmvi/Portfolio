@@ -529,7 +529,7 @@
             <div class="flex justify-center gap-2 mt-1">
                 <button onclick="toggleMute()" id="mute-btn"
                     class="text-theme-color hover:text-white border border-theme-color px-2 py-1 text-[10px]">
-                    MUTE / UNMUTE
+                    MUTE
                 </button>
             </div>
         </div>
@@ -567,24 +567,7 @@
             <i data-lucide="power"></i> Shut Down
         </div>
     </div>
-    <!-- CYBERDECK BROWSER -->
-    <div id="win-browser" class="window" style="top:10%; left:20%; width:800px; height:600px; display:none;">
-        <div class="window-header">
-            <span>CYBERDECK.EXE</span>
-            <div class="window-controls">
-                <button class="win-btn" onclick="minimizeWindow('win-browser')"></button>
-                <button class="win-btn bg-red-500" onclick="closeWindow('win-browser')"></button>
-            </div>
-        </div>
-        <div class="window-content" style="padding:0; display:flex; flex-direction:column;">
-            <div style="padding:10px; background:#000; border-bottom:1px solid var(--theme-dim);">
-                <input type="text" id="browser-url" placeholder="Type: darkbazaar.onion"
-                    style="width:100%; padding:8px; background:#0a0a0a; border:1px solid var(--theme-dim); color:var(--theme-color); font-family:monospace;"
-                    onkeypress="if(event.key==='Enter') browserGo()">
-            </div>
-            <iframe id="browser-frame" style="flex:1; width:100%; border:none;"></iframe>
-        </div>
-    </div>
+
     <div id="taskbar">
         <button id="start-btn" onclick="toggleStartMenu()">
             <i data-lucide="aperture" class="w-4 h-4"></i> START
@@ -594,6 +577,7 @@
         </div>
         <div id="clock">00:00:00</div>
     </div>
+
 
     <!-- SCRIPTS -->
     <script src="os.js"></script>

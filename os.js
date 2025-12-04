@@ -2104,7 +2104,74 @@ function browserGo() {
         url = 'https://' + url;
     }
 
-    // 2. Smart URL Rewrites for Iframe Compatibility
+    // 2. DARK WEB SITES (Static Files)
+    // MARKETS (10)
+    if (url.includes('darkbazaar.onion')) { frame.src = 'darkweb/darkbazaar.html'; return; }
+    if (url.includes('silkroad4.onion')) { frame.src = 'darkweb/markets/silkroad4.html'; return; }
+    if (url.includes('armory.onion')) { frame.src = 'darkweb/markets/armory.html'; return; }
+    if (url.includes('docsmarket.onion')) { frame.src = 'darkweb/markets/docsmarket.html'; return; }
+    if (url.includes('creditshop.onion')) { frame.src = 'darkweb/markets/creditshop.html'; return; }
+    if (url.includes('pharmanet.onion')) { frame.src = 'darkweb/markets/pharmanet.html'; return; }
+    if (url.includes('blackhat.market')) { frame.src = 'darkweb/markets/blackhat.html'; return; }
+    if (url.includes('idforge.onion')) { frame.src = 'darkweb/markets/idforge.html'; return; }
+    if (url.includes('contraband.hub')) { frame.src = 'darkweb/markets/contraband.html'; return; }
+    if (url.includes('deepauction.onion')) { frame.src = 'darkweb/markets/deepauction.html'; return; }
+
+    // CRYPTO (8)
+    if (url.includes('cryptominer.pool')) { frame.src = 'darkweb/cryptominer.html'; return; }
+    if (url.includes('hexexchange.com')) { frame.src = 'darkweb/hexexchange.html'; return; }
+    if (url.includes('coinmixer.onion')) { frame.src = 'darkweb/crypto/coinmixer.html'; return; }
+    if (url.includes('walletgen.io')) { frame.src = 'darkweb/crypto/walletgen.html'; return; }
+    if (url.includes('hashpower.rent')) { frame.src = 'darkweb/crypto/hashpower.html'; return; }
+    if (url.includes('cryptobank.dark')) { frame.src = 'darkweb/crypto/cryptobank.html'; return; }
+    if (url.includes('nft.underground')) { frame.src = 'darkweb/crypto/nft.html'; return; }
+    if (url.includes('defi.shadow')) { frame.src = 'darkweb/crypto/defi.html'; return; }
+
+    // FORUMS (8)
+    if (url.includes('hackforums.net')) { frame.src = 'darkweb/forums/hackforums.html'; return; }
+    if (url.includes('exploit.zone')) { frame.src = 'darkweb/forums/exploitzone.html'; return; }
+    if (url.includes('blackhat.forum')) { frame.src = 'darkweb/forums/blackhat.html'; return; }
+    if (url.includes('carding.world')) { frame.src = 'darkweb/forums/carding.html'; return; }
+    if (url.includes('defcon.onion')) { frame.src = 'darkweb/forums/defcon.html'; return; }
+    if (url.includes('zeroday.market')) { frame.src = 'darkweb/forums/zeroday.html'; return; }
+    if (url.includes('pwn.collective')) { frame.src = 'darkweb/forums/pwn.html'; return; }
+    if (url.includes('anon.chat')) { frame.src = 'darkweb/forums/anonchat.html'; return; }
+
+    // INTELLIGENCE (6)
+    if (url.includes('wikileaks.onion')) { frame.src = 'darkweb/intel/wikileaks.html'; return; }
+    if (url.includes('corp.leaks')) { frame.src = 'darkweb/intel/corpleaks.html'; return; }
+    if (url.includes('gov.files')) { frame.src = 'darkweb/intel/govfiles.html'; return; }
+    if (url.includes('insider.intel')) { frame.src = 'darkweb/intel/insider.html'; return; }
+    if (url.includes('breach.database')) { frame.src = 'darkweb/intel/breachdb.html'; return; }
+    if (url.includes('doxbin.onion')) { frame.src = 'darkweb/intel/doxbin.html'; return; }
+
+    // SERVICES (6)
+    if (url.includes('hitman.onion')) { frame.src = 'darkweb/services/hitman.html'; return; }
+    if (url.includes('ddos.rental')) { frame.src = 'darkweb/services/ddos.html'; return; }
+    if (url.includes('hacker.hire')) { frame.src = 'darkweb/services/hackerhire.html'; return; }
+    if (url.includes('fake.news')) { frame.src = 'darkweb/services/fakenews.html'; return; }
+    if (url.includes('bot.army')) { frame.src = 'darkweb/services/botarmy.html'; return; }
+    if (url.includes('vpn.ultra')) { frame.src = 'darkweb/services/vpnultra.html'; return; }
+
+    // TOOLS (6)
+    if (url.includes('toolkit.onion')) { frame.src = 'darkweb/tools/toolkit.html'; return; }
+    if (url.includes('malware.lab')) { frame.src = 'darkweb/tools/malwarelab.html'; return; }
+    if (url.includes('crack.station')) { frame.src = 'darkweb/tools/crackstation.html'; return; }
+    if (url.includes('keygen.master')) { frame.src = 'darkweb/tools/keygen.html'; return; }
+    if (url.includes('rootkit.dev')) { frame.src = 'darkweb/tools/rootkit.html'; return; }
+    if (url.includes('exploit.builder')) { frame.src = 'darkweb/tools/exploitbuilder.html'; return; }
+
+    // INFO (8)
+    if (url.includes('darkpedia.onion')) { frame.src = 'darkweb/info/darkpedia.html'; return; }
+    if (url.includes('tutorial.underground')) { frame.src = 'darkweb/info/tutorials.html'; return; }
+    if (url.includes('opsec.guide')) { frame.src = 'darkweb/info/opsec.html'; return; }
+    if (url.includes('counterfeit.wiki')) { frame.src = 'darkweb/info/counterfeit.html'; return; }
+    if (url.includes('dark.games')) { frame.src = 'darkweb/info/darkgames.html'; return; }
+    if (url.includes('redroom.onion')) { frame.src = 'darkweb/info/redroom.html'; return; }
+    if (url.includes('betting.dark')) { frame.src = 'darkweb/info/betting.html'; return; }
+    if (url.includes('stream.pirate')) { frame.src = 'darkweb/info/streampirate.html'; return; }
+
+    // 3. Smart URL Rewrites for Iframe Compatibility
 
     // Google: Use the /webhp?igu=1 hack which often allows embedding
     if (url.includes('google.com') && !url.includes('igu=1')) {
@@ -2730,84 +2797,4 @@ function shutdownSystem() {
     }, 100);
 }
 
-// Browser Navigation Function
-// Browser Navigation Function - All 52 Dark Web Sites
-function browserGo() {
-    let url = document.getElementById('browser-url').value;
-    const frame = document.getElementById('browser-frame');
 
-    if (!url) return;
-
-    // MARKETS (10)
-    if (url.includes('darkbazaar.onion')) { frame.src = 'darkweb/darkbazaar.html'; return; }
-    if (url.includes('silkroad4.onion')) { frame.src = 'darkweb/markets/silkroad4.html'; return; }
-    if (url.includes('armory.onion')) { frame.src = 'darkweb/markets/armory.html'; return; }
-    if (url.includes('docsmarket.onion')) { frame.src = 'darkweb/markets/docsmarket.html'; return; }
-    if (url.includes('creditshop.onion')) { frame.src = 'darkweb/markets/creditshop.html'; return; }
-    if (url.includes('pharmanet.onion')) { frame.src = 'darkweb/markets/pharmanet.html'; return; }
-    if (url.includes('blackhat.market')) { frame.src = 'darkweb/markets/blackhat.html'; return; }
-    if (url.includes('idforge.onion')) { frame.src = 'darkweb/markets/idforge.html'; return; }
-    if (url.includes('contraband.hub')) { frame.src = 'darkweb/markets/contraband.html'; return; }
-    if (url.includes('deepauction.onion')) { frame.src = 'darkweb/markets/deepauction.html'; return; }
-
-    // CRYPTO (8)
-    if (url.includes('cryptominer.pool')) { frame.src = 'darkweb/cryptominer.html'; return; }
-    if (url.includes('hexexchange.com')) { frame.src = 'darkweb/hexexchange.html'; return; }
-    if (url.includes('coinmixer.onion')) { frame.src = 'darkweb/crypto/coinmixer.html'; return; }
-    if (url.includes('walletgen.io')) { frame.src = 'darkweb/crypto/walletgen.html'; return; }
-    if (url.includes('hashpower.rent')) { frame.src = 'darkweb/crypto/hashpower.html'; return; }
-    if (url.includes('cryptobank.dark')) { frame.src = 'darkweb/crypto/cryptobank.html'; return; }
-    if (url.includes('nft.underground')) { frame.src = 'darkweb/crypto/nft.html'; return; }
-    if (url.includes('defi.shadow')) { frame.src = 'darkweb/crypto/defi.html'; return; }
-
-    // FORUMS (8)
-    if (url.includes('hackforums.net')) { frame.src = 'darkweb/forums/hackforums.html'; return; }
-    if (url.includes('exploit.zone')) { frame.src = 'darkweb/forums/exploitzone.html'; return; }
-    if (url.includes('blackhat.forum')) { frame.src = 'darkweb/forums/blackhat.html'; return; }
-    if (url.includes('carding.world')) { frame.src = 'darkweb/forums/carding.html'; return; }
-    if (url.includes('defcon.onion')) { frame.src = 'darkweb/forums/defcon.html'; return; }
-    if (url.includes('zeroday.market')) { frame.src = 'darkweb/forums/zeroday.html'; return; }
-    if (url.includes('pwn.collective')) { frame.src = 'darkweb/forums/pwn.html'; return; }
-    if (url.includes('anon.chat')) { frame.src = 'darkweb/forums/anonchat.html'; return; }
-
-    // INTELLIGENCE (6)
-    if (url.includes('wikileaks.onion')) { frame.src = 'darkweb/intel/wikileaks.html'; return; }
-    if (url.includes('corp.leaks')) { frame.src = 'darkweb/intel/corpleaks.html'; return; }
-    if (url.includes('gov.files')) { frame.src = 'darkweb/intel/govfiles.html'; return; }
-    if (url.includes('insider.intel')) { frame.src = 'darkweb/intel/insider.html'; return; }
-    if (url.includes('breach.database')) { frame.src = 'darkweb/intel/breachdb.html'; return; }
-    if (url.includes('doxbin.onion')) { frame.src = 'darkweb/intel/doxbin.html'; return; }
-
-    // SERVICES (6)
-    if (url.includes('hitman.onion')) { frame.src = 'darkweb/services/hitman.html'; return; }
-    if (url.includes('ddos.rental')) { frame.src = 'darkweb/services/ddos.html'; return; }
-    if (url.includes('hacker.hire')) { frame.src = 'darkweb/services/hackerhire.html'; return; }
-    if (url.includes('fake.news')) { frame.src = 'darkweb/services/fakenews.html'; return; }
-    if (url.includes('bot.army')) { frame.src = 'darkweb/services/botarmy.html'; return; }
-    if (url.includes('vpn.ultra')) { frame.src = 'darkweb/services/vpnultra.html'; return; }
-
-    // TOOLS (6)
-    if (url.includes('toolkit.onion')) { frame.src = 'darkweb/tools/toolkit.html'; return; }
-    if (url.includes('malware.lab')) { frame.src = 'darkweb/tools/malwarelab.html'; return; }
-    if (url.includes('crack.station')) { frame.src = 'darkweb/tools/crackstation.html'; return; }
-    if (url.includes('keygen.master')) { frame.src = 'darkweb/tools/keygen.html'; return; }
-    if (url.includes('rootkit.dev')) { frame.src = 'darkweb/tools/rootkit.html'; return; }
-    if (url.includes('exploit.builder')) { frame.src = 'darkweb/tools/exploitbuilder.html'; return; }
-
-    // INFO (8)
-    if (url.includes('darkpedia.onion')) { frame.src = 'darkweb/info/darkpedia.html'; return; }
-    if (url.includes('tutorial.underground')) { frame.src = 'darkweb/info/tutorials.html'; return; }
-    if (url.includes('opsec.guide')) { frame.src = 'darkweb/info/opsec.html'; return; }
-    if (url.includes('counterfeit.wiki')) { frame.src = 'darkweb/info/counterfeit.html'; return; }
-    if (url.includes('dark.games')) { frame.src = 'darkweb/info/darkgames.html'; return; }
-    if (url.includes('redroom.onion')) { frame.src = 'darkweb/info/redroom.html'; return; }
-    if (url.includes('betting.dark')) { frame.src = 'darkweb/info/betting.html'; return; }
-    if (url.includes('stream.pirate')) { frame.src = 'darkweb/info/streampirate.html'; return; }
-
-    // Regular URLs
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        url = 'https://' + url;
-    }
-
-    frame.src = url;
-}
